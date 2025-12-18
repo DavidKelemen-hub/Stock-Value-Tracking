@@ -9,10 +9,7 @@ using JsonSerializer = System.Text.Json.JsonSerializer;
 public class Program
 {
     // Create a string array with the lines of text
-    string[] lines = { "First line", "Second line", "Third line" };
-    string docPath = "C:\\Users\\K. David\\source\\repos\\ConsoleApp1\\ConsoleApp1\\output\\output.txt";
     static string api_key = "X0637BX0DJD9U0K6";
-    static string debugdata = new string("");
     static string url = $"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=MSFT&outputsize=compact&&apikey={api_key}";
 
     public class Root
@@ -52,7 +49,6 @@ public class Program
         if (response.IsSuccessStatusCode)
         {
             string jsonResponse = await response.Content.ReadAsStringAsync();
-            //Console.WriteLine(jsonResponse); //debug purpose
             var root = JsonSerializer.Deserialize<Root>(jsonResponse);
             var dailydata = root.TimeSeriesDaily;
 
@@ -61,11 +57,5 @@ public class Program
                 Console.WriteLine(string.Format("Closing value on {0} is {1}", item.Key, item.Value.Close));
             }
         }
-
-
-
-
-
-
     }
 }
