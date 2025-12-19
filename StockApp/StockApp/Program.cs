@@ -10,7 +10,8 @@ public class Program
 {
     // Create a string array with the lines of text
     static string api_key = "X0637BX0DJD9U0K6";
-    static string url = $"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=MSFT&outputsize=compact&&apikey={api_key}";
+    static string symbol;
+    static string url = $"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=&outputsize=compact&&apikey=";
 
     public class Root
     {
@@ -39,22 +40,35 @@ public class Program
 
     public static async Task Main(string[] args)
     {
-        HttpClient client = new()
+        symbol = "";
+        while (!symbol.Equals("q"))
         {
-            BaseAddress = new Uri(url)
-        };
+            Console.WriteLine("Enter stock symbol:");
+            symbol = Console.ReadLine();
 
-        HttpResponseMessage response = await client.GetAsync(url);
+            url = String.Format("https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={0}&outputsize=compact&&apikey={1}", symbol, api_key);
 
-        if (response.IsSuccessStatusCode)
-        {
-            string jsonResponse = await response.Content.ReadAsStringAsync();
-            var root = JsonSerializer.Deserialize<Root>(jsonResponse);
-            var dailydata = root.TimeSeriesDaily;
-
-            foreach (KeyValuePair<string, DailyEntries> item in dailydata)
+            HttpClient client = new()
             {
-                Console.WriteLine(string.Format("Closing value on {0} is {1}", item.Key, item.Value.Close));
+                BaseAddress = new Uri(url)
+            };
+
+            HttpResponseMessage response = await client.GetAsync(url);
+
+            if (response.IsSuccessStatusCode)
+            {
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+                var root = JsonSerializer.Deserialize<Root>(jsonResponse);
+                var dailydata = root.TimeSeriesDaily;
+
+                foreach (KeyValuePair<string, DailyEntries> item in dailydata)
+                {
+                    Console.WriteLine(string.Format("Closing value on {0} is {1}", item.Key, item.Value.Close));
+                }
+            }
+            else
+            {
+                Console.WriteLine("Error: " + response.StatusCode);
             }
         }
     }
