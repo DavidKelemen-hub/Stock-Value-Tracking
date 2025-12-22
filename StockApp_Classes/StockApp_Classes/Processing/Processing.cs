@@ -7,7 +7,6 @@ using StockApp_Classes.Models;
 
 namespace StockApp_Classes.Processing
 {
-
     public class Processing
     {
 
@@ -61,6 +60,12 @@ namespace StockApp_Classes.Processing
         {
             var lowest = data.OrderBy(x => Convert.ToDouble(x.Value.Low)).First();
             return lowest.Key;
+        }
+
+        public string GetHighestClosingPriceDate(Dictionary<string, DailyEntry> data)
+        {
+            var highest = data.OrderByDescending(x => Convert.ToDouble(x.Value.Close)).First();
+            return highest.Key;
         }
 
         public double GetOpenPriceByDate(Dictionary<string, DailyEntry> data, string date)

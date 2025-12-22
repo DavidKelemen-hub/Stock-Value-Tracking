@@ -7,6 +7,19 @@ using System.Threading.Tasks;
 
 namespace StockApp_Classes.Models
 {
+    public class CompaniesCollection
+    {
+        [JsonPropertyName("symbols")]
+        public required List<Symbols> Companies { get; set; }
+    }
+    public class Symbols
+    {
+        [JsonPropertyName("symbol")]
+        public required string Symbol { get; set; }
+
+        [JsonPropertyName("name")]
+        public required string Name { get; set; }
+    }
     public class DailyEntriesCollection
     {
         [JsonPropertyName("Time Series (Daily)")]
