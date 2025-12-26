@@ -17,10 +17,10 @@ namespace StockApp_Classes.Services
             this.connectionString = connectionString;
         }
 
-        const string queryString = "SELECT Name FROM Company";
-
         public List<string> GetAllCompanies()
         {
+            const string queryString = "SELECT Name FROM Company";
+
             using (var connection = new SqlConnection(this.connectionString))
             {
                 var result = connection.Query<string>(queryString).ToList();
@@ -53,7 +53,7 @@ namespace StockApp_Classes.Services
         public List<DailyEntry> GetCompleteStockData(string symbol)
         {
             var stockID = GetCompanyIDFromSymbol(symbol);
-            const string queryString = "SELECT TradeDate, OpenPrice, HighPrice, LowPrice, ClosePrice, Volume " +
+            const string queryString = "SELECT * " +
                                        "FROM DailyPrices WHERE StockID = @stockID";
 
             using (var connection = new SqlConnection(this.connectionString))
@@ -66,7 +66,7 @@ namespace StockApp_Classes.Services
         public List<DailyEntry> GetStockEntriesBetweenDates(string symbol, string startDate, string endDate)
         {
             var stockID = GetCompanyIDFromSymbol(symbol);
-            const string queryString = "SELECT TradeDate, OpenPrice, HighPrice, LowPrice, ClosePrice, Volume " +
+            const string queryString = "SELECT * " +
                                        "FROM DailyPrices WHERE StockID = @stockID " +
                                        "AND TradeDate BETWEEN @startDate AND @endDate";
 
