@@ -1,22 +1,26 @@
 ﻿using StockApp_Classes.Services;
 using StockApp_Classes.Processing;
 using System.Runtime.Serialization;
+using System;
+using System.Configuration;
 
 class Program
 {
     static async Task Main(string[] args)
     {
-       const string connectionstring = "Data Source=localhost;Initial Catalog=StockData;Integrated Security=True;Trust Server Certificate=True";
+        var connectionString =
+        ConfigurationManager.ConnectionStrings["dbconnection"].ConnectionString;
 
-        DataBaseService service = new DataBaseService(connectionstring);
 
-       var result = service.GetCompanyIDFromName("AbbVie");
+        DataBaseService service = new DataBaseService(connectionString);
 
-       //foreach (var entry in result)
-       //{
-       // Console.WriteLine($"{entry.TradeDate} - Open: {entry.OpenPrice}, Close: {entry.ClosePrice}");
-       // }
-        Console.WriteLine(result);
+       var result = service.GetStockEntriesBetweenDates("AAPL", "2025.01.01","2025.07.01");
+
+        foreach (var entry in result)
+        {
+            Console.WriteLine($"{entry.TradeDate} - Open: {entry.OpenPrice}, Close: {entry.ClosePrice}");
+        }
+       // Console.WriteLine(result);
 
 
     }

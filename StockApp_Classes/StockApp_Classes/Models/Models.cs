@@ -30,4 +30,6 @@ namespace StockApp_Classes.Models
         public string Symbol { get; set; }
         public string Name { get; set; }
     }
+
+   
 }
