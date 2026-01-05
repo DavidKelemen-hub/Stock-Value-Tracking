@@ -63,7 +63,7 @@ namespace StockApp_Classes.Services
             }
         }
 
-        public List<DailyEntry> GetStockEntriesBetweenDates(string symbol, string startDate, string endDate)
+        public List<DailyEntry> GetStockEntriesBetweenDates(string symbol, DateTime startDate, DateTime endDate)
         {
             var stockID = GetCompanyIDFromSymbol(symbol);
             const string queryString = "SELECT * " +

@@ -13,6 +13,9 @@ using System.Threading.Tasks;
 using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Series;
+using System.Windows.Input;
+using Microsoft.Data.SqlClient;
+using StockApp.Helpers;
 
 
 namespace StockApp.ViewModels
@@ -20,6 +23,7 @@ namespace StockApp.ViewModels
     public class MainViewModel : INotifyPropertyChanged
     {     
         public ObservableCollection<Company> Companies { get; set; }
+        public ICommand RangeClickedCommand { get; set; }
         private Company selectedCompany;
         private PlotModel chartData;
         private DataBaseService dbService { get; set; }
@@ -28,6 +32,14 @@ namespace StockApp.ViewModels
         {
             dbService = new DataBaseService(System.Configuration.ConfigurationManager.ConnectionStrings["dbconnection"].ConnectionString);
             Companies = new ObservableCollection<Company>(dbService.GetAllCompanies());
+            RangeClickedCommand = new RelayCommand(param =>
+            {
+                var range = param as string;
+                if (range == null) return;
+
+                LoadChartData(range);
+            });
+
         }
 
         public Company SelectedCompany
@@ -37,7 +49,7 @@ namespace StockApp.ViewModels
             {
                 if (selectedCompany == value) return;
                 selectedCompany = value;
-                LoadChartData();
+                //LoadChartData();
                 OnPropertyChanged();
             }
         }
@@ -53,12 +65,21 @@ namespace StockApp.ViewModels
             }
         }
 
-        private void LoadChartData()
+        private void LoadChartData(string range)
         {
             if (SelectedCompany == null)
                 return;
 
-            var prices = dbService.GetStockEntriesBetweenDates(SelectedCompany.Symbol,"2025-01-01","2025-12-31");
+            List<DailyEntry> prices;
+            if(range == "5D")
+            {
+               prices = dbService.GetStockEntriesBetweenDates(SelectedCompany.Symbol, DateTime.Today.AddDays(-5), DateTime.Today);
+            }
+            else
+            {
+               prices = dbService.GetCompleteStockData(SelectedCompany.Symbol);
+            }
+
 
             ChartData = new PlotModel { Title = $"{SelectedCompany.Name} Stock Prices" };
             ChartData.Series.Clear();
@@ -70,7 +91,10 @@ namespace StockApp.ViewModels
                 StringFormat = "yyyy-MM-dd",
                 AxislineStyle = LineStyle.Solid,
                 MajorTickSize = 2,
-                MinorTickSize = 2
+                MinorTickSize = 2,
+                IsZoomEnabled = false,
+                IsPanEnabled = false
+
             });
 
             ChartData.Axes.Add(new LinearAxis
@@ -78,7 +102,9 @@ namespace StockApp.ViewModels
                 Position = AxisPosition.Left,
                 AxislineStyle = LineStyle.LongDashDotDot,
                 MajorTickSize = 7,
-                MinorTickSize = 4
+                MinorTickSize = 4,
+                IsZoomEnabled = false,
+                IsPanEnabled = false
             });
 
 
