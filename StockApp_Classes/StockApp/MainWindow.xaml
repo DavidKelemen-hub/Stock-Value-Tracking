@@ -1,11 +1,14 @@
 ﻿<Window x:Class="StockApp.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:oxy="http://oxyplot.org/wpf"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:StockApp"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
+    
     <Grid Margin="12">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="280"/>
@@ -24,9 +27,8 @@
             />
 
             <ListBox
-            Name="CompaniesListBox"
-            ItemsSource="{Binding CompaniesViewModel.Companies}"
-            SelectedItem="{Binding CompaniesViewModel.SelectedCompany, Mode=TwoWay}"
+            ItemsSource="{Binding Companies}"
+            SelectedItem="{Binding SelectedCompany}"
             ScrollViewer.VerticalScrollBarVisibility="Auto">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
@@ -47,13 +49,18 @@
         <Border Grid.Column="2" Padding="12" BorderThickness="1">
             <StackPanel>
                 <TextBlock FontSize="18" FontWeight="Bold"
-                       Text="{Binding CompaniesViewModel.SelectedCompany.Name}" />
+               Text="{Binding SelectedCompany.Name}" />
                 <TextBlock Opacity="0.7"
-                       Text="{Binding CompaniesViewModel.SelectedCompany.Symbol}" />
+               Text="{Binding SelectedCompany.Symbol}" />
+               
+                
+                <!-- Chart -->
+                <oxy:PlotView Model="{Binding ChartData}" Height="300" /> 
 
-                <!-- Your chart goes here -->
-                <TextBlock Margin="0,16,0,0" 
-                       Text="{Binding ClosePrice}"/>
+
+                <!-- Close price for selected date -->
+                <TextBlock Margin="0,16,0,0"
+               Text="{Binding ClosePrice}" />
             </StackPanel>
         </Border>
     </Grid>

@@ -16,7 +16,7 @@ namespace StockApp_Classes.Models
     public class DailyEntry
     {
         public int StockID { get; set; }
-        public string TradeDate { get; set; }
+        public DateTime TradeDate { get; set; }
         public double OpenPrice { get; set; }
         public double HighPrice { get; set; }
         public double LowPrice { get; set; }
