@@ -18,15 +18,11 @@ namespace StockApp
         
         public CompaniesViewModel(DataBaseService service)
         {
-            Companies = new ObservableCollection<Company>(service.GetAllCompanies());
+            
         }
 
-        private Company selectedCompany;
+        
 
-        public Company SelectedCompany
-        {
-            get { return selectedCompany; }
-            set {  selectedCompany = value; }
-        }
+        
     }
 }
