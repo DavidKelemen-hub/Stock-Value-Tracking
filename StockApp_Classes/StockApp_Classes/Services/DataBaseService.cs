@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
 using Dapper;
 using StockApp_Classes.Models;
+using StockApp.Helpers;
 
 namespace StockApp_Classes.Services
 {
@@ -63,21 +64,34 @@ namespace StockApp_Classes.Services
             }
         }
 
-        public List<DailyEntry> GetStockEntriesBetweenDates(string symbol, DateTime startDate, DateTime endDate)
+        public List<DailyEntry> GetStockEntriesBetweenDates(string symbol, string range)
         {
-            var stockID = GetCompanyIDFromSymbol(symbol);
-            const string queryString = "SELECT * " +
-                                       "FROM DailyPrices WHERE StockID = @stockID " +
-                                       "AND TradeDate BETWEEN @startDate AND @endDate";
+            DateTime endDate = DateTime.Today;
+            DateTimeHelper dtHelper = new DateTimeHelper(); 
 
-            using (var connection = new SqlConnection(this.connectionString))
+            if(range == "Max")
             {
-                var result = connection.Query<DailyEntry>(queryString, new { stockID, startDate, endDate });
+                var result = GetCompleteStockData(symbol);
                 return result.ToList();
+            }
+            else
+            {
+                DateTime startDate = dtHelper.GetStartDate(range);
+                var stockID = GetCompanyIDFromSymbol(symbol);
+
+                const string queryString = "SELECT * " +
+                                           "FROM DailyPrices WHERE StockID = @stockID " +
+                                           "AND TradeDate BETWEEN @startDate AND @endDate";
+
+                using (var connection = new SqlConnection(this.connectionString))
+                {
+                    var result = connection.Query<DailyEntry>(queryString, new { stockID, startDate, endDate });
+                    return result.ToList();
+                }
             }
         }
 
-        public double GetClosePriceOnDate(string symbol, string date)
+        public double GetClosePriceOnDate(string symbol, DateTime date)
         {
             var stockID = GetCompanyIDFromSymbol(symbol);
             const string queryString = "SELECT ClosePrice " +

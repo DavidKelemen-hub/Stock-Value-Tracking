@@ -98,7 +98,11 @@
                 <TextBlock Opacity="0.7"
                    Text="{Binding SelectedCompany.Symbol}" />
 
-                <!-- Range buttons -->
+                <TextBlock Opacity="0.7"
+                   Text="{Binding VariationPercentage, StringFormat={}{0}%}" />
+                
+
+                    <!-- Range buttons -->
                 <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
                     <Button Content="5D"  Background="Black" Foreground="Gray"
                             Width="48" Height="28" Margin="0,0,8,0"
