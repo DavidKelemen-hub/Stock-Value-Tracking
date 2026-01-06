@@ -21,7 +21,7 @@ namespace StockApp_Classes.Models
         public double HighPrice { get; set; }
         public double LowPrice { get; set; }
         public double ClosePrice { get; set; }
-        public int Volume { get; set; }
+        public long Volume { get; set; }
     }
 
     public class Company

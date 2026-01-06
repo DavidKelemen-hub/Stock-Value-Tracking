@@ -9,6 +9,8 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     
+    
+    
     <Grid Margin="12">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="280"/>
@@ -46,23 +48,120 @@
         </DockPanel>
 
         <!-- Right panel (placeholder) -->
-        <Border Grid.Column="2" Padding="12" BorderThickness="1">
+        <Border Grid.Column="2"
+        Padding="12"
+        BorderThickness="1">
+
+            <!-- UN SINGUR child -->
             <StackPanel>
-                <TextBlock FontSize="18" FontWeight="Bold"
-               Text="{Binding SelectedCompany.Name}" />
+                <StackPanel.Resources>
+                    <Style x:Key="RangeButtonStyle" TargetType="Button">
+                        <Setter Property="Background" Value="Black"/>
+                        <Setter Property="Foreground" Value="Gray"/>
+                        <Setter Property="Padding" Value="10,6"/>
+                        <Setter Property="Margin" Value="0,0,12,0"/>
+                        <Setter Property="BorderThickness" Value="0"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                        <Setter Property="Cursor" Value="Hand"/>
+
+                        <Style.Triggers>
+                            <EventTrigger RoutedEvent="MouseEnter">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ColorAnimation
+                            Storyboard.TargetProperty="(Button.Foreground).(SolidColorBrush.Color)"
+                            To="#8ab4f8"
+                            Duration="0:0:0.15"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+
+                            <EventTrigger RoutedEvent="MouseLeave">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ColorAnimation
+                            Storyboard.TargetProperty="(Button.Foreground).(SolidColorBrush.Color)"
+                            To="Gray"
+                            Duration="0:0:0.15"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </StackPanel.Resources>
+
+
+                <TextBlock FontSize="18"
+                   FontWeight="Bold"
+                   Text="{Binding SelectedCompany.Name}" />
+
                 <TextBlock Opacity="0.7"
-               Text="{Binding SelectedCompany.Symbol}" />
-               
+                   Text="{Binding SelectedCompany.Symbol}" />
+
+                <TextBlock Opacity="0.7"
+                   Text="{Binding VariationPercentage, StringFormat={}{0}%}" />
                 
-                <!-- Chart -->
-                <oxy:PlotView Model="{Binding ChartData}" Height="300" /> 
+
+                    <!-- Range buttons -->
+                <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
+                    <Button Content="5D"  Background="Black" Foreground="Gray"
+                            Width="48" Height="28" Margin="0,0,8,0"
+                            HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                            Command ="{Binding RangeClickedCommand}"
+                            CommandParameter="5D"/>
+
+                    <Button Content="1M"  Background="Black" Foreground="Gray"
+                            Width="48" Height="28" Margin="0,0,8,0"
+                            HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                            Command ="{Binding RangeClickedCommand}"
+                            CommandParameter="1M"/>
+
+                    <Button Content="6M"  Background="Black" Foreground="Gray"
+                            Width="48" Height="28" Margin="0,0,8,0"
+                            HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                            Command ="{Binding RangeClickedCommand}"
+                            CommandParameter="6M"/>
+
+                    <Button Content="YTD" Background="Black" Foreground="Gray"
+                            Width="48" Height="28" Margin="0,0,8,0"
+                            HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                            Command ="{Binding RangeClickedCommand}"
+                            CommandParameter="YTD"/>
+
+                    <Button Content="1Y"  Background="Black" Foreground="Gray"
+                            Width="48" Height="28" Margin="0,0,8,0"
+                            HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                            Command ="{Binding RangeClickedCommand}"
+                            CommandParameter="1Y"/>
+
+                    <Button Content="5Y"  Background="Black" Foreground="Gray"
+                            Width="48" Height="28" Margin="0,0,8,0"
+                            HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                            Command ="{Binding RangeClickedCommand}"
+                            CommandParameter="5Y"/>
+
+                    <Button Content="Max" Background="Black" Foreground="Gray"
+                            Width="48" Height="28" Margin="0"
+                            HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                            Command ="{Binding RangeClickedCommand}"
+                            CommandParameter="Max"/>
+                </StackPanel>
+
+                <!-- Chart lipit -->
+                <oxy:PlotView Model="{Binding ChartData}"
+              Height="300"
+              Margin="0"/>
 
 
-                <!-- Close price for selected date -->
+                <!-- Close price -->
                 <TextBlock Margin="0,16,0,0"
-               Text="{Binding ClosePrice}" />
+                   Text="{Binding ClosePrice}" />
+
             </StackPanel>
         </Border>
+
     </Grid>
 
 </Window>
+    
+    
