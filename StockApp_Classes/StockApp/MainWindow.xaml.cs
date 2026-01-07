@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using StockApp_Classes.Processing;
 
 namespace StockApp
 {
@@ -26,7 +27,7 @@ namespace StockApp
         {
             InitializeComponent();
 
-            DataContext = new MainViewModel();
+            DataContext = new MainViewModel(new Processing());
         }
 
       
