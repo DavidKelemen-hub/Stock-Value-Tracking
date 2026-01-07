@@ -104,6 +104,17 @@ namespace StockApp_Classes.Services
             }
         }
 
-
+        public double GetLatestClosePrice(string symbol)
+        {
+            var stockID = GetCompanyIDFromSymbol(symbol);
+            const string queryString = "SELECT TOP 1 ClosePrice " +
+                                       "FROM DailyPrices WHERE StockID = @stockID " +
+                                       "ORDER BY TradeDate DESC";
+            using (var connection = new SqlConnection(this.connectionString))
+            {
+                var result = connection.QuerySingleOrDefault<double>(queryString, new { stockID });
+                return result;
+            }
+        }
     }
 }
