@@ -5,6 +5,7 @@
         xmlns:oxy="http://oxyplot.org/wpf"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:local="clr-namespace:StockApp"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
@@ -32,6 +33,7 @@
             ItemsSource="{Binding Companies}"
             SelectedItem="{Binding SelectedCompany}"
             ScrollViewer.VerticalScrollBarVisibility="Auto">
+                
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock>
@@ -90,15 +92,25 @@
                     </Style>
                 </StackPanel.Resources>
 
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
 
-                <TextBlock FontSize="18"
+                    <TextBlock FontSize="18"
                    FontWeight="Bold"
                    Text="{Binding SelectedCompany.Name}" />
 
-                <TextBlock Opacity="0.7"
-                   Text="{Binding SelectedCompany.Symbol}" />
+                    <TextBlock Opacity="0.7"
+                               FontSize="18"
+                          Margin="8,0,0,0"
+                    Text="{Binding SelectedCompany.Symbol, StringFormat={}({0})}" />
+                    
+                    <TextBlock FontSize="18"
+                        FontWeight="Bold"
+                               Margin="8,0,0,0"
+                        Text="{Binding CurrentPrice, StringFormat={}{0} USD}" />
+                </StackPanel>
 
                 <TextBlock Opacity="0.7"
+                         FontSize="14"
                    Text="{Binding VariationPercentage, StringFormat={}{0}%}" />
                 
 

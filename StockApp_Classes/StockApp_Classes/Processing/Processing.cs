@@ -43,6 +43,11 @@ namespace StockApp_Classes.Processing
             return dbService.GetStockEntriesBetweenDates(symbol, range);
         }
 
+        public double GetCurrentPrice(string symbol)
+        {
+            return dbService.GetLatestClosePrice(symbol);
+        }
+
     }
 }
 
