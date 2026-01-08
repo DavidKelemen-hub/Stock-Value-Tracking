@@ -36,6 +36,9 @@ namespace StockApp.Helpers
                 case "1Y":
                     this.startDate = DateTime.Today.AddYears(-1);
                     break;
+                case "YTD":
+                    this.startDate = new DateTime(DateTime.Today.Year, 1, 1);
+                    break;
                 case "5Y":
                     this.startDate = DateTime.Today.AddYears(-5);
                     break;

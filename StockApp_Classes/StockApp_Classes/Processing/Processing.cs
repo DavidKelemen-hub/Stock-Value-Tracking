@@ -26,8 +26,6 @@ namespace StockApp_Classes.Processing
             double startPrice = stockEntries.First().ClosePrice;
             double endPrice = stockEntries.Last().ClosePrice;
 
-
-
             percentageVariation = ((endPrice - startPrice) * 100) / startPrice;
 
             return Math.Round(percentageVariation,2);
@@ -46,6 +44,33 @@ namespace StockApp_Classes.Processing
         public double GetCurrentPrice(string symbol)
         {
             return dbService.GetLatestClosePrice(symbol);
+        }
+
+        public double GetPriceDifferenceInRange(string symbol, string range)
+        {
+            List<DailyEntry> stockEntries = GetStockEntriesBetweenDates(symbol, range);
+            double priceDifference = stockEntries.Last().ClosePrice - stockEntries.First().ClosePrice;
+            return Math.Round(priceDifference,2);
+        }
+
+        public string GetRangeDescription(double priceVariation,string range)
+        {
+            string description = range switch
+            {
+                "5D" => "past 5 days",
+                "1M" => "past month",
+                "3M" => "past 3 months",
+                "6M" => "past 6 months",
+                "YTD" => "year to date",
+                "1Y" => "past year",
+                "5Y" => "past 5 years",
+                "Max" => "all time"
+            };
+            
+            string trendArrow = priceVariation >= 0 ? "▲ " : "▼ ";
+
+            return string.Concat(trendArrow, description);
+
         }
 
     }
