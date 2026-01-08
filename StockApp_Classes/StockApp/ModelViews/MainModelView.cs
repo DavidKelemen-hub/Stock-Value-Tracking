@@ -1,21 +1,11 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using Microsoft.IdentityModel.Tokens;
 using OxyPlot;
-using OxyPlot;
-using OxyPlot.Axes;
-using OxyPlot.Axes;
-using OxyPlot.Series;
 using StockApp.Helpers;
 using StockApp_Classes.Models;
 using StockApp_Classes.Processing;
-using StockApp_Classes.Services;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 
@@ -23,77 +13,92 @@ namespace StockApp.ViewModels
 {
     public class MainViewModel : INotifyPropertyChanged
     {     
-        public ObservableCollection<Company> Companies { get; set; }
+        public ObservableCollection<Company> _companies { get; set; }
         public ICommand RangeClickedCommand { get; set; }
         private Company selectedCompany;
-        public PlotModel chartData;
-        private Processing processingService { get; set; }
-        public ChartBuilder chartBuilder { get; set; }
-        public double variationPercengage { get; set; }
-        public double currentPrice { get; set; }
-        public string selectedRange { get; set; }
+        private PlotModel chartData;
+        private readonly Processing processingService;
+        private ChartBuilder chartBuilder { get; set; }
+        private double variationPercentage { get; set; }
+        private double currentPrice { get; set; }
+        private string selectedRange { get; set; }
+        private string searchText { get; set; }
 
-        public MainViewModel()
+        private SearchHelper searchHelper = new SearchHelper();
+
+        public MainViewModel(Processing service)
         {
-            processingService = new Processing();
+            this.processingService = service;
             Companies = new ObservableCollection<Company>(processingService.GetAllCompanies());
+            
+            FillMatchingCompanies();
+            selectedCompany = Companies.First();
+            selectedRange = "1Y";
+            
+            RefreshData();
 
-            HandleInitialChartLoad();
-            HandleRangeClickedCommand();
-
-        }
-
-        /************************************************* Commands ****************************************************/
-        private void HandleRangeClickedCommand()
-        {
             RangeClickedCommand = new RelayCommand(param =>
             {
                 SelectedRange = param as string;
-                if (SelectedRange == null) return;
+                if (SelectedRange == null || SelectedCompany == null) return;
 
-                chartBuilder = new ChartBuilder(SelectedCompany.Name);
-                var prices = processingService.GetStockEntriesBetweenDates(SelectedCompany.Symbol, SelectedRange);
-                ChartData = chartBuilder.LoadChartData(SelectedRange, prices);
-                VariationPercentage = processingService.GetPriceVariation(SelectedCompany.Symbol, SelectedRange);
-                CurrentPrice = processingService.GetCurrentPrice(SelectedCompany.Symbol);
+                RefreshData();
             });
-        }
 
-        private void HandleSelectionChanged()
+        }
+        /************************************************* Commands ****************************************************/
+        private void FillMatchingCompanies()
         {
-            selectedRange = "1Y";
+            if (SearchText.IsNullOrEmpty())
+            {
+                Companies = new ObservableCollection<Company>(processingService.GetAllCompanies());
+            }
+            else
+            {
+                Companies = new ObservableCollection<Company>(searchHelper.GetMatchingCompanies(SearchText.ToLower(), Companies));
+            }
+            
+            
+        }
+        private void RefreshData()
+        {
             chartBuilder = new ChartBuilder(SelectedCompany.Name);
             var prices = processingService.GetStockEntriesBetweenDates(SelectedCompany.Symbol, SelectedRange);
             ChartData = chartBuilder.LoadChartData(SelectedRange, prices);
             VariationPercentage = processingService.GetPriceVariation(SelectedCompany.Symbol, SelectedRange);
             CurrentPrice = processingService.GetCurrentPrice(SelectedCompany.Symbol);
         }
-
-        public void HandleInitialChartLoad()
-        {
-            /* At startup we select the first company inorder to not have a blank screen */
-            selectedCompany = Companies.First();
-            selectedRange = "1Y";
-            chartBuilder = new ChartBuilder(SelectedCompany.Name);
-
-            /* Calculate data and load chart with the entries */
-            var prices = processingService.GetStockEntriesBetweenDates(SelectedCompany.Symbol, selectedRange);
-            ChartData = chartBuilder.LoadChartData(selectedRange, prices);
-            VariationPercentage = processingService.GetPriceVariation(SelectedCompany.Symbol, selectedRange);
-            CurrentPrice = processingService.GetCurrentPrice(SelectedCompany.Symbol);
-        }
-
-
         /************************************************* Commands ****************************************************/
 
         /*********************************************** Model Properties ****************************************************/
-        public double VariationPercentage
+        public ObservableCollection<Company> Companies
         {
-            get { return variationPercengage; }
+            get { return _companies; }
             set
             {
-                if (variationPercengage == value) return;
-                variationPercengage = value;
+                if (_companies == value) return;
+                _companies = value;
+                OnPropertyChanged();
+            }
+        }
+        public string SearchText
+        {
+            get { return searchText; }
+            set
+            {
+                if (searchText == value) return;
+                searchText = value;
+                OnPropertyChanged();
+                //FillMatchingCompanies();
+            }
+        }
+            public double VariationPercentage
+        {
+            get { return variationPercentage; }
+            set
+            {
+                if (variationPercentage == value) return;
+                variationPercentage = value;
                 OnPropertyChanged();
             }
         }
@@ -128,7 +133,7 @@ namespace StockApp.ViewModels
                 if (selectedCompany == value) return;
                 selectedCompany = value;
                 OnPropertyChanged();
-                HandleSelectionChanged();
+                RefreshData();
             }
         }
 
