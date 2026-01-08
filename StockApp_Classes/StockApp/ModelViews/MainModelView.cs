@@ -13,7 +13,8 @@ namespace StockApp.ViewModels
 {
     public class MainViewModel : INotifyPropertyChanged
     {     
-        public ObservableCollection<Company> _companies { get; set; }
+        private ObservableCollection<Company> _companies { get; set; }
+        private ObservableCollection<Company> CompaniesCopy { get; set; }
         public ICommand RangeClickedCommand { get; set; }
         private Company selectedCompany;
         private PlotModel chartData;
@@ -29,12 +30,9 @@ namespace StockApp.ViewModels
         public MainViewModel(Processing service)
         {
             this.processingService = service;
-            Companies = new ObservableCollection<Company>(processingService.GetAllCompanies());
-            
+
+            Initialize();
             FillMatchingCompanies();
-            selectedCompany = Companies.First();
-            selectedRange = "1Y";
-            
             RefreshData();
 
             RangeClickedCommand = new RelayCommand(param =>
@@ -47,21 +45,27 @@ namespace StockApp.ViewModels
 
         }
         /************************************************* Commands ****************************************************/
+        private void Initialize()
+        {
+            Companies = new ObservableCollection<Company>(processingService.GetAllCompanies());
+            CompaniesCopy = Companies;
+            selectedCompany = Companies.First();
+            selectedRange = "1Y";
+        }
         private void FillMatchingCompanies()
         {
             if (SearchText.IsNullOrEmpty())
             {
-                Companies = new ObservableCollection<Company>(processingService.GetAllCompanies());
+                Companies = CompaniesCopy;
             }
             else
             {
-                Companies = new ObservableCollection<Company>(searchHelper.GetMatchingCompanies(SearchText.ToLower(), Companies));
+                Companies = new ObservableCollection<Company>(searchHelper.GetMatchingCompanies(SearchText.ToLower(), CompaniesCopy));
             }
-            
-            
         }
         private void RefreshData()
         {
+            if (SelectedCompany == null) return;
             chartBuilder = new ChartBuilder(SelectedCompany.Name);
             var prices = processingService.GetStockEntriesBetweenDates(SelectedCompany.Symbol, SelectedRange);
             ChartData = chartBuilder.LoadChartData(SelectedRange, prices);
@@ -89,7 +93,7 @@ namespace StockApp.ViewModels
                 if (searchText == value) return;
                 searchText = value;
                 OnPropertyChanged();
-                //FillMatchingCompanies();
+                FillMatchingCompanies();
             }
         }
             public double VariationPercentage
