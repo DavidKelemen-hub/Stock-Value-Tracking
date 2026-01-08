@@ -23,11 +23,11 @@ namespace StockApp.ViewModels
         public ObservableCollection<Company> companiesCollection { get; set; }
         private Company selectedCompany;
         private PlotModel chartData;
-        private double variationPercentage { get; set; }
+        private string percentageVariation { get; set; }
         private double currentPrice { get; set; }
         private string selectedRange { get; set; }
         private string searchText { get; set; }
-        private double priceVariation { get; set; }
+        private string priceVariation { get; set; }
         private string rangeText { get; set; }
         private Brush textColor { get; set; }
         public ICommand RangeClickedCommand { get; set; }
@@ -74,12 +74,14 @@ namespace StockApp.ViewModels
             if (SelectedCompany == null) return;
             chartBuilder = new ChartBuilder(SelectedCompany.Name);
             var prices = processingService.GetStockEntriesBetweenDates(SelectedCompany.Symbol, SelectedRange);
-            ChartData = chartBuilder.LoadChartData(SelectedRange, prices);
-            VariationPercentage = processingService.GetPriceVariation(SelectedCompany.Symbol, SelectedRange);
+            PercentageVariation = processingService.GetPercentageVariationInRange(SelectedCompany.Symbol, SelectedRange).ToString();
             CurrentPrice = processingService.GetCurrentPrice(SelectedCompany.Symbol);
-            PriceVariation = processingService.GetPriceDifferenceInRange(SelectedCompany.Symbol, SelectedRange);
-            RangeText = processingService.GetRangeDescription(PriceVariation, SelectedRange);
-            if(PriceVariation < 0)
+            PriceVariation = processingService.GetPriceVariationInRange(SelectedCompany.Symbol, SelectedRange).ToString();
+            RangeText = processingService.GetRangeDescription(Convert.ToDouble(PriceVariation), SelectedRange);
+
+            ChartData = chartBuilder.LoadChartData(SelectedRange, prices, Math.Sign(Convert.ToDouble(PercentageVariation)));
+
+            if (Convert.ToDouble(PriceVariation) < 0)
             {
                 TextColor = Brushes.Red;
             }
@@ -122,7 +124,7 @@ namespace StockApp.ViewModels
                 OnPropertyChanged();
             }
         }
-        public double PriceVariation
+        public string PriceVariation
         {
             get { return priceVariation; }
             set
@@ -143,13 +145,13 @@ namespace StockApp.ViewModels
                 LoadMatchingCompanies();
             }
         }
-            public double VariationPercentage
+            public string PercentageVariation
         {
-            get { return variationPercentage; }
+            get { return percentageVariation; }
             set
             {
-                if (variationPercentage == value) return;
-                variationPercentage = value;
+                if (percentageVariation == value) return;
+                percentageVariation = value;
                 OnPropertyChanged();
             }
         }
