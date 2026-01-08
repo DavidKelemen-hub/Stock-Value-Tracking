@@ -7,32 +7,38 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
+using System.Windows.Media;
 
 
 namespace StockApp.ViewModels
 {
     public class MainViewModel : INotifyPropertyChanged
     {     
-        private ObservableCollection<Company> _companies { get; set; }
-        private ObservableCollection<Company> CompaniesCopy { get; set; }
-        public ICommand RangeClickedCommand { get; set; }
-        private Company selectedCompany;
-        private PlotModel chartData;
+        
+        private ObservableCollection<Company> companiesCopy { get; set; }
         private readonly Processing processingService;
         private ChartBuilder chartBuilder { get; set; }
+        private SearchHelper searchHelper = new SearchHelper();
+        /************************************************ Bindable properties ****************************************************/
+        public ObservableCollection<Company> companiesCollection { get; set; }
+        private Company selectedCompany;
+        private PlotModel chartData;
         private double variationPercentage { get; set; }
         private double currentPrice { get; set; }
         private string selectedRange { get; set; }
         private string searchText { get; set; }
-
-        private SearchHelper searchHelper = new SearchHelper();
+        private double priceVariation { get; set; }
+        private string rangeText { get; set; }
+        private Brush textColor { get; set; }
+        public ICommand RangeClickedCommand { get; set; }
+        /************************************************ Bindable properties ****************************************************/
 
         public MainViewModel(Processing service)
         {
             this.processingService = service;
 
             Initialize();
-            FillMatchingCompanies();
+            LoadMatchingCompanies();
             RefreshData();
 
             RangeClickedCommand = new RelayCommand(param =>
@@ -48,19 +54,19 @@ namespace StockApp.ViewModels
         private void Initialize()
         {
             Companies = new ObservableCollection<Company>(processingService.GetAllCompanies());
-            CompaniesCopy = Companies;
-            selectedCompany = Companies.First();
+            companiesCopy = Companies;
+            selectedCompany = companiesCollection.First();
             selectedRange = "1Y";
         }
-        private void FillMatchingCompanies()
+        private void LoadMatchingCompanies()
         {
             if (SearchText.IsNullOrEmpty())
             {
-                Companies = CompaniesCopy;
+                Companies = companiesCopy;
             }
             else
             {
-                Companies = new ObservableCollection<Company>(searchHelper.GetMatchingCompanies(SearchText.ToLower(), CompaniesCopy));
+                Companies = new ObservableCollection<Company>(searchHelper.GetMatchingCompanies(SearchText.ToLower(), companiesCopy));
             }
         }
         private void RefreshData()
@@ -71,17 +77,58 @@ namespace StockApp.ViewModels
             ChartData = chartBuilder.LoadChartData(SelectedRange, prices);
             VariationPercentage = processingService.GetPriceVariation(SelectedCompany.Symbol, SelectedRange);
             CurrentPrice = processingService.GetCurrentPrice(SelectedCompany.Symbol);
+            PriceVariation = processingService.GetPriceDifferenceInRange(SelectedCompany.Symbol, SelectedRange);
+            RangeText = processingService.GetRangeDescription(PriceVariation, SelectedRange);
+            if(PriceVariation < 0)
+            {
+                TextColor = Brushes.Red;
+            }
+            else
+            {
+                TextColor = Brushes.Green;
+            }
         }
         /************************************************* Commands ****************************************************/
 
         /*********************************************** Model Properties ****************************************************/
         public ObservableCollection<Company> Companies
         {
-            get { return _companies; }
+            get { return companiesCollection; }
             set
             {
-                if (_companies == value) return;
-                _companies = value;
+                if (companiesCollection == value) return;
+                companiesCollection = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public Brush TextColor
+        {
+            get { return textColor; }
+            set
+            {
+                if (textColor == value) return;
+                textColor = value;
+                OnPropertyChanged();
+            }
+        }
+        public string RangeText
+        {
+            get { return rangeText; }
+            set
+            {
+                if (rangeText == value) return;
+                rangeText = value;
+                OnPropertyChanged();
+            }
+        }
+        public double PriceVariation
+        {
+            get { return priceVariation; }
+            set
+            {
+                if (priceVariation == value) return;
+                priceVariation = value;
                 OnPropertyChanged();
             }
         }
@@ -93,7 +140,7 @@ namespace StockApp.ViewModels
                 if (searchText == value) return;
                 searchText = value;
                 OnPropertyChanged();
-                FillMatchingCompanies();
+                LoadMatchingCompanies();
             }
         }
             public double VariationPercentage
