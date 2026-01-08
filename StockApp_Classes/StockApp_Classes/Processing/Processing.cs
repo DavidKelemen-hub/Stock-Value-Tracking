@@ -17,10 +17,12 @@ namespace StockApp_Classes.Processing
             dbService = new DataBaseService(System.Configuration.ConfigurationManager.ConnectionStrings["dbconnection"].ConnectionString);
         }
 
-        public double GetPriceVariation(string symbol, string range)
+        public string GetPercentageVariationInRange(string symbol, string range)
         {
             double percentageVariation = 0.0;
-            
+            string percentageSign=string.Empty;
+
+
             var stockEntries = GetStockEntriesBetweenDates(symbol, range);
 
             double startPrice = stockEntries.First().ClosePrice;
@@ -28,7 +30,14 @@ namespace StockApp_Classes.Processing
 
             percentageVariation = ((endPrice - startPrice) * 100) / startPrice;
 
-            return Math.Round(percentageVariation,2);
+            if(percentageVariation >= 0)
+            {
+                percentageSign = "+";
+            }
+             
+
+            string percentageVariationString = Math.Round(percentageVariation, 2).ToString();
+            return string.Concat(percentageSign, percentageVariationString);
         }
 
         public List<Company> GetAllCompanies()
@@ -46,11 +55,18 @@ namespace StockApp_Classes.Processing
             return dbService.GetLatestClosePrice(symbol);
         }
 
-        public double GetPriceDifferenceInRange(string symbol, string range)
+        public string GetPriceVariationInRange(string symbol, string range)
         {
             List<DailyEntry> stockEntries = GetStockEntriesBetweenDates(symbol, range);
-            double priceDifference = stockEntries.Last().ClosePrice - stockEntries.First().ClosePrice;
-            return Math.Round(priceDifference,2);
+            double priceVariation = stockEntries.Last().ClosePrice - stockEntries.First().ClosePrice;
+            string priceSign = string.Empty;
+
+            if (priceVariation >= 0)
+            {
+                priceSign = "+";
+            }
+            string priceDifferenceString = Math.Round(priceVariation, 2).ToString();
+            return string.Concat(priceSign, priceDifferenceString);
         }
 
         public string GetRangeDescription(double priceVariation,string range)
