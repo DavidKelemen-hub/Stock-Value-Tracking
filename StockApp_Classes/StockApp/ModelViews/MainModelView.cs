@@ -1,4 +1,5 @@
-﻿using OxyPlot;
+﻿using Microsoft.IdentityModel.Tokens;
+using OxyPlot;
 using StockApp.Helpers;
 using StockApp_Classes.Models;
 using StockApp_Classes.Processing;
@@ -12,7 +13,7 @@ namespace StockApp.ViewModels
 {
     public class MainViewModel : INotifyPropertyChanged
     {     
-        public ObservableCollection<Company> Companies { get; set; }
+        public ObservableCollection<Company> _companies { get; set; }
         public ICommand RangeClickedCommand { get; set; }
         private Company selectedCompany;
         private PlotModel chartData;
@@ -21,26 +22,44 @@ namespace StockApp.ViewModels
         private double variationPercentage { get; set; }
         private double currentPrice { get; set; }
         private string selectedRange { get; set; }
+        private string searchText { get; set; }
 
-        public MainViewModel(Processing processingService)
+        private SearchHelper searchHelper = new SearchHelper();
+
+        public MainViewModel(Processing service)
         {
+            this.processingService = service;
             Companies = new ObservableCollection<Company>(processingService.GetAllCompanies());
-            this.processingService = processingService;
-            this.selectedCompany = Companies.First();
-            this.selectedRange = "1Y";
+            
+            FillMatchingCompanies();
+            selectedCompany = Companies.First();
+            selectedRange = "1Y";
+            
             RefreshData();
 
             RangeClickedCommand = new RelayCommand(param =>
             {
                 SelectedRange = param as string;
-                if (SelectedRange == null) return;
+                if (SelectedRange == null || SelectedCompany == null) return;
 
                 RefreshData();
             });
 
         }
         /************************************************* Commands ****************************************************/
-
+        private void FillMatchingCompanies()
+        {
+            if (SearchText.IsNullOrEmpty())
+            {
+                Companies = new ObservableCollection<Company>(processingService.GetAllCompanies());
+            }
+            else
+            {
+                Companies = new ObservableCollection<Company>(searchHelper.GetMatchingCompanies(SearchText.ToLower(), Companies));
+            }
+            
+            
+        }
         private void RefreshData()
         {
             chartBuilder = new ChartBuilder(SelectedCompany.Name);
@@ -49,11 +68,31 @@ namespace StockApp.ViewModels
             VariationPercentage = processingService.GetPriceVariation(SelectedCompany.Symbol, SelectedRange);
             CurrentPrice = processingService.GetCurrentPrice(SelectedCompany.Symbol);
         }
-      
         /************************************************* Commands ****************************************************/
 
         /*********************************************** Model Properties ****************************************************/
-        public double VariationPercentage
+        public ObservableCollection<Company> Companies
+        {
+            get { return _companies; }
+            set
+            {
+                if (_companies == value) return;
+                _companies = value;
+                OnPropertyChanged();
+            }
+        }
+        public string SearchText
+        {
+            get { return searchText; }
+            set
+            {
+                if (searchText == value) return;
+                searchText = value;
+                OnPropertyChanged();
+                //FillMatchingCompanies();
+            }
+        }
+            public double VariationPercentage
         {
             get { return variationPercentage; }
             set
