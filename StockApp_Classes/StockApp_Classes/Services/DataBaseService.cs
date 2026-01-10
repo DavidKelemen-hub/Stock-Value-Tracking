@@ -20,7 +20,8 @@ namespace StockApp_Classes.Services
 
         public List<Company> GetAllCompanies()
         {
-            const string queryString = "SELECT Name, Symbol FROM Company";
+            const string queryString = "SELECT Name, Symbol FROM Company ORDER BY Symbol ASC";
+                                       
 
             using (var connection = new SqlConnection(this.connectionString))
             {
