@@ -33,52 +33,15 @@ namespace StockApp_Classes.Services
         public List<CompanyPerformance> GetTopPerformingCompanies(string range)
         {
 
-            DateTime endDate = DateTime.Today;
+            DateTime end = DateTime.Today;
             DateTimeHelper dtHelper = new DateTimeHelper();
-            DateTime startDate = dtHelper.GetStartDate(range);
+            DateTime start = dtHelper.GetStartDate(range);
 
-            const string queryString = @"WITH bounds AS (
-    SELECT
-        dp.StockID,
-        MIN(dp.TradeDate) AS StartTradeDate,
-        MAX(dp.TradeDate) AS EndTradeDate
-    FROM dbo.DailyPrices dp
-    WHERE dp.TradeDate BETWEEN @startDate AND @endDate
-    GROUP BY dp.StockID
-),
-var AS (
-    SELECT
-        c.StockID,
-        c.Symbol,
-        c.Name,
-        s.ClosePrice AS StartClose,
-        e.ClosePrice AS EndClose,
-        ROUND((e.ClosePrice - s.ClosePrice),2) AS PriceChange,
-        CASE 
-            WHEN s.ClosePrice = 0 THEN NULL
-            ELSE ROUND(((e.ClosePrice - s.ClosePrice) / s.ClosePrice) * 100,2)
-        END AS PercentChange
-    FROM bounds b
-    JOIN dbo.DailyPrices s 
-        ON s.StockID = b.StockID 
-       AND s.TradeDate = b.StartTradeDate
-    JOIN dbo.DailyPrices e 
-        ON e.StockID = b.StockID 
-       AND e.TradeDate = b.EndTradeDate
-    JOIN dbo.Company c     
-        ON c.StockID = b.StockID
-)
-SELECT TOP (10)
-    Symbol,
-    Name,
-    PriceChange,
-    PercentChange
-FROM var
-ORDER BY PercentChange DESC;
-";
+            const string queryString = @"EXEC GetTopPerformingCompanies @startDate=@start, @endDate=@end";
+
             using (var connection = new SqlConnection(this.connectionString))
             {
-                var result = connection.Query<CompanyPerformance>(queryString, new { startDate, endDate } ).ToList();
+                var result = connection.Query<CompanyPerformance>(queryString, new { start, end } ).ToList();
                 return result;
             }
         }
@@ -86,52 +49,15 @@ ORDER BY PercentChange DESC;
         public List<CompanyPerformance> GetLowestPerformingCompanies(string range)
         {
 
-            DateTime endDate = DateTime.Today;
+            DateTime end = DateTime.Today;
             DateTimeHelper dtHelper = new DateTimeHelper();
-            DateTime startDate = dtHelper.GetStartDate(range);
+            DateTime start = dtHelper.GetStartDate(range);
 
-            const string queryString = @"WITH bounds AS (
-    SELECT
-        dp.StockID,
-        MIN(dp.TradeDate) AS StartTradeDate,
-        MAX(dp.TradeDate) AS EndTradeDate
-    FROM dbo.DailyPrices dp
-    WHERE dp.TradeDate BETWEEN @startDate AND @endDate
-    GROUP BY dp.StockID
-),
-var AS (
-    SELECT
-        c.StockID,
-        c.Symbol,
-        c.Name,
-        s.ClosePrice AS StartClose,
-        e.ClosePrice AS EndClose,
-        ROUND((e.ClosePrice - s.ClosePrice),2) AS PriceChange,
-        CASE 
-            WHEN s.ClosePrice = 0 THEN NULL
-            ELSE ROUND(((e.ClosePrice - s.ClosePrice) / s.ClosePrice) * 100,2)
-        END AS PercentChange
-    FROM bounds b
-    JOIN dbo.DailyPrices s 
-        ON s.StockID = b.StockID 
-       AND s.TradeDate = b.StartTradeDate
-    JOIN dbo.DailyPrices e 
-        ON e.StockID = b.StockID 
-       AND e.TradeDate = b.EndTradeDate
-    JOIN dbo.Company c     
-        ON c.StockID = b.StockID
-)
-SELECT TOP (10)
-    Symbol,
-    Name,
-    PriceChange,
-    PercentChange
-FROM var
-ORDER BY PercentChange ASC;
-";
+            string queryString = @"EXEC GetLowestPerformingCompanies @startDate=@start, @endDate=@end";
+
             using (var connection = new SqlConnection(this.connectionString))
             {
-                var result = connection.Query<CompanyPerformance>(queryString, new { startDate, endDate }).ToList();
+                var result = connection.Query<CompanyPerformance>(queryString,new {start, end}).ToList();
                 return result;
             }
         }
