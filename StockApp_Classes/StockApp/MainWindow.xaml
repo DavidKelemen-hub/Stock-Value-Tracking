@@ -194,8 +194,50 @@
                                Text="{Binding LowestPrice, StringFormat={}{0}$}"/>
                     </StackPanel>
 
+                <Button Content="{Binding PerformanceSelector}"
+        Command="{Binding PerformanceSelectorCommand}"
+        CommandParameter="{Binding RelativeSource={RelativeSource Self}}"
+        Width="250"
+        Height="32"
+        Margin="4"
+        FontSize="13"
+        FontWeight="SemiBold"
+        Foreground="#333333"
+        HorizontalContentAlignment="Center"
+        VerticalContentAlignment="Center">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="Border"
+                    Background="#F2F2F2"
+                    BorderBrush="#C8C8C8"
+                    BorderThickness="1"
+                    CornerRadius="6">
+                                <ContentPresenter
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"/>
+                            </Border>
+
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="Border" Property="Background" Value="#E6E6E6"/>
+                                </Trigger>
+
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="Border" Property="Background" Value="#DADADA"/>
+                                </Trigger>
+
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter TargetName="Border" Property="Background" Value="#F7F7F7"/>
+                                    <Setter Property="Foreground" Value="#999999"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+
+
                 <!-- Top Performers -->
-                <ItemsControl ItemsSource="{Binding TopPerformerCompanies}">
+                <ItemsControl ItemsSource="{Binding CompaniesPerformance}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <UniformGrid Columns="2"
@@ -241,9 +283,9 @@
                                         <TextBlock.Text>
                                             <MultiBinding StringFormat="{}{0} ({1})">
                                                 <!-- PriceChange -->
-                                                <Binding Path="PriceChange"/>
-                                                <!-- PercentageChange -->
                                                 <Binding Path="PercentChange"/>
+                                                <!-- PercentageChange -->
+                                                <Binding Path="PriceChange"/>
                                             </MultiBinding>
                                         </TextBlock.Text>
                                     </TextBlock>

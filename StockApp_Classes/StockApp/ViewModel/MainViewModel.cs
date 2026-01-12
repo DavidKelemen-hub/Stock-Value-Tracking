@@ -29,11 +29,13 @@ namespace StockApp.ViewModels
         private string searchText { get; set; }
         private string priceVariation { get; set; }
         private string rangeText { get; set; }
+        private string performanceSelector { get; set; }
         private Brush textColor { get; set; }
         public ICommand RangeClickedCommand { get; set; }
+        public ICommand PerformanceSelectorCommand { get; set; }
         private double highestPrice { get; set; }
         private double lowestPrice { get; set; }
-        public List<CompanyPerformance> topPerformerCompanies { get; set; }
+        public List<CompanyPerformance> companiesPerformance { get; set; }
         /************************************************ Bindable properties ****************************************************/
 
         public MainViewModel(Processing service)
@@ -52,6 +54,12 @@ namespace StockApp.ViewModels
                 RefreshData();
             });
 
+            PerformanceSelectorCommand = new RelayCommand(param =>
+            {
+                var selection = param as string;
+
+                LoadPerformingCompanies();
+            });
         }
         /************************************************* Commands ****************************************************/
         private void Initialize()
@@ -60,7 +68,7 @@ namespace StockApp.ViewModels
             companiesCopy = Companies;
             selectedCompany = companiesCollection.First();
             selectedRange = "1Y";
-            
+            PerformanceSelector = new String("Check Lowest Performing Companies");   
         }
         private void LoadMatchingCompanies()
         {
@@ -71,6 +79,20 @@ namespace StockApp.ViewModels
             else
             {
                 Companies = new ObservableCollection<Company>(searchHelper.GetMatchingCompanies(SearchText.ToLower(), companiesCopy));
+            }
+        }
+
+        private void LoadPerformingCompanies()
+        {
+            if(PerformanceSelector == "Check Top Performing Companies")
+            {
+                CompaniesPerformance = processingService.GetTopPerformingCompanies(SelectedRange);
+                PerformanceSelector = "Check Lowest Performing Companies";
+            }
+            else
+            {
+                CompaniesPerformance = processingService.GetLowestPerformingCompanies(SelectedRange);
+                PerformanceSelector = "Check Top Performing Companies";
             }
         }
         private void RefreshData()
@@ -85,7 +107,7 @@ namespace StockApp.ViewModels
             HighestPrice = processingService.GetHighestPriceInRange(SelectedCompany.Symbol, SelectedRange);
             LowestPrice = processingService.GetLowestPriceInRange(SelectedCompany.Symbol, SelectedRange);
             ChartData = chartBuilder.LoadChartData(SelectedRange, prices, Math.Sign(Convert.ToDouble(PercentageVariation)));
-            TopPerformerCompanies = processingService.GetTopPerformingCompanies(SelectedRange);
+            CompaniesPerformance = processingService.GetTopPerformingCompanies(SelectedRange);
 
             if (Convert.ToDouble(PriceVariation) < 0)
             {
@@ -94,6 +116,19 @@ namespace StockApp.ViewModels
             else
             {
                 TextColor = Brushes.Green;
+            }
+        }
+
+        private List<CompanyPerformance>GetPerformers(string option)
+        {
+            if(option == "")
+            {
+                
+                return processingService.GetTopPerformingCompanies(SelectedRange);
+            }
+            else
+            {
+                return processingService.GetLowestPerformingCompanies(SelectedRange);
             }
         }
         /************************************************* Commands ****************************************************/
@@ -110,13 +145,24 @@ namespace StockApp.ViewModels
             }
         }
 
-        public List<CompanyPerformance> TopPerformerCompanies
+        public List<CompanyPerformance> CompaniesPerformance
         {
-            get { return topPerformerCompanies; }
+            get { return companiesPerformance; }
             set
             {
-                if (topPerformerCompanies == value) return;
-                topPerformerCompanies = value;
+                if (companiesPerformance == value) return;
+                companiesPerformance = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string PerformanceSelector
+        {
+            get { return performanceSelector; }
+            set
+            {
+                if (performanceSelector == value) return;
+                performanceSelector = value;
                 OnPropertyChanged();
             }
         }
