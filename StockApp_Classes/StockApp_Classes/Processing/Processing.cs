@@ -17,6 +17,18 @@ namespace StockApp_Classes.Processing
             dbService = new DataBaseService(System.Configuration.ConfigurationManager.ConnectionStrings["dbconnection"].ConnectionString);
         }
 
+        public double GetHighestPriceInRange(string symbol, string range)
+        {
+            var stockEntries = GetStockEntriesBetweenDates(symbol, range);
+            return stockEntries.Max(entry => entry.HighPrice);
+        }
+
+        public double GetLowestPriceInRange(string symbol, string range)
+        {
+            var stockEntries = GetStockEntriesBetweenDates(symbol, range);
+            return stockEntries.Min(entry => entry.LowPrice);
+        }
+
         public string GetPercentageVariationInRange(string symbol, string range)
         {
             double percentageVariation = 0.0;
@@ -45,6 +57,10 @@ namespace StockApp_Classes.Processing
             return dbService.GetAllCompanies();
         }
 
+        public List<CompanyPerformance> GetTopPerformingCompanies(string range)
+        {
+            return dbService.GetTopPerformingCompanies(range);
+        }
         public List<DailyEntry> GetStockEntriesBetweenDates(string symbol, string range)
         {
             return dbService.GetStockEntriesBetweenDates(symbol, range);

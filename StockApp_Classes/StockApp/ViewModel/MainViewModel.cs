@@ -31,6 +31,9 @@ namespace StockApp.ViewModels
         private string rangeText { get; set; }
         private Brush textColor { get; set; }
         public ICommand RangeClickedCommand { get; set; }
+        private double highestPrice { get; set; }
+        private double lowestPrice { get; set; }
+        public List<CompanyPerformance> topPerformerCompanies { get; set; }
         /************************************************ Bindable properties ****************************************************/
 
         public MainViewModel(Processing service)
@@ -57,6 +60,7 @@ namespace StockApp.ViewModels
             companiesCopy = Companies;
             selectedCompany = companiesCollection.First();
             selectedRange = "1Y";
+            
         }
         private void LoadMatchingCompanies()
         {
@@ -78,8 +82,10 @@ namespace StockApp.ViewModels
             CurrentPrice = processingService.GetCurrentPrice(SelectedCompany.Symbol);
             PriceVariation = processingService.GetPriceVariationInRange(SelectedCompany.Symbol, SelectedRange).ToString();
             RangeText = processingService.GetRangeDescription(Convert.ToDouble(PriceVariation), SelectedRange);
-
+            HighestPrice = processingService.GetHighestPriceInRange(SelectedCompany.Symbol, SelectedRange);
+            LowestPrice = processingService.GetLowestPriceInRange(SelectedCompany.Symbol, SelectedRange);
             ChartData = chartBuilder.LoadChartData(SelectedRange, prices, Math.Sign(Convert.ToDouble(PercentageVariation)));
+            TopPerformerCompanies = processingService.GetTopPerformingCompanies(SelectedRange);
 
             if (Convert.ToDouble(PriceVariation) < 0)
             {
@@ -100,6 +106,39 @@ namespace StockApp.ViewModels
             {
                 if (companiesCollection == value) return;
                 companiesCollection = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public List<CompanyPerformance> TopPerformerCompanies
+        {
+            get { return topPerformerCompanies; }
+            set
+            {
+                if (topPerformerCompanies == value) return;
+                topPerformerCompanies = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public double HighestPrice
+        {
+            get { return highestPrice; }
+            set
+            {
+                if (highestPrice == value) return;
+                highestPrice = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public double LowestPrice
+        {
+            get { return lowestPrice; }
+            set
+            {
+                if (lowestPrice == value) return;
+                lowestPrice = value;
                 OnPropertyChanged();
             }
         }

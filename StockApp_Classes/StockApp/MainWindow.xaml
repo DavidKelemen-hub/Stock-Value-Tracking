@@ -104,7 +104,7 @@
                     <TextBlock FontSize="18"
                                FontWeight="Bold"
                                Margin="8,0,0,0"
-                               Text="{Binding CurrentPrice, StringFormat={}{0} USD}" />
+                               Text="{Binding CurrentPrice, StringFormat={}{0}$}" />
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
@@ -168,16 +168,93 @@
                             CommandParameter="Max"/>
                 </StackPanel>
 
-                <!-- Chart lipit -->
+            <!-- Chart lipit -->
                 <oxy:PlotView Model="{Binding ChartData}"
-              Height="300"
-              Margin="0"/>
+                    Height="300"
+                    Margin="0"/>
 
+                    <StackPanel Orientation="Vertical" Margin="0,12,12,0">
+                                <Label Content="Highest Price"
+                                       FontWeight="Bold"
+                                       VerticalAlignment="Center"/>
+                    <TextBlock FontSize="14"
+                                   Margin="8,0,0,0"
+                                   Foreground="Black"
+                                   Text="{Binding HighestPrice, StringFormat={}{0}$}"/>
+                </StackPanel>
 
-                <!-- Close price -->
-                <TextBlock Margin="0,16,0,0"
-                   Text="{Binding ClosePrice}" />
+                    <StackPanel Orientation="Vertical" Margin="0,12,12,0">
+                        
+                        <Label Content="Lowest Price"
+                                FontWeight="Bold"
+                                VerticalAlignment="Center"/>
+                    <TextBlock FontSize="14"
+                               Margin="8,0,0,0"
+                               Foreground="Black"
+                               Text="{Binding LowestPrice, StringFormat={}{0}$}"/>
+                    </StackPanel>
 
+                <!-- Top Performers -->
+                <ItemsControl ItemsSource="{Binding TopPerformerCompanies}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Columns="2"
+                         Rows="5"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Margin="6"
+                    Padding="10"
+                    CornerRadius="10"
+                    BorderThickness="1"
+                    BorderBrush="#22000000"
+                    Background="#FAFAFA">
+
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="4"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <!-- Name (Symbol) -->
+                                    <TextBlock Grid.Row="0"
+                               FontSize="13"
+                               FontWeight="SemiBold"
+                               TextTrimming="CharacterEllipsis">
+                                        <TextBlock.Text>
+                                            <MultiBinding StringFormat="{}{0} ({1})">
+                                                <!-- Name -->
+                                                <Binding Path="Name"/>
+                                                <!-- Symbol -->
+                                                <Binding Path="Symbol"/>
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                    </TextBlock>
+
+                                    <!-- PriceChange (PercentageChange) -->
+                                    <TextBlock Grid.Row="2"
+                               FontSize="12"
+                               FontWeight="SemiBold">
+                                        <TextBlock.Text>
+                                            <MultiBinding StringFormat="{}{0} ({1})">
+                                                <!-- PriceChange -->
+                                                <Binding Path="PriceChange"/>
+                                                <!-- PercentageChange -->
+                                                <Binding Path="PercentChange"/>
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                    </TextBlock>
+
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <!-- Top Performers -->
+                
             </StackPanel>
         </Border>
 
