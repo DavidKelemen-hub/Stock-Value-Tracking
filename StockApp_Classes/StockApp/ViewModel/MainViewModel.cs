@@ -23,19 +23,23 @@ namespace StockApp.ViewModels
         public ObservableCollection<Company> companiesCollection { get; set; }
         private Company selectedCompany;
         private PlotModel chartData;
-        private string percentageVariation { get; set; }
+        private double percentageVariation { get; set; }
         private double currentPrice { get; set; }
         private string selectedRange { get; set; }
         private string searchText { get; set; }
-        private string priceVariation { get; set; }
+        private double priceVariation { get; set; }
         private string rangeText { get; set; }
         private string performanceSelector { get; set; }
-        private Brush textColor { get; set; }
+        private Brush chartColor { get; set; }
+        private Brush performersColor { get; set; }
         public ICommand RangeClickedCommand { get; set; }
         public ICommand PerformanceSelectorCommand { get; set; }
         private double highestPrice { get; set; }
         private double lowestPrice { get; set; }
         public List<CompanyPerformance> companiesPerformance { get; set; }
+
+        private string topPerformers = "Check Top Performing Companies";
+        private string lowPerformers = "Check Lowest Performing Companies";
         /************************************************ Bindable properties ****************************************************/
 
         public MainViewModel(Processing service)
@@ -68,7 +72,8 @@ namespace StockApp.ViewModels
             companiesCopy = Companies;
             selectedCompany = companiesCollection.First();
             selectedRange = "1Y";
-            PerformanceSelector = new String("Check Lowest Performing Companies");   
+            PerformanceSelector = topPerformers;
+            LoadPerformingCompanies();
         }
         private void LoadMatchingCompanies()
         {
@@ -84,15 +89,17 @@ namespace StockApp.ViewModels
 
         private void LoadPerformingCompanies()
         {
-            if(PerformanceSelector == "Check Top Performing Companies")
+            if(PerformanceSelector == topPerformers)
             {
                 CompaniesPerformance = processingService.GetTopPerformingCompanies(SelectedRange);
-                PerformanceSelector = "Check Lowest Performing Companies";
+                PerformanceSelector = lowPerformers;
+                PerformersColor = new SolidColorBrush(Colors.LimeGreen);
             }
             else
             {
                 CompaniesPerformance = processingService.GetLowestPerformingCompanies(SelectedRange);
-                PerformanceSelector = "Check Top Performing Companies";
+                PerformanceSelector = topPerformers;
+                PerformersColor = new SolidColorBrush(Colors.IndianRed);
             }
         }
         private void RefreshData()
@@ -100,35 +107,22 @@ namespace StockApp.ViewModels
             if (SelectedCompany == null) return;
             chartBuilder = new ChartBuilder(SelectedCompany.Name);
             var prices = processingService.GetStockEntriesBetweenDates(SelectedCompany.Symbol, SelectedRange);
-            PercentageVariation = processingService.GetPercentageVariationInRange(SelectedCompany.Symbol, SelectedRange).ToString();
+            PercentageVariation = processingService.GetPercentageVariationInRange(SelectedCompany.Symbol, SelectedRange);
             CurrentPrice = processingService.GetCurrentPrice(SelectedCompany.Symbol);
-            PriceVariation = processingService.GetPriceVariationInRange(SelectedCompany.Symbol, SelectedRange).ToString();
+            PriceVariation = processingService.GetPriceVariationInRange(SelectedCompany.Symbol, SelectedRange);
             RangeText = processingService.GetRangeDescription(Convert.ToDouble(PriceVariation), SelectedRange);
             HighestPrice = processingService.GetHighestPriceInRange(SelectedCompany.Symbol, SelectedRange);
             LowestPrice = processingService.GetLowestPriceInRange(SelectedCompany.Symbol, SelectedRange);
             ChartData = chartBuilder.LoadChartData(SelectedRange, prices, Math.Sign(Convert.ToDouble(PercentageVariation)));
-            CompaniesPerformance = processingService.GetTopPerformingCompanies(SelectedRange);
+            
 
             if (Convert.ToDouble(PriceVariation) < 0)
             {
-                TextColor = Brushes.Red;
+                ChartColor = new SolidColorBrush(Colors.IndianRed);
             }
             else
             {
-                TextColor = Brushes.Green;
-            }
-        }
-
-        private List<CompanyPerformance>GetPerformers(string option)
-        {
-            if(option == "")
-            {
-                
-                return processingService.GetTopPerformingCompanies(SelectedRange);
-            }
-            else
-            {
-                return processingService.GetLowestPerformingCompanies(SelectedRange);
+                ChartColor = new SolidColorBrush(Colors.LimeGreen);
             }
         }
         /************************************************* Commands ****************************************************/
@@ -189,13 +183,24 @@ namespace StockApp.ViewModels
             }
         }
 
-        public Brush TextColor
+        public Brush ChartColor
         {
-            get { return textColor; }
+            get { return chartColor; }
             set
             {
-                if (textColor == value) return;
-                textColor = value;
+                if (chartColor == value) return;
+                chartColor = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public Brush PerformersColor
+        {
+            get { return performersColor; }
+            set
+            {
+                if (performersColor == value) return;
+                performersColor = value;
                 OnPropertyChanged();
             }
         }
@@ -209,7 +214,7 @@ namespace StockApp.ViewModels
                 OnPropertyChanged();
             }
         }
-        public string PriceVariation
+        public double PriceVariation
         {
             get { return priceVariation; }
             set
@@ -230,7 +235,7 @@ namespace StockApp.ViewModels
                 LoadMatchingCompanies();
             }
         }
-            public string PercentageVariation
+            public double PercentageVariation
         {
             get { return percentageVariation; }
             set
@@ -249,6 +254,7 @@ namespace StockApp.ViewModels
                 if (selectedRange == value) return;
                 selectedRange = value;
                 OnPropertyChanged();
+                LoadPerformingCompanies();
             }
         }
 

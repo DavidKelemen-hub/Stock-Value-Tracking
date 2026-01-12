@@ -29,27 +29,16 @@ namespace StockApp_Classes.Processing
             return stockEntries.Min(entry => entry.LowPrice);
         }
 
-        public string GetPercentageVariationInRange(string symbol, string range)
+        public double GetPercentageVariationInRange(string symbol, string range)
         {
             double percentageVariation = 0.0;
-            string percentageSign=string.Empty;
-
-
             var stockEntries = GetStockEntriesBetweenDates(symbol, range);
 
             double startPrice = stockEntries.First().ClosePrice;
             double endPrice = stockEntries.Last().ClosePrice;
 
             percentageVariation = ((endPrice - startPrice) * 100) / startPrice;
-
-            if(percentageVariation >= 0)
-            {
-                percentageSign = "+";
-            }
-             
-
-            string percentageVariationString = Math.Round(percentageVariation, 2).ToString();
-            return string.Concat(percentageSign, percentageVariationString);
+            return Math.Round(percentageVariation, 2);
         }
 
         public List<Company> GetAllCompanies()
@@ -76,18 +65,11 @@ namespace StockApp_Classes.Processing
             return dbService.GetLatestClosePrice(symbol);
         }
 
-        public string GetPriceVariationInRange(string symbol, string range)
+        public double GetPriceVariationInRange(string symbol, string range)
         {
             List<DailyEntry> stockEntries = GetStockEntriesBetweenDates(symbol, range);
             double priceVariation = stockEntries.Last().ClosePrice - stockEntries.First().ClosePrice;
-            string priceSign = string.Empty;
-
-            if (priceVariation >= 0)
-            {
-                priceSign = "+";
-            }
-            string priceDifferenceString = Math.Round(priceVariation, 2).ToString();
-            return string.Concat(priceSign, priceDifferenceString);
+            return Math.Round(priceVariation, 2);
         }
 
         public string GetRangeDescription(double priceVariation,string range)

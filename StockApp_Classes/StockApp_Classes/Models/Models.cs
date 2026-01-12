@@ -19,7 +19,6 @@ namespace StockApp_Classes.Models
         public string Name { get; set; }
         public double PriceChange { get; set; }
         public double PercentChange { get; set; }
-        
     }
 
     public class DailyEntry

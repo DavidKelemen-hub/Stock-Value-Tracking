@@ -93,8 +93,7 @@ namespace StockApp.Helpers
             {
                 Position = AxisPosition.Left,
                 AxislineStyle = LineStyle.Dot,
-                //MajorTickSize = 7,
-                //MinorTickSize = 4,
+                MajorTickSize = 7,
                 IsZoomEnabled = false,
                 IsPanEnabled = false,
             });
@@ -103,11 +102,11 @@ namespace StockApp.Helpers
             var series = new LineSeries();
             if(sign == 0 || sign == 1)
             {
-                series.Color = OxyColors.Green;
+                series.Color = OxyColors.LimeGreen;
             }
             else
             {
-                series.Color = OxyColors.Red;
+                series.Color = OxyColors.IndianRed;
             }
                 foreach (var p in dailyEntries)
                     series.Points.Add(DateTimeAxis.CreateDataPoint(p.TradeDate, p.ClosePrice));
