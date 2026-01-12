@@ -10,6 +10,8 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     
+    
+    
     <Grid Margin="12">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="280"/>
@@ -54,41 +56,7 @@
 
             <!-- UN SINGUR child -->
             <StackPanel>
-                <StackPanel.Resources>
-                    <Style x:Key="RangeButtonStyle" TargetType="Button">
-                        <Setter Property="Background" Value="Black"/>
-                        <Setter Property="Foreground" Value="Gray"/>
-                        <Setter Property="Padding" Value="10,6"/>
-                        <Setter Property="Margin" Value="0,0,12,0"/>
-                        <Setter Property="BorderThickness" Value="0"/>
-                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
-                        <Setter Property="Cursor" Value="Hand"/>
-
-                        <Style.Triggers>
-                            <EventTrigger RoutedEvent="MouseEnter">
-                                <BeginStoryboard>
-                                    <Storyboard>
-                                        <ColorAnimation
-                            Storyboard.TargetProperty="(Button.Foreground).(SolidColorBrush.Color)"
-                            To="#8ab4f8"
-                            Duration="0:0:0.15"/>
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </EventTrigger>
-
-                            <EventTrigger RoutedEvent="MouseLeave">
-                                <BeginStoryboard>
-                                    <Storyboard>
-                                        <ColorAnimation
-                            Storyboard.TargetProperty="(Button.Foreground).(SolidColorBrush.Color)"
-                            To="Gray"
-                            Duration="0:0:0.15"/>
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </EventTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </StackPanel.Resources>
+                
 
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
 
@@ -110,101 +78,95 @@
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
                 <TextBlock FontSize="14"
                            Margin="8,0,0,0"
-                           Text="{Binding PriceVariation}"
-                           Foreground="{Binding TextColor}"/>
+                           Text="{Binding PriceVariation, StringFormat={}{0:+0.##;-0.##;0}}"
+                           Foreground="{Binding ChartColor}"/>
                 <TextBlock FontSize="14"
                            Margin="8,0,0,0"
-                           Text="{Binding PercentageVariation, StringFormat={}({0}%)}"
-                           Foreground="{Binding TextColor}"/>
+                           Text="{Binding PercentageVariation, StringFormat={}{0:(+0.##;(-0.##;(0}%)}"
+                           Foreground="{Binding ChartColor}"/>
 
                  <TextBlock FontSize="14"
                             Margin="8,0,0,0"
                             Text="{Binding RangeText}"
-                            Foreground="{Binding TextColor}"/>
+                            Foreground="{Binding ChartColor}"/>
                 </StackPanel>
 
                     <!-- Range buttons -->
                 <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
-                    <Button Content="5D"  Background="Black" Foreground="Gray"
-                            Width="48" Height="28" Margin="0,0,8,0"
-                            HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
-                            Command ="{Binding RangeClickedCommand}"
-                            CommandParameter="5D"/>
+                    <Button Content="5D"  Style="{StaticResource RangeButtonStyle}"
+            Command="{Binding RangeClickedCommand}"
+            CommandParameter="5D"/>
 
-                    <Button Content="1M"  Background="Black" Foreground="Gray"
-                            Width="48" Height="28" Margin="0,0,8,0"
-                            HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
-                            Command ="{Binding RangeClickedCommand}"
-                            CommandParameter="1M"/>
+                    <Button Content="1M"  Style="{StaticResource RangeButtonStyle}"
+            Command="{Binding RangeClickedCommand}"
+            CommandParameter="1M"/>
 
-                    <Button Content="6M"  Background="Black" Foreground="Gray"
-                            Width="48" Height="28" Margin="0,0,8,0"
-                            HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
-                            Command ="{Binding RangeClickedCommand}"
-                            CommandParameter="6M"/>
+                    <Button Content="6M"  Style="{StaticResource RangeButtonStyle}"
+            Command="{Binding RangeClickedCommand}"
+            CommandParameter="6M"/>
 
-                    <Button Content="YTD" Background="Black" Foreground="Gray"
-                            Width="48" Height="28" Margin="0,0,8,0"
-                            HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
-                            Command ="{Binding RangeClickedCommand}"
-                            CommandParameter="YTD"/>
+                    <Button Content="YTD" Style="{StaticResource RangeButtonStyle}"
+            Command="{Binding RangeClickedCommand}"
+            CommandParameter="YTD"/>
 
-                    <Button Content="1Y"  Background="Black" Foreground="Gray"
-                            Width="48" Height="28" Margin="0,0,8,0"
-                            HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
-                            Command ="{Binding RangeClickedCommand}"
-                            CommandParameter="1Y"/>
+                    <Button Content="1Y"  Style="{StaticResource RangeButtonStyle}"
+            Command="{Binding RangeClickedCommand}"
+            CommandParameter="1Y"/>
 
-                    <Button Content="5Y"  Background="Black" Foreground="Gray"
-                            Width="48" Height="28" Margin="0,0,8,0"
-                            HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
-                            Command ="{Binding RangeClickedCommand}"
-                            CommandParameter="5Y"/>
+                    <Button Content="5Y"  Style="{StaticResource RangeButtonStyle}"
+            Command="{Binding RangeClickedCommand}"
+            CommandParameter="5Y"/>
 
-                    <Button Content="Max" Background="Black" Foreground="Gray"
-                            Width="48" Height="28" Margin="0"
-                            HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
-                            Command ="{Binding RangeClickedCommand}"
-                            CommandParameter="Max"/>
+                    <Button Content="Max" Style="{StaticResource RangeButtonStyle}"
+            Command="{Binding RangeClickedCommand}"
+            CommandParameter="Max"/>
                 </StackPanel>
 
-            <!-- Chart lipit -->
+
+                <!-- Chart lipit -->
                 <oxy:PlotView Model="{Binding ChartData}"
                     Height="300"
                     Margin="0"/>
 
+                <!-- Indicatoare aditionale -->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                     <StackPanel Orientation="Vertical" Margin="0,12,12,0">
-                                <Label Content="Highest Price"
+                        <Label Content="Highest Price"
                                        FontWeight="Bold"
                                        VerticalAlignment="Center"/>
-                    <TextBlock FontSize="14"
+                        <TextBlock FontSize="14"
                                    Margin="8,0,0,0"
                                    Foreground="Black"
                                    Text="{Binding HighestPrice, StringFormat={}{0}$}"/>
-                </StackPanel>
+                    </StackPanel>
 
                     <StackPanel Orientation="Vertical" Margin="0,12,12,0">
-                        
+
                         <Label Content="Lowest Price"
                                 FontWeight="Bold"
                                 VerticalAlignment="Center"/>
-                    <TextBlock FontSize="14"
+                        <TextBlock FontSize="14"
                                Margin="8,0,0,0"
                                Foreground="Black"
                                Text="{Binding LowestPrice, StringFormat={}{0}$}"/>
                     </StackPanel>
+                </StackPanel>
+                <!-- Indicatoare aditionale -->
 
+                <Separator Margin="0,12"/>
+
+                <!-- Button selector -->
                 <Button Content="{Binding PerformanceSelector}"
-        Command="{Binding PerformanceSelectorCommand}"
-        CommandParameter="{Binding RelativeSource={RelativeSource Self}}"
-        Width="250"
-        Height="32"
-        Margin="4"
-        FontSize="13"
-        FontWeight="SemiBold"
-        Foreground="#333333"
-        HorizontalContentAlignment="Center"
-        VerticalContentAlignment="Center">
+                        Margin="0,8,0,8"
+                        Command="{Binding PerformanceSelectorCommand}"
+                        CommandParameter="{Binding RelativeSource={RelativeSource Self}}"
+                        Width="250"
+                        Height="32"
+                        FontSize="13"
+                        FontWeight="SemiBold"
+                        Foreground="#333333"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center">
                     <Button.Template>
                         <ControlTemplate TargetType="Button">
                             <Border x:Name="Border"
@@ -234,7 +196,7 @@
                         </ControlTemplate>
                     </Button.Template>
                 </Button>
-
+                <!-- Button selector -->
 
                 <!-- Top Performers -->
                 <ItemsControl ItemsSource="{Binding CompaniesPerformance}">
@@ -273,18 +235,19 @@
                                                 <!-- Symbol -->
                                                 <Binding Path="Symbol"/>
                                             </MultiBinding>
+                                            
                                         </TextBlock.Text>
                                     </TextBlock>
 
                                     <!-- PriceChange (PercentageChange) -->
                                     <TextBlock Grid.Row="2"
-                               FontSize="12"
-                               FontWeight="SemiBold">
+                                               FontSize="12"
+                                               FontWeight="SemiBold"
+                                               Foreground="{Binding DataContext.PerformersColor,RelativeSource={RelativeSource AncestorType=ItemsControl}}">
+
                                         <TextBlock.Text>
-                                            <MultiBinding StringFormat="{}{0} ({1})">
-                                                <!-- PriceChange -->
+                                            <MultiBinding StringFormat="{}{0:+0.##;-0.##;0}% ({1:+0.##;-0.##;0}$)">
                                                 <Binding Path="PercentChange"/>
-                                                <!-- PercentageChange -->
                                                 <Binding Path="PriceChange"/>
                                             </MultiBinding>
                                         </TextBlock.Text>
