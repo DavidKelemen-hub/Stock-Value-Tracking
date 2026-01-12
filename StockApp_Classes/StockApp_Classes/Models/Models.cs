@@ -13,6 +13,15 @@ namespace StockApp_Classes.Models
 
     }
 
+    public class CompanyPerformance
+    {
+        public string Symbol { get; set; }
+        public string Name { get; set; }
+        public double PriceChange { get; set; }
+        public double PercentChange { get; set; }
+        
+    }
+
     public class DailyEntry
     {
         public int StockID { get; set; }

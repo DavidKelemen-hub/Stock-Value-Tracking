@@ -57,6 +57,10 @@ namespace StockApp_Classes.Processing
             return dbService.GetAllCompanies();
         }
 
+        public List<CompanyPerformance> GetTopPerformingCompanies(string range)
+        {
+            return dbService.GetTopPerformingCompanies(range);
+        }
         public List<DailyEntry> GetStockEntriesBetweenDates(string symbol, string range)
         {
             return dbService.GetStockEntriesBetweenDates(symbol, range);
