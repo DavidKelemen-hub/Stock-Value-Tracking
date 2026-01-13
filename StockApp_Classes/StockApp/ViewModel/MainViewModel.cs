@@ -8,6 +8,8 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using System.Windows.Media;
+using StockApp.StockService;
+using StockApp.DTOHelper;
 
 
 namespace StockApp.ViewModels
@@ -37,9 +39,8 @@ namespace StockApp.ViewModels
         private double highestPrice { get; set; }
         private double lowestPrice { get; set; }
         public List<CompanyPerformance> companiesPerformance { get; set; }
+        public Service _service = new Service();
 
-        private string topPerformers = "Check Top Performing Companies";
-        private string lowPerformers = "Check Lowest Performing Companies";
         /************************************************ Bindable properties ****************************************************/
 
         public MainViewModel(Processing service)
@@ -47,25 +48,42 @@ namespace StockApp.ViewModels
             this.processingService = service;
 
             Initialize();
-            LoadMatchingCompanies();
-            RefreshData();
 
             RangeClickedCommand = new RelayCommand(param =>
             {
                 SelectedRange = param as string;
                 if (SelectedRange == null || SelectedCompany == null) return;
 
-                RefreshData();
+                LoadData();
             });
         }
         /************************************************* Commands ****************************************************/
         private void Initialize()
         {
-            Companies = new ObservableCollection<Company>(processingService.GetAllCompanies());
-            companiesCopy = Companies;
-            selectedCompany = companiesCollection.First();
-            selectedRange = "1Y";
-            LoadPerformingCompanies();
+            InitDTO dto = _service.LoadInitData(ShowTop10,SearchText);
+
+            Companies = dto.Companies;
+            SelectedCompany = dto.SelectedCompany;
+            SelectedRange = dto.SelectedRange;
+            CompaniesPerformance = dto.Performers;
+            ChartData = dto.ChartData;
+            PerformersColor = dto.PerformersColor;
+        }
+
+        private void LoadData()
+        {
+            StockDTO dto = _service.LoadData(SelectedCompany, SelectedRange, ShowTop10, SearchText);
+
+            PercentageVariation = dto.PercentageVariation;
+            CurrentPrice = dto.CurrentPrice;
+            PriceVariation = dto.PriceVariation;
+            RangeText = dto.RangeText;
+            HighestPrice = dto.HighestPrice;
+            LowestPrice = dto.LowestPrice;
+            CompaniesPerformance = dto.Performers;
+            PerformersColor = dto.PerformersColor;
+            Companies = dto.Companies;
+            ChartData = dto.ChartData;
         }
         private void LoadMatchingCompanies()
         {
@@ -92,29 +110,7 @@ namespace StockApp.ViewModels
                 PerformersColor = new SolidColorBrush(Colors.IndianRed);
             }
         }
-        private void RefreshData()
-        {
-            if (SelectedCompany == null) return;
-            chartBuilder = new ChartBuilder(SelectedCompany.Name);
-            var prices = processingService.GetStockEntriesBetweenDates(SelectedCompany.Symbol, SelectedRange);
-            PercentageVariation = processingService.GetPercentageVariationInRange(SelectedCompany.Symbol, SelectedRange);
-            CurrentPrice = processingService.GetCurrentPrice(SelectedCompany.Symbol);
-            PriceVariation = processingService.GetPriceVariationInRange(SelectedCompany.Symbol, SelectedRange);
-            RangeText = processingService.GetRangeDescription(Convert.ToDouble(PriceVariation), SelectedRange);
-            HighestPrice = processingService.GetHighestPriceInRange(SelectedCompany.Symbol, SelectedRange);
-            LowestPrice = processingService.GetLowestPriceInRange(SelectedCompany.Symbol, SelectedRange);
-            ChartData = chartBuilder.LoadChartData(SelectedRange, prices, Math.Sign(Convert.ToDouble(PercentageVariation)));
-            
-
-            if (Convert.ToDouble(PriceVariation) < 0)
-            {
-                ChartColor = new SolidColorBrush(Colors.IndianRed);
-            }
-            else
-            {
-                ChartColor = new SolidColorBrush(Colors.LimeGreen);
-            }
-        }
+        
         /************************************************* Commands ****************************************************/
 
         /*********************************************** Model Properties ****************************************************/
@@ -148,7 +144,7 @@ namespace StockApp.ViewModels
                 if (showTop10 == value) return;
                 showTop10 = value;
                 OnPropertyChanged();
-                LoadPerformingCompanies();
+                //LoadPerformingCompanies();
             }
         }
 
@@ -223,7 +219,7 @@ namespace StockApp.ViewModels
                 if (searchText == value) return;
                 searchText = value;
                 OnPropertyChanged();
-                LoadMatchingCompanies();
+                //LoadMatchingCompanies();
             }
         }
             public double PercentageVariation
@@ -245,7 +241,7 @@ namespace StockApp.ViewModels
                 if (selectedRange == value) return;
                 selectedRange = value;
                 OnPropertyChanged();
-                LoadPerformingCompanies();
+                //LoadPerformingCompanies();
             }
         }
 
@@ -263,12 +259,11 @@ namespace StockApp.ViewModels
         public Company SelectedCompany
         {
             get { return selectedCompany; }
-            set
+            set 
             {
                 if (selectedCompany == value) return;
                 selectedCompany = value;
                 OnPropertyChanged();
-                RefreshData();
             }
         }
 
