@@ -29,7 +29,7 @@ namespace StockApp.ViewModels
         private string searchText { get; set; }
         private double priceVariation { get; set; }
         private string rangeText { get; set; }
-        private string performanceSelector { get; set; }
+        private bool showTop10 { get; set; }
         private Brush chartColor { get; set; }
         private Brush performersColor { get; set; }
         public ICommand RangeClickedCommand { get; set; }
@@ -57,13 +57,6 @@ namespace StockApp.ViewModels
 
                 RefreshData();
             });
-
-            PerformanceSelectorCommand = new RelayCommand(param =>
-            {
-                var selection = param as string;
-
-                LoadPerformingCompanies();
-            });
         }
         /************************************************* Commands ****************************************************/
         private void Initialize()
@@ -72,7 +65,6 @@ namespace StockApp.ViewModels
             companiesCopy = Companies;
             selectedCompany = companiesCollection.First();
             selectedRange = "1Y";
-            PerformanceSelector = topPerformers;
             LoadPerformingCompanies();
         }
         private void LoadMatchingCompanies()
@@ -89,16 +81,14 @@ namespace StockApp.ViewModels
 
         private void LoadPerformingCompanies()
         {
-            if(PerformanceSelector == topPerformers)
+            if(ShowTop10 == true)
             {
                 CompaniesPerformance = processingService.GetTopPerformingCompanies(SelectedRange);
-                PerformanceSelector = lowPerformers;
                 PerformersColor = new SolidColorBrush(Colors.LimeGreen);
             }
             else
             {
                 CompaniesPerformance = processingService.GetLowestPerformingCompanies(SelectedRange);
-                PerformanceSelector = topPerformers;
                 PerformersColor = new SolidColorBrush(Colors.IndianRed);
             }
         }
@@ -150,14 +140,15 @@ namespace StockApp.ViewModels
             }
         }
 
-        public string PerformanceSelector
+        public bool ShowTop10
         {
-            get { return performanceSelector; }
+            get { return showTop10; }
             set
             {
-                if (performanceSelector == value) return;
-                performanceSelector = value;
+                if (showTop10 == value) return;
+                showTop10 = value;
                 OnPropertyChanged();
+                LoadPerformingCompanies();
             }
         }
 

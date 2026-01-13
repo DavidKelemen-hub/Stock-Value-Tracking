@@ -156,46 +156,26 @@
                 <Separator Margin="0,12"/>
 
                 <!-- Button selector -->
-                <Button Content="{Binding PerformanceSelector}"
-                        Margin="0,8,0,8"
-                        Command="{Binding PerformanceSelectorCommand}"
-                        CommandParameter="{Binding RelativeSource={RelativeSource Self}}"
-                        Width="250"
-                        Height="32"
-                        FontSize="13"
-                        FontWeight="SemiBold"
-                        Foreground="#333333"
-                        HorizontalContentAlignment="Center"
-                        VerticalContentAlignment="Center">
-                    <Button.Template>
-                        <ControlTemplate TargetType="Button">
-                            <Border x:Name="Border"
-                    Background="#F2F2F2"
-                    BorderBrush="#C8C8C8"
-                    BorderThickness="1"
-                    CornerRadius="6">
-                                <ContentPresenter
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"/>
-                            </Border>
+                <StackPanel Orientation="Horizontal"
+            HorizontalAlignment="Center"
+            Margin="0,10">
 
-                            <ControlTemplate.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter TargetName="Border" Property="Background" Value="#E6E6E6"/>
-                                </Trigger>
+                    <TextBlock Text="Top 10 Losers"
+                               Foreground="IndianRed"
+                               FontSize="14"
+               VerticalAlignment="Center"
+               Margin="0,0,10,0"/>
 
-                                <Trigger Property="IsPressed" Value="True">
-                                    <Setter TargetName="Border" Property="Background" Value="#DADADA"/>
-                                </Trigger>
+                    <ToggleButton Style="{StaticResource SwitchToggle}"
+                  IsChecked="{Binding ShowTop10}" />
 
-                                <Trigger Property="IsEnabled" Value="False">
-                                    <Setter TargetName="Border" Property="Background" Value="#F7F7F7"/>
-                                    <Setter Property="Foreground" Value="#999999"/>
-                                </Trigger>
-                            </ControlTemplate.Triggers>
-                        </ControlTemplate>
-                    </Button.Template>
-                </Button>
+                    <TextBlock Text="Top 10 Gainers"
+                               Foreground="LimeGreen"
+                                                              FontSize="14"
+                               VerticalAlignment="Center"
+                               Margin="10,0,0,0"/>
+                </StackPanel>
+
                 <!-- Button selector -->
 
                 <!-- Top Performers -->
