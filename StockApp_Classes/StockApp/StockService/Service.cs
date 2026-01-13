@@ -17,6 +17,7 @@ namespace StockApp.StockService
     {
         private readonly Processing _processing;
         private readonly SearchHelper _searchHelper;
+        private readonly string InitSelectedRange = "1Y";
 
         public Service()
         {
@@ -39,59 +40,61 @@ namespace StockApp.StockService
             }
             return _companies;
         }
-        public InitDTO LoadInitData(bool isTop10, string searchText)
+
+        public Company GetInitialCompany()
         {
-
-            
-            var companies = GetFilteredCompanies(searchText);
-            var selectedCompany = companies.FirstOrDefault();
-            var selectedRange = "1Y";
-            var percentageVariation = _processing.GetPercentageVariationInRange(selectedCompany.Symbol, selectedRange);
-            var dailyEntries = _processing.GetStockEntriesBetweenDates(selectedCompany.Symbol, selectedRange);
-            ChartBuilder chartBuilder = new ChartBuilder(selectedCompany.Name);
-            var chartData = chartBuilder.LoadChartData(selectedRange, 
-                                                       dailyEntries, 
-                                                       Math.Sign(Convert.ToDouble(percentageVariation)));
-            var performersColor = isTop10 ? new SolidColorBrush(Colors.LimeGreen) : new SolidColorBrush(Colors.IndianRed);
-
-            return new InitDTO
-            {
-                Companies = companies,
-                SelectedCompany = selectedCompany,
-                SelectedRange = selectedRange,
-                Performers = isTop10 ? _processing.GetTopPerformingCompanies(selectedRange) : _processing.GetLowestPerformingCompanies(selectedRange),
-                ChartData = chartData,
-                PerformersColor = performersColor
-
-
-            };
+            ObservableCollection<Company> _companiesCopy = new ObservableCollection<Company>(_processing.GetAllCompanies());
+            return _companiesCopy.FirstOrDefault();
         }
 
-        public StockDTO LoadData(Company SelectedCompany, string SelectedRange, bool isTop10, string searchText)
+        public string GetInitialRange()
         {
-            ChartBuilder chartBuilder = new ChartBuilder(SelectedCompany.Name);
-            var dailyEntries = _processing.GetStockEntriesBetweenDates(SelectedCompany.Symbol, SelectedRange);
-            var percentageVariation = _processing.GetPercentageVariationInRange(SelectedCompany.Symbol, SelectedRange);
-            var prices = _processing.GetStockEntriesBetweenDates(SelectedCompany.Symbol, SelectedRange);
-            var priceVariation = _processing.GetPriceVariationInRange(SelectedCompany.Symbol, SelectedRange);
+            return InitSelectedRange;
+        }
+
+        public List<CompanyPerformance> GetTopPerformers(bool isTop10, string selectedRange)
+        {
+            return isTop10 ? _processing.GetTopPerformingCompanies(selectedRange) : _processing.GetLowestPerformingCompanies(selectedRange);
+        }
+
+        public Brush GetPerformersColor(bool isTop10)
+        {
+            return isTop10 ? new SolidColorBrush(Colors.LimeGreen) : new SolidColorBrush(Colors.IndianRed);
+        }
+
+        public StockDTO LoadData(Company selectedCompany, string selectedRange, bool isTop10, string searchText)
+        {
+            
+            ChartBuilder chartBuilder = new ChartBuilder(selectedCompany.Name);
+            var dailyEntries = _processing.GetStockEntriesBetweenDates(selectedCompany.Symbol, selectedRange);
+            var percentageVariation = _processing.GetPercentageVariationInRange(selectedCompany.Symbol, selectedRange);
+            var prices = _processing.GetStockEntriesBetweenDates(selectedCompany.Symbol, selectedRange);
+            var priceVariation = _processing.GetPriceVariationInRange(selectedCompany.Symbol, selectedRange);
             var companies = GetFilteredCompanies(searchText);
-            var chartData = chartBuilder.LoadChartData(SelectedRange,
+            var chartData = chartBuilder.LoadChartData(selectedRange,
                                                        dailyEntries,
                                                        Math.Sign(Convert.ToDouble(percentageVariation)));
 
+            var currentPrice = _processing.GetCurrentPrice(selectedCompany.Symbol);
+            var highestPrice = _processing.GetHighestPriceInRange(selectedCompany.Symbol, selectedRange);
+            var lowestPrice = _processing.GetLowestPriceInRange(selectedCompany.Symbol, selectedRange);
+            var rangeText = _processing.GetRangeDescription(Convert.ToDouble(priceVariation), selectedRange);
+            var performers = GetTopPerformers(isTop10, selectedRange);
+            var performersColor = GetPerformersColor(isTop10);
+
             return new StockDTO
             {
-                PercentageVariation = _processing.GetPriceVariationInRange(SelectedCompany.Symbol, SelectedRange),
-                CurrentPrice = _processing.GetCurrentPrice(SelectedCompany.Symbol),
-                PriceVariation = _processing.GetPriceVariationInRange(SelectedCompany.Symbol, SelectedRange),
-                RangeText = _processing.GetRangeDescription(Convert.ToDouble(priceVariation), SelectedRange),
-                HighestPrice = _processing.GetHighestPriceInRange(SelectedCompany.Symbol, SelectedRange),
-                LowestPrice = _processing.GetLowestPriceInRange(SelectedCompany.Symbol, SelectedRange),
-                Performers = isTop10 ? _processing.GetTopPerformingCompanies(SelectedRange) : _processing.GetLowestPerformingCompanies(SelectedRange),
-                PerformersColor = isTop10 ? new SolidColorBrush(Colors.LimeGreen) : new SolidColorBrush(Colors.IndianRed),
                 Companies = companies,
+                Performers = performers,
                 ChartData = chartData,
-                SelectedCompany = SelectedCompany
+                PerformersColor = performersColor,
+                CurrentPrice = currentPrice,
+                PriceVariation = priceVariation,
+                PercentageVariation = percentageVariation,
+                HighestPrice = highestPrice,
+                LowestPrice = lowestPrice,
+                RangeText = rangeText
+
             };
         }
     }
