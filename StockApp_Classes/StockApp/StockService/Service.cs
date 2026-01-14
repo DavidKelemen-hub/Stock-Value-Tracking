@@ -25,6 +25,11 @@ namespace StockApp.StockService
             _searchHelper = new SearchHelper();
         }
 
+        public ObservableCollection<Company> GetAllCompanies()
+        {
+            return new ObservableCollection<Company>(_processing.GetAllCompanies());
+        }
+
         public ObservableCollection<Company> GetFilteredCompanies(string searchText)
         {
             ObservableCollection<Company> _companies;

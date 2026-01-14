@@ -34,13 +34,10 @@ namespace StockApp.ViewModels
         private Brush chartColor { get; set; }
         private Brush performersColor { get; set; }
         public ICommand RangeClickedCommand { get; set; }
-        public ICommand PerformanceSelectorCommand { get; set; }
         private double highestPrice { get; set; }
         private double lowestPrice { get; set; }
         public List<CompanyPerformance> companiesPerformance { get; set; }
         public Service _service = new Service();
-        public Processing processing = new Processing();
-        public SearchHelper searchHelper = new SearchHelper();
         private bool isInitialized = false;
         private bool _isRefreshing;
 
@@ -48,7 +45,7 @@ namespace StockApp.ViewModels
 
         public MainViewModel()
         {
-            Companies = new ObservableCollection<Company>(processing.GetAllCompanies());
+            Companies = _service.GetAllCompanies();
             CompaniesView = CollectionViewSource.GetDefaultView(Companies);
             CompaniesView.Filter = CompanyMatches;
             SelectedCompany = _service.GetFilteredCompanies(SearchText).FirstOrDefault();
@@ -101,18 +98,6 @@ namespace StockApp.ViewModels
         {
             if (!isInitialized) return;
             LoadData();
-        }
-
-        private void LoadMatchingCompanies()
-        {
-            if (SearchText.IsNullOrEmpty())
-            {
-                Companies = companiesCopy;
-            }
-            else
-            {
-                Companies = new ObservableCollection<Company>(searchHelper.GetMatchingCompanies(SearchText.ToLower(), companiesCopy));
-            }
         }
         /************************************************* Commands ****************************************************/
 
