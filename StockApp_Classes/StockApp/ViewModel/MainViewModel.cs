@@ -10,6 +10,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using StockApp.StockService;
 using StockApp.DTOHelper;
+using System.Windows.Data;
 
 
 namespace StockApp.ViewModels
@@ -20,6 +21,7 @@ namespace StockApp.ViewModels
         /************************************************ Bindable properties ****************************************************/
         public ObservableCollection<Company> companiesCollection { get; set; }
         public ObservableCollection<Company> companiesCopy { get; set; }
+        public ICollectionView CompaniesView { get; set; }
         private Company selectedCompany;
         private PlotModel chartData;
         private double percentageVariation { get; set; }
@@ -40,16 +42,17 @@ namespace StockApp.ViewModels
         public Processing processing = new Processing();
         public SearchHelper searchHelper = new SearchHelper();
         private bool isInitialized = false;
-        
+        private bool _isRefreshing;
+
         /************************************************ Bindable properties ****************************************************/
 
         public MainViewModel()
         {
             Companies = new ObservableCollection<Company>(processing.GetAllCompanies());
-            companiesCopy = Companies;
+            CompaniesView = CollectionViewSource.GetDefaultView(Companies);
+            CompaniesView.Filter = CompanyMatches;
             SelectedCompany = _service.GetFilteredCompanies(SearchText).FirstOrDefault();
             SelectedRange = _service.GetInitialRange();
-
 
             LoadData();
             isInitialized = true;
@@ -62,7 +65,21 @@ namespace StockApp.ViewModels
             });
         }
         /************************************************* Commands ****************************************************/
-        
+        private bool CompanyMatches(object obj)
+        {
+            if (obj is not Company c) return false;
+
+            var s = SearchText?.Trim();
+            if (string.IsNullOrEmpty(s)) return true;
+
+            // avoid null issues
+            var name = c.Name ?? "";
+            var symbol = c.Symbol ?? "";
+
+            return name.Contains(s, StringComparison.OrdinalIgnoreCase)
+                || symbol.Contains(s, StringComparison.OrdinalIgnoreCase);
+        }
+
 
         public void LoadData()
         {
@@ -199,16 +216,25 @@ namespace StockApp.ViewModels
         }
         public string SearchText
         {
-            get { return searchText; }
+            get => searchText;
             set
             {
                 if (searchText == value) return;
                 searchText = value;
                 OnPropertyChanged();
-                LoadMatchingCompanies();
+
+                var old = SelectedCompany;
+
+                _isRefreshing = true;
+                try { CompaniesView.Refresh(); }
+                finally { _isRefreshing = false; }
+
+                // keep selection if still visible
+                if (old != null && CompaniesView.Contains(old))
+                    SelectedCompany = old;
             }
         }
-            public double PercentageVariation
+        public double PercentageVariation
         {
             get { return percentageVariation; }
             set
@@ -242,12 +268,15 @@ namespace StockApp.ViewModels
             }
         }
 
-        public Company SelectedCompany
+        public Company? SelectedCompany
         {
-            get { return selectedCompany; }
-            set 
+            get => selectedCompany;
+            set
             {
-                if (selectedCompany == value) return;
+                // ignore transient null pushed by WPF during refresh
+                if (value == null && _isRefreshing) return;
+
+                if (ReferenceEquals(selectedCompany, value)) return;
                 selectedCompany = value;
                 OnPropertyChanged();
                 RequestRefresh();
