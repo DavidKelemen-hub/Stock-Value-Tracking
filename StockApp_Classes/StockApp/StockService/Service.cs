@@ -57,27 +57,24 @@ namespace StockApp.StockService
             return InitSelectedRange;
         }
 
-        public async Task<List<CompanyPerformance>> GetTopPerformers(bool isTop10, string selectedRange)
+        public List<CompanyPerformance> GetTopPerformers(bool isTop10, string selectedRange)
         {
-            Task<List<CompanyPerformance>> task;
             if (isTop10)
             {
-                task =  _processing.GetTopPerformingCompanies(selectedRange);
+                return _processing.GetTopPerformingCompanies(selectedRange);
             }
             else
             {
-                task = _processing.GetLowestPerformingCompanies(selectedRange);
+                return _processing.GetLowestPerformingCompanies(selectedRange);
             }
-             List<CompanyPerformance> result = await task;
-            return result;
-        }
+        }   
 
         public Brush GetPerformersColor(bool isTop10)
         {
             return isTop10 ? new SolidColorBrush(Colors.LimeGreen) : new SolidColorBrush(Colors.IndianRed);
         }
 
-        public async Task<StockDTO> LoadData(Company selectedCompany, string selectedRange, bool isTop10, string searchText)
+        public StockDTO LoadData(Company selectedCompany, string selectedRange, bool isTop10, string searchText)
         {
             
             ChartBuilder chartBuilder = new ChartBuilder(selectedCompany.Name);
@@ -95,7 +92,8 @@ namespace StockApp.StockService
             var lowestPrice = _processing.GetLowestPriceInRange(selectedCompany.Symbol, selectedRange);
             var rangeText = _processing.GetRangeDescription(Convert.ToDouble(priceVariation), selectedRange);
             var performersColor = GetPerformersColor(isTop10);
-            var performers = await GetTopPerformers(isTop10, selectedRange);
+            var performers = GetTopPerformers(isTop10, selectedRange);
+            var chartColor = priceVariation > 0 ? new SolidColorBrush(Colors.LimeGreen) : new SolidColorBrush(Colors.IndianRed);
 
             return new StockDTO
             {
@@ -108,7 +106,8 @@ namespace StockApp.StockService
                 PercentageVariation = percentageVariation,
                 HighestPrice = highestPrice,
                 LowestPrice = lowestPrice,
-                RangeText = rangeText
+                RangeText = rangeText,
+                ChartColor = chartColor,
 
             };
         }

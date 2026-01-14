@@ -46,15 +46,7 @@ namespace StockApp.ViewModels
 
         public MainViewModel()
         {
-            Companies = _service.GetAllCompanies();
-            CompaniesView = CollectionViewSource.GetDefaultView(Companies);
-            CompaniesView.Filter = CompanyMatches;
-            SelectedCompany = _service.GetFilteredCompanies(SearchText).FirstOrDefault();
-            SelectedRange = _service.GetInitialRange();
-
-            LoadData();
-
-            isInitialized = true;
+            _ =  InitAsync();
 
             RangeClickedCommand = new RelayCommand(param =>
             {
@@ -82,7 +74,7 @@ namespace StockApp.ViewModels
 
         public async Task LoadData()
         {
-            StockDTO dto = await _service.LoadData(SelectedCompany, SelectedRange, ShowTop10, SearchText);
+            StockDTO dto = _service.LoadData(SelectedCompany, SelectedRange, ShowTop10, SearchText);
 
             PercentageVariation = dto.PercentageVariation;
             CurrentPrice = dto.CurrentPrice;
@@ -93,6 +85,20 @@ namespace StockApp.ViewModels
             CompaniesPerformance = dto.Performers;
             PerformersColor = dto.PerformersColor;
             ChartData = dto.ChartData;
+            ChartColor = dto.ChartColor;
+        }
+
+        public async Task InitAsync()
+        {
+            Companies = _service.GetAllCompanies();
+            CompaniesView = CollectionViewSource.GetDefaultView(Companies);
+            CompaniesView.Filter = CompanyMatches;
+            SelectedCompany = _service.GetFilteredCompanies(SearchText).FirstOrDefault();
+            SelectedRange = _service.GetInitialRange();
+
+            await LoadData();
+
+            isInitialized = true;
         }
 
         public async Task  RequestRefresh()
@@ -133,7 +139,7 @@ namespace StockApp.ViewModels
                 if (showTop10 == value) return;
                 showTop10 = value;
                 OnPropertyChanged();
-                RequestRefresh();
+                _ = RequestRefresh();
             }
         }
 
@@ -239,7 +245,7 @@ namespace StockApp.ViewModels
                 if (selectedRange == value) return;
                 selectedRange = value;
                 OnPropertyChanged();
-                RequestRefresh();
+                _ = RequestRefresh();
             }
         }
 
@@ -265,7 +271,7 @@ namespace StockApp.ViewModels
                 if (ReferenceEquals(selectedCompany, value)) return;
                 selectedCompany = value;
                 OnPropertyChanged();
-                RequestRefresh();
+                _ = RequestRefresh();
             }
         }
 

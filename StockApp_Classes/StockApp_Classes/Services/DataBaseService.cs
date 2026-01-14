@@ -22,7 +22,6 @@ namespace StockApp_Classes.Services
         {
             const string queryString = "SELECT Name, Symbol FROM Company ORDER BY Symbol ASC";
                                        
-
             using (var connection = new SqlConnection(this.connectionString))
             {
                 var result = connection.Query<Company>(queryString).ToList();
@@ -30,16 +29,23 @@ namespace StockApp_Classes.Services
             }
         }
 
-        public async Task<List<CompanyPerformance>> GetTopPerformingCompanies(string range)
+        public List<CompanyPerformance> GetTopPerformingCompanies(string range)
         {
-
+            
             DateTime end = DateTime.Today;
+            DateTime start;
             DateTimeHelper dtHelper = new DateTimeHelper();
-            DateTime start = dtHelper.GetStartDate(range);
-
+            if (range == "5D")
+            {
+                start = GetLast5TradingDays().Last().TradeDate;
+            }
+            else
+            {
+                start = dtHelper.GetStartDate(range);
+            }
+                
             const string queryString = @"EXEC GetTopPerformingCompanies @startDate=@start, @endDate=@end";
 
-            await Task.Delay(1); // Simulate async operation
             using (var connection = new SqlConnection(this.connectionString))
             {
                 var result = connection.Query<CompanyPerformance>(queryString, new { start, end } ).ToList();
@@ -47,16 +53,14 @@ namespace StockApp_Classes.Services
             }
         }
 
-        public async Task<List<CompanyPerformance>> GetLowestPerformingCompanies(string range)
+        public List<CompanyPerformance> GetLowestPerformingCompanies(string range)
         {
-
             DateTime end = DateTime.Today;
             DateTimeHelper dtHelper = new DateTimeHelper();
             DateTime start = dtHelper.GetStartDate(range);
 
             string queryString = @"EXEC GetLowestPerformingCompanies @startDate=@start, @endDate=@end";
 
-            await Task.Delay(1); // Simulate async operation
             using (var connection = new SqlConnection(this.connectionString))
             {
                 var result = connection.Query<CompanyPerformance>(queryString,new {start, end}).ToList();
@@ -95,6 +99,18 @@ namespace StockApp_Classes.Services
             using (var connection = new SqlConnection(this.connectionString))
             {
                 var result = connection.Query<DailyEntry>(queryString, new { stockID });
+                return result.ToList();
+            }
+        }
+
+        public List<DailyEntry> GetLast5TradingDays()
+        {
+            
+            const string queryString = "SELECT DISTINCT TOP 5 TradeDate FROM DailyPrices ORDER BY TradeDate DESC";
+
+            using (var connection = new SqlConnection(this.connectionString))
+            {
+                var result = connection.Query<DailyEntry>(queryString);
                 return result.ToList();
             }
         }
