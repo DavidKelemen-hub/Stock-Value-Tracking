@@ -30,8 +30,9 @@
             />
 
             <ListBox
-            ItemsSource="{Binding Companies}"
-            SelectedItem="{Binding SelectedCompany}"
+            ItemsSource="{Binding CompaniesView}"
+            SelectedItem="{Binding SelectedCompany, Mode=TwoWay}"
+            
             ScrollViewer.VerticalScrollBarVisibility="Auto">
                 
                 <ListBox.ItemTemplate>

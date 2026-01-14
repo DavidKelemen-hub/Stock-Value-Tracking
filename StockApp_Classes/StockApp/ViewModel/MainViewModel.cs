@@ -8,6 +8,9 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using System.Windows.Media;
+using StockApp.StockService;
+using StockApp.DTOHelper;
+using System.Windows.Data;
 
 
 namespace StockApp.ViewModels
@@ -15,12 +18,10 @@ namespace StockApp.ViewModels
     public class MainViewModel : INotifyPropertyChanged
     {     
         
-        private ObservableCollection<Company> companiesCopy { get; set; }
-        private readonly Processing processingService;
-        private ChartBuilder chartBuilder { get; set; }
-        private SearchHelper searchHelper = new SearchHelper();
         /************************************************ Bindable properties ****************************************************/
         public ObservableCollection<Company> companiesCollection { get; set; }
+        public ObservableCollection<Company> companiesCopy { get; set; }
+        public ICollectionView CompaniesView { get; set; }
         private Company selectedCompany;
         private PlotModel chartData;
         private double percentageVariation { get; set; }
@@ -33,87 +34,70 @@ namespace StockApp.ViewModels
         private Brush chartColor { get; set; }
         private Brush performersColor { get; set; }
         public ICommand RangeClickedCommand { get; set; }
-        public ICommand PerformanceSelectorCommand { get; set; }
         private double highestPrice { get; set; }
         private double lowestPrice { get; set; }
         public List<CompanyPerformance> companiesPerformance { get; set; }
+        public Service _service = new Service();
+        private bool isInitialized = false;
+        private bool _isRefreshing;
 
-        private string topPerformers = "Check Top Performing Companies";
-        private string lowPerformers = "Check Lowest Performing Companies";
         /************************************************ Bindable properties ****************************************************/
 
-        public MainViewModel(Processing service)
+        public MainViewModel()
         {
-            this.processingService = service;
+            Companies = _service.GetAllCompanies();
+            CompaniesView = CollectionViewSource.GetDefaultView(Companies);
+            CompaniesView.Filter = CompanyMatches;
+            SelectedCompany = _service.GetFilteredCompanies(SearchText).FirstOrDefault();
+            SelectedRange = _service.GetInitialRange();
 
-            Initialize();
-            LoadMatchingCompanies();
-            RefreshData();
+            LoadData();
+            isInitialized = true;
 
             RangeClickedCommand = new RelayCommand(param =>
             {
                 SelectedRange = param as string;
                 if (SelectedRange == null || SelectedCompany == null) return;
 
-                RefreshData();
             });
         }
         /************************************************* Commands ****************************************************/
-        private void Initialize()
+        private bool CompanyMatches(object obj)
         {
-            Companies = new ObservableCollection<Company>(processingService.GetAllCompanies());
-            companiesCopy = Companies;
-            selectedCompany = companiesCollection.First();
-            selectedRange = "1Y";
-            LoadPerformingCompanies();
-        }
-        private void LoadMatchingCompanies()
-        {
-            if (SearchText.IsNullOrEmpty())
-            {
-                Companies = companiesCopy;
-            }
-            else
-            {
-                Companies = new ObservableCollection<Company>(searchHelper.GetMatchingCompanies(SearchText.ToLower(), companiesCopy));
-            }
+            if (obj is not Company c) return false;
+
+            var s = SearchText?.Trim();
+            if (string.IsNullOrEmpty(s)) return true;
+
+            // avoid null issues
+            var name = c.Name ?? "";
+            var symbol = c.Symbol ?? "";
+
+            return name.Contains(s, StringComparison.OrdinalIgnoreCase)
+                || symbol.Contains(s, StringComparison.OrdinalIgnoreCase);
         }
 
-        private void LoadPerformingCompanies()
-        {
-            if(ShowTop10 == true)
-            {
-                CompaniesPerformance = processingService.GetTopPerformingCompanies(SelectedRange);
-                PerformersColor = new SolidColorBrush(Colors.LimeGreen);
-            }
-            else
-            {
-                CompaniesPerformance = processingService.GetLowestPerformingCompanies(SelectedRange);
-                PerformersColor = new SolidColorBrush(Colors.IndianRed);
-            }
-        }
-        private void RefreshData()
-        {
-            if (SelectedCompany == null) return;
-            chartBuilder = new ChartBuilder(SelectedCompany.Name);
-            var prices = processingService.GetStockEntriesBetweenDates(SelectedCompany.Symbol, SelectedRange);
-            PercentageVariation = processingService.GetPercentageVariationInRange(SelectedCompany.Symbol, SelectedRange);
-            CurrentPrice = processingService.GetCurrentPrice(SelectedCompany.Symbol);
-            PriceVariation = processingService.GetPriceVariationInRange(SelectedCompany.Symbol, SelectedRange);
-            RangeText = processingService.GetRangeDescription(Convert.ToDouble(PriceVariation), SelectedRange);
-            HighestPrice = processingService.GetHighestPriceInRange(SelectedCompany.Symbol, SelectedRange);
-            LowestPrice = processingService.GetLowestPriceInRange(SelectedCompany.Symbol, SelectedRange);
-            ChartData = chartBuilder.LoadChartData(SelectedRange, prices, Math.Sign(Convert.ToDouble(PercentageVariation)));
-            
 
-            if (Convert.ToDouble(PriceVariation) < 0)
-            {
-                ChartColor = new SolidColorBrush(Colors.IndianRed);
-            }
-            else
-            {
-                ChartColor = new SolidColorBrush(Colors.LimeGreen);
-            }
+        public void LoadData()
+        {
+            StockDTO dto = _service.LoadData(SelectedCompany, SelectedRange, ShowTop10, SearchText);
+
+            PercentageVariation = dto.PercentageVariation;
+            CurrentPrice = dto.CurrentPrice;
+            PriceVariation = dto.PriceVariation;
+            RangeText = dto.RangeText;
+            HighestPrice = dto.HighestPrice;
+            LowestPrice = dto.LowestPrice;
+            CompaniesPerformance = dto.Performers;
+            PerformersColor = dto.PerformersColor;
+            //Companies = dto.Companies;
+            ChartData = dto.ChartData;
+        }
+
+        public void RequestRefresh()
+        {
+            if (!isInitialized) return;
+            LoadData();
         }
         /************************************************* Commands ****************************************************/
 
@@ -148,7 +132,7 @@ namespace StockApp.ViewModels
                 if (showTop10 == value) return;
                 showTop10 = value;
                 OnPropertyChanged();
-                LoadPerformingCompanies();
+                RequestRefresh();
             }
         }
 
@@ -217,16 +201,25 @@ namespace StockApp.ViewModels
         }
         public string SearchText
         {
-            get { return searchText; }
+            get => searchText;
             set
             {
                 if (searchText == value) return;
                 searchText = value;
                 OnPropertyChanged();
-                LoadMatchingCompanies();
+
+                var old = SelectedCompany;
+
+                _isRefreshing = true;
+                try { CompaniesView.Refresh(); }
+                finally { _isRefreshing = false; }
+
+                // keep selection if still visible
+                if (old != null && CompaniesView.Contains(old))
+                    SelectedCompany = old;
             }
         }
-            public double PercentageVariation
+        public double PercentageVariation
         {
             get { return percentageVariation; }
             set
@@ -245,7 +238,7 @@ namespace StockApp.ViewModels
                 if (selectedRange == value) return;
                 selectedRange = value;
                 OnPropertyChanged();
-                LoadPerformingCompanies();
+                RequestRefresh();
             }
         }
 
@@ -260,15 +253,18 @@ namespace StockApp.ViewModels
             }
         }
 
-        public Company SelectedCompany
+        public Company? SelectedCompany
         {
-            get { return selectedCompany; }
+            get => selectedCompany;
             set
             {
-                if (selectedCompany == value) return;
+                // ignore transient null pushed by WPF during refresh
+                if (value == null && _isRefreshing) return;
+
+                if (ReferenceEquals(selectedCompany, value)) return;
                 selectedCompany = value;
                 OnPropertyChanged();
-                RefreshData();
+                RequestRefresh();
             }
         }
 

@@ -27,7 +27,7 @@ namespace StockApp
         {
             InitializeComponent();
 
-            DataContext = new MainViewModel(new Processing());
+            DataContext = new MainViewModel();
         }
 
       
