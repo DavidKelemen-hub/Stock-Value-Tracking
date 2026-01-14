@@ -30,7 +30,7 @@ namespace StockApp_Classes.Services
             }
         }
 
-        public List<CompanyPerformance> GetTopPerformingCompanies(string range)
+        public async Task<List<CompanyPerformance>> GetTopPerformingCompanies(string range)
         {
 
             DateTime end = DateTime.Today;
@@ -39,6 +39,7 @@ namespace StockApp_Classes.Services
 
             const string queryString = @"EXEC GetTopPerformingCompanies @startDate=@start, @endDate=@end";
 
+            await Task.Delay(1); // Simulate async operation
             using (var connection = new SqlConnection(this.connectionString))
             {
                 var result = connection.Query<CompanyPerformance>(queryString, new { start, end } ).ToList();
@@ -46,7 +47,7 @@ namespace StockApp_Classes.Services
             }
         }
 
-        public List<CompanyPerformance> GetLowestPerformingCompanies(string range)
+        public async Task<List<CompanyPerformance>> GetLowestPerformingCompanies(string range)
         {
 
             DateTime end = DateTime.Today;
@@ -55,6 +56,7 @@ namespace StockApp_Classes.Services
 
             string queryString = @"EXEC GetLowestPerformingCompanies @startDate=@start, @endDate=@end";
 
+            await Task.Delay(1); // Simulate async operation
             using (var connection = new SqlConnection(this.connectionString))
             {
                 var result = connection.Query<CompanyPerformance>(queryString,new {start, end}).ToList();

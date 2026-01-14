@@ -34,6 +34,7 @@ namespace StockApp.ViewModels
         private Brush chartColor { get; set; }
         private Brush performersColor { get; set; }
         public ICommand RangeClickedCommand { get; set; }
+
         private double highestPrice { get; set; }
         private double lowestPrice { get; set; }
         public List<CompanyPerformance> companiesPerformance { get; set; }
@@ -52,6 +53,7 @@ namespace StockApp.ViewModels
             SelectedRange = _service.GetInitialRange();
 
             LoadData();
+
             isInitialized = true;
 
             RangeClickedCommand = new RelayCommand(param =>
@@ -78,9 +80,9 @@ namespace StockApp.ViewModels
         }
 
 
-        public void LoadData()
+        public async Task LoadData()
         {
-            StockDTO dto = _service.LoadData(SelectedCompany, SelectedRange, ShowTop10, SearchText);
+            StockDTO dto = await _service.LoadData(SelectedCompany, SelectedRange, ShowTop10, SearchText);
 
             PercentageVariation = dto.PercentageVariation;
             CurrentPrice = dto.CurrentPrice;
@@ -90,14 +92,13 @@ namespace StockApp.ViewModels
             LowestPrice = dto.LowestPrice;
             CompaniesPerformance = dto.Performers;
             PerformersColor = dto.PerformersColor;
-            //Companies = dto.Companies;
             ChartData = dto.ChartData;
         }
 
-        public void RequestRefresh()
+        public async Task  RequestRefresh()
         {
             if (!isInitialized) return;
-            LoadData();
+            await LoadData();
         }
         /************************************************* Commands ****************************************************/
 

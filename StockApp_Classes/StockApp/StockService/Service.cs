@@ -57,9 +57,19 @@ namespace StockApp.StockService
             return InitSelectedRange;
         }
 
-        public List<CompanyPerformance> GetTopPerformers(bool isTop10, string selectedRange)
+        public async Task<List<CompanyPerformance>> GetTopPerformers(bool isTop10, string selectedRange)
         {
-            return isTop10 ? _processing.GetTopPerformingCompanies(selectedRange) : _processing.GetLowestPerformingCompanies(selectedRange);
+            Task<List<CompanyPerformance>> task;
+            if (isTop10)
+            {
+                task =  _processing.GetTopPerformingCompanies(selectedRange);
+            }
+            else
+            {
+                task = _processing.GetLowestPerformingCompanies(selectedRange);
+            }
+             List<CompanyPerformance> result = await task;
+            return result;
         }
 
         public Brush GetPerformersColor(bool isTop10)
@@ -67,7 +77,7 @@ namespace StockApp.StockService
             return isTop10 ? new SolidColorBrush(Colors.LimeGreen) : new SolidColorBrush(Colors.IndianRed);
         }
 
-        public StockDTO LoadData(Company selectedCompany, string selectedRange, bool isTop10, string searchText)
+        public async Task<StockDTO> LoadData(Company selectedCompany, string selectedRange, bool isTop10, string searchText)
         {
             
             ChartBuilder chartBuilder = new ChartBuilder(selectedCompany.Name);
@@ -84,8 +94,8 @@ namespace StockApp.StockService
             var highestPrice = _processing.GetHighestPriceInRange(selectedCompany.Symbol, selectedRange);
             var lowestPrice = _processing.GetLowestPriceInRange(selectedCompany.Symbol, selectedRange);
             var rangeText = _processing.GetRangeDescription(Convert.ToDouble(priceVariation), selectedRange);
-            var performers = GetTopPerformers(isTop10, selectedRange);
             var performersColor = GetPerformersColor(isTop10);
+            var performers = await GetTopPerformers(isTop10, selectedRange);
 
             return new StockDTO
             {
