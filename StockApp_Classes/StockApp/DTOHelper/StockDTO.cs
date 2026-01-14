@@ -19,6 +19,7 @@ namespace StockApp.DTOHelper
         public List<CompanyPerformance> Performers { get; set; }
         public PlotModel ChartData { get; set; }
         public Brush PerformersColor { get; set; }
+        public Brush ChartColor { get; set; }
         public double CurrentPrice { get; set; }
         public double PriceVariation { get; set; }
         public double PercentageVariation { get; set; }

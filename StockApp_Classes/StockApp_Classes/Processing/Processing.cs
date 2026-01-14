@@ -46,19 +46,14 @@ namespace StockApp_Classes.Processing
             return dbService.GetAllCompanies();
         }
 
-        public async Task<List<CompanyPerformance>> GetTopPerformingCompanies(string range)
+        public List<CompanyPerformance> GetTopPerformingCompanies(string range)
         {
-            Task<List<CompanyPerformance>> task =  dbService.GetTopPerformingCompanies(range);
-
-            List<CompanyPerformance> result = await task;
-            return result;
+            return dbService.GetTopPerformingCompanies(range); ;
         }
 
-        public async Task<List<CompanyPerformance>> GetLowestPerformingCompanies(string range){
+        public List<CompanyPerformance> GetLowestPerformingCompanies(string range){
 
-            Task<List<CompanyPerformance>> task = dbService.GetLowestPerformingCompanies(range);
-            List<CompanyPerformance> result = await task;
-            return result;
+            return dbService.GetLowestPerformingCompanies(range);
         }
 
         public List<DailyEntry> GetStockEntriesBetweenDates(string symbol, string range)
