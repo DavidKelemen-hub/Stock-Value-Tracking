@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using StockApp.Models;
+using StockApp.Helpers;
 using Microsoft.Data.SqlClient;
 using Dapper;
-using StockApp_Classes.Models;
 
-namespace StockApp_Classes.Services
+namespace StockApp.Services
 {
     public class DataBaseService
     {

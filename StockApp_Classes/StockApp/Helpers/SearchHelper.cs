@@ -1,11 +1,5 @@
-﻿using OpenTK.Graphics.ES10;
-using StockApp_Classes.Models;
-using System;
-using System.Collections.Generic;
+﻿using StockApp.Models;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace StockApp.Helpers
 {

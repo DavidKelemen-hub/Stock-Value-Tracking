@@ -1,14 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace StockApp.Helpers
 {
-    using System;
-    using System.Windows.Input;
-
     public class RelayCommand : ICommand
     {
         private readonly Action<object?> _execute;

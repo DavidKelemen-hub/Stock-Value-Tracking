@@ -1,14 +1,9 @@
 ﻿using Microsoft.IdentityModel.Tokens;
-using StockApp.DTOHelper;
+using StockApp.DTO;
 using StockApp.Helpers;
-using StockApp_Classes.Models;
-using StockApp_Classes.Processing;
-using System;
-using System.Collections.Generic;
+using StockApp.Models;
+using StockApp.DataProcessing;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Media;
 
 namespace StockApp.StockService
