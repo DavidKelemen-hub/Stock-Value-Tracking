@@ -91,6 +91,7 @@ namespace StockApp.StockService
             var highestPrice = _processing.GetHighestPriceInRange(selectedCompany.Symbol, selectedRange);
             var lowestPrice = _processing.GetLowestPriceInRange(selectedCompany.Symbol, selectedRange);
             var rangeText = _processing.GetRangeDescription(Convert.ToDouble(priceVariation), selectedRange);
+            var performerRangeText = rangeText.Substring(2);
             var performersColor = GetPerformersColor(isTop10);
             var performers = GetTopPerformers(isTop10, selectedRange);
             var chartColor = priceVariation > 0 ? new SolidColorBrush(Colors.LimeGreen) : new SolidColorBrush(Colors.IndianRed);
@@ -108,6 +109,7 @@ namespace StockApp.StockService
                 LowestPrice = lowestPrice,
                 RangeText = rangeText,
                 ChartColor = chartColor,
+                PerformerRangeText = performerRangeText
 
             };
         }

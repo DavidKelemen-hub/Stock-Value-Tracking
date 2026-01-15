@@ -55,10 +55,8 @@
         Padding="12"
         BorderThickness="1">
 
-            <!-- UN SINGUR child -->
-            <StackPanel>
-                
 
+            <StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
 
                     <TextBlock FontSize="18"
@@ -94,33 +92,47 @@
 
                     <!-- Range buttons -->
                 <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
-                    <Button Content="5D"  Style="{StaticResource RangeButtonStyle}"
-            Command="{Binding RangeClickedCommand}"
-            CommandParameter="5D"/>
+                    <RadioButton Content="5D"
+                 GroupName="RangeGroup"
+                 Style="{StaticResource RangeRadioButtonStyle}"
+                 Command="{Binding RangeClickedCommand}"
+                 CommandParameter="5D"/>
 
-                    <Button Content="1M"  Style="{StaticResource RangeButtonStyle}"
-            Command="{Binding RangeClickedCommand}"
-            CommandParameter="1M"/>
+                    <RadioButton Content="1M"
+                 GroupName="RangeGroup"
+                 Style="{StaticResource RangeRadioButtonStyle}"
+                 Command="{Binding RangeClickedCommand}"
+                 CommandParameter="1M"/>
 
-                    <Button Content="6M"  Style="{StaticResource RangeButtonStyle}"
-            Command="{Binding RangeClickedCommand}"
-            CommandParameter="6M"/>
+                    <RadioButton Content="6M"
+                 GroupName="RangeGroup"
+                 Style="{StaticResource RangeRadioButtonStyle}"
+                 Command="{Binding RangeClickedCommand}"
+                 CommandParameter="6M"/>
 
-                    <Button Content="YTD" Style="{StaticResource RangeButtonStyle}"
-            Command="{Binding RangeClickedCommand}"
-            CommandParameter="YTD"/>
+                    <RadioButton Content="YTD"
+                 GroupName="RangeGroup"
+                 Style="{StaticResource RangeRadioButtonStyle}"
+                 Command="{Binding RangeClickedCommand}"
+                 CommandParameter="YTD"/>
 
-                    <Button Content="1Y"  Style="{StaticResource RangeButtonStyle}"
-            Command="{Binding RangeClickedCommand}"
-            CommandParameter="1Y"/>
+                    <RadioButton Content="1Y"
+                 GroupName="RangeGroup"
+                 Style="{StaticResource RangeRadioButtonStyle}"
+                 Command="{Binding RangeClickedCommand}"
+                 CommandParameter="1Y"/>
 
-                    <Button Content="5Y"  Style="{StaticResource RangeButtonStyle}"
-            Command="{Binding RangeClickedCommand}"
-            CommandParameter="5Y"/>
+                    <RadioButton Content="5Y"
+                 GroupName="RangeGroup"
+                 Style="{StaticResource RangeRadioButtonStyle}"
+                 Command="{Binding RangeClickedCommand}"
+                 CommandParameter="5Y"/>
 
-                    <Button Content="Max" Style="{StaticResource RangeButtonStyle}"
-            Command="{Binding RangeClickedCommand}"
-            CommandParameter="Max"/>
+                    <RadioButton Content="Max"
+                 GroupName="RangeGroup"
+                 Style="{StaticResource RangeRadioButtonStyle}"
+                 Command="{Binding RangeClickedCommand}"
+                 CommandParameter="Max"/>
                 </StackPanel>
 
 
@@ -156,26 +168,48 @@
 
                 <Separator Margin="0,12"/>
 
+                
+                
+                
+                
                 <!-- Button selector -->
-                <StackPanel Orientation="Horizontal"
-            HorizontalAlignment="Center"
-            Margin="0,10">
+                <Grid Margin="0,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
 
-                    <TextBlock Text="Top 10 Losers"
-                               Foreground="IndianRed"
-                               FontSize="14"
+                    <!-- Left text -->
+                    <TextBlock Grid.Column="0"
+               Opacity="0.7"
+               FontSize="18"
                VerticalAlignment="Center"
-               Margin="0,0,10,0"/>
+               HorizontalAlignment="Left"
+               FontWeight="Bold"
+               Text="{Binding PerformerRangeText,
+                      StringFormat={}Top/Low Performers from {0}}" />
 
-                    <ToggleButton Style="{StaticResource SwitchToggle}"
-                  IsChecked="{Binding ShowTop10}" />
+                    <!-- Center controls -->
+                    <StackPanel Grid.Column="1"
+                Orientation="Horizontal"
+                VerticalAlignment="Center">
 
-                    <TextBlock Text="Top 10 Gainers"
-                               Foreground="LimeGreen"
-                                                              FontSize="14"
-                               VerticalAlignment="Center"
-                               Margin="10,0,0,0"/>
-                </StackPanel>
+                        <TextBlock Text="Low Performers"
+                   Foreground="IndianRed"
+                   FontSize="14"
+                   Margin="0,0,10,0"/>
+
+                        <ToggleButton Style="{StaticResource SwitchToggle}"
+                      IsChecked="{Binding ShowTop10}" />
+
+                        <TextBlock Text="Top Performers"
+                   Foreground="LimeGreen"
+                   FontSize="14"
+                   Margin="10,0,0,0"/>
+                    </StackPanel>
+                </Grid>
+
 
                 <!-- Button selector -->
 
