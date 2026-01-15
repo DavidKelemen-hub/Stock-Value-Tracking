@@ -30,6 +30,7 @@ namespace StockApp.ViewModels
         private string searchText { get; set; }
         private double priceVariation { get; set; }
         private string rangeText { get; set; }
+        private string performerRangeText { get; set; }
         private bool showTop10 { get; set; }
         private Brush chartColor { get; set; }
         private Brush performersColor { get; set; }
@@ -86,6 +87,7 @@ namespace StockApp.ViewModels
             PerformersColor = dto.PerformersColor;
             ChartData = dto.ChartData;
             ChartColor = dto.ChartColor;
+            PerformerRangeText = dto.PerformerRangeText;
         }
 
         public async Task InitAsync()
@@ -193,6 +195,17 @@ namespace StockApp.ViewModels
             {
                 if (rangeText == value) return;
                 rangeText = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string PerformerRangeText
+        {
+            get { return performerRangeText; }
+            set
+            {
+                if (performerRangeText == value) return;
+                performerRangeText = value;
                 OnPropertyChanged();
             }
         }

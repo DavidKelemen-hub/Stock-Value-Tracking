@@ -26,6 +26,7 @@ namespace StockApp.DTOHelper
         public double HighestPrice { get; set; }
         public double LowestPrice { get; set; }
         public string RangeText { get; set; }
+        public string PerformerRangeText { get; set; }
         public String SelectedRange { get; set; }
         public bool IsTop10 { get; set; }
         public string SearchText { get; set; }

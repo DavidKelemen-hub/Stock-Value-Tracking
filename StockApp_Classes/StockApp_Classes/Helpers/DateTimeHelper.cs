@@ -43,7 +43,7 @@ namespace StockApp.Helpers
                     this.startDate = DateTime.Today.AddYears(-5);
                     break;
                 default:
-                    this.startDate = DateTime.Today.AddMonths(-1);
+                    this.startDate = DateTime.Today.AddYears(-5);
                     break;
             }
             return this.startDate;
