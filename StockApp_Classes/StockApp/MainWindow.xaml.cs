@@ -1,6 +1,6 @@
 ﻿using StockApp.ViewModels;
-using StockApp_Classes.Models;
-using StockApp_Classes.Services;
+using StockApp.Models;
+using StockApp.Services;
 using System.Collections.ObjectModel;
 using System.Configuration;
 using System.Text;
@@ -13,7 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using StockApp_Classes.Processing;
+using StockApp.DataProcessing;
 
 namespace StockApp
 {

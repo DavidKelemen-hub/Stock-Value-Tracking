@@ -1,17 +1,10 @@
 ﻿using OxyPlot;
-using StockApp_Classes.Models;
-using System;
-using System.Collections.Generic;
+using StockApp.Models;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Media;
 
-namespace StockApp.DTOHelper
+namespace StockApp.DTO
 {
-   
-
     public class StockDTO
     {
         public ObservableCollection<Company> Companies { get; set; } 

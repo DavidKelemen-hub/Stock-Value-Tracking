@@ -1,17 +1,14 @@
-﻿using Microsoft.IdentityModel.Tokens;
-using OxyPlot;
+﻿using OxyPlot;
 using StockApp.Helpers;
-using StockApp_Classes.Models;
-using StockApp_Classes.Processing;
+using StockApp.Models;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using System.Windows.Media;
 using StockApp.StockService;
-using StockApp.DTOHelper;
+using StockApp.DTO;
 using System.Windows.Data;
-
 
 namespace StockApp.ViewModels
 {
@@ -35,18 +32,20 @@ namespace StockApp.ViewModels
         private Brush chartColor { get; set; }
         private Brush performersColor { get; set; }
         public ICommand RangeClickedCommand { get; set; }
-
         private double highestPrice { get; set; }
         private double lowestPrice { get; set; }
         public List<CompanyPerformance> companiesPerformance { get; set; }
-        public Service _service = new Service();
-        private bool isInitialized = false;
+        private Service _service;
+        private bool isInitialized;
         private bool _isRefreshing;
 
         /************************************************ Bindable properties ****************************************************/
 
         public MainViewModel()
         {
+            isInitialized = false;
+            _service = new Service();
+
             _ =  InitAsync();
 
             RangeClickedCommand = new RelayCommand(param =>
@@ -57,24 +56,11 @@ namespace StockApp.ViewModels
             });
         }
         /************************************************* Commands ****************************************************/
-        private bool CompanyMatches(object obj)
-        {
-            if (obj is not Company c) return false;
 
-            var s = SearchText?.Trim();
-            if (string.IsNullOrEmpty(s)) return true;
-
-            // avoid null issues
-            var name = c.Name ?? "";
-            var symbol = c.Symbol ?? "";
-
-            return name.Contains(s, StringComparison.OrdinalIgnoreCase)
-                || symbol.Contains(s, StringComparison.OrdinalIgnoreCase);
-        }
-
-
+        /* Async tasks are not quite working at the moment - needs refining */
         public async Task LoadData()
         {
+            if (SelectedCompany == null) return;
             StockDTO dto = _service.LoadData(SelectedCompany, SelectedRange, ShowTop10, SearchText);
 
             PercentageVariation = dto.PercentageVariation;
@@ -90,6 +76,7 @@ namespace StockApp.ViewModels
             PerformerRangeText = dto.PerformerRangeText;
         }
 
+        /* Async tasks are not quite working at the moment - needs refining */
         public async Task InitAsync()
         {
             Companies = _service.GetAllCompanies();
@@ -103,11 +90,30 @@ namespace StockApp.ViewModels
             isInitialized = true;
         }
 
+        /* Async tasks are not quite working at the moment - needs refining */
         public async Task  RequestRefresh()
         {
             if (!isInitialized) return;
             await LoadData();
         }
+
+        /* This metod was created by ChatGPT inorder to resolve null reference errors 
+           for SelectedCompany when filtering the CollectionView - will refine later */
+        private bool CompanyMatches(object obj)
+        {
+            if (obj is not Company c) return false;
+
+            var s = SearchText?.Trim();
+            if (string.IsNullOrEmpty(s)) return true;
+
+            var name = c.Name ?? "";
+            var symbol = c.Symbol ?? "";
+
+            return name.Contains(s, StringComparison.OrdinalIgnoreCase)
+                || symbol.Contains(s, StringComparison.OrdinalIgnoreCase);
+        }
+        /* This metod was created by ChatGPT inorder to resolve null reference errors 
+           for SelectedCompany when filtering the CollectionView - will refine later */
         /************************************************* Commands ****************************************************/
 
         /*********************************************** Model Properties ****************************************************/
@@ -121,7 +127,6 @@ namespace StockApp.ViewModels
                 OnPropertyChanged();
             }
         }
-
         public List<CompanyPerformance> CompaniesPerformance
         {
             get { return companiesPerformance; }
@@ -228,6 +233,7 @@ namespace StockApp.ViewModels
                 searchText = value;
                 OnPropertyChanged();
 
+                /* This section was created using ChatGPT to resolve null reference errors - will refine later */
                 var old = SelectedCompany;
 
                 _isRefreshing = true;
@@ -237,6 +243,7 @@ namespace StockApp.ViewModels
                 // keep selection if still visible
                 if (old != null && CompaniesView.Contains(old))
                     SelectedCompany = old;
+                /* This section was created using ChatGPT to resolve null reference errors - will refine later */
             }
         }
         public double PercentageVariation
@@ -278,10 +285,11 @@ namespace StockApp.ViewModels
             get => selectedCompany;
             set
             {
-                // ignore transient null pushed by WPF during refresh
+                /* This section was created using ChatGPT to resolve null reference errors - will refine later */
                 if (value == null && _isRefreshing) return;
 
                 if (ReferenceEquals(selectedCompany, value)) return;
+                /* This section was created using ChatGPT to resolve null reference errors - will refine later */
                 selectedCompany = value;
                 OnPropertyChanged();
                 _ = RequestRefresh();
