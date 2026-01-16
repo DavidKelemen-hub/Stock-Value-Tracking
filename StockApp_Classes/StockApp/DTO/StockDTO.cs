@@ -9,9 +9,7 @@ namespace StockApp.DTO
     {
         public ObservableCollection<Company> Companies { get; set; } 
         public Company SelectedCompany { get; set; }
-        public List<CompanyPerformance> Performers { get; set; }
         public PlotModel ChartData { get; set; }
-        public Brush PerformersColor { get; set; }
         public Brush ChartColor { get; set; }
         public double CurrentPrice { get; set; }
         public double PriceVariation { get; set; }
@@ -19,10 +17,16 @@ namespace StockApp.DTO
         public double HighestPrice { get; set; }
         public double LowestPrice { get; set; }
         public string RangeText { get; set; }
-        public string PerformerRangeText { get; set; }
         public String SelectedRange { get; set; }
-        public bool IsTop10 { get; set; }
         public string SearchText { get; set; }
+    }
+
+    public class PerformersDTO
+    {
+        public List<CompanyPerformance> Performers { get; set; }
+        public Brush PerformersColor { get; set; }
+        public string PerformerRangeText { get; set; }
+        public bool IsTop10 { get; set; }
     }
 
 }
