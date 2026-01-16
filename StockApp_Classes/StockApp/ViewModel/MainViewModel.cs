@@ -46,7 +46,7 @@ namespace StockApp.ViewModels
             isInitialized = false;
             _service = new Service();
 
-            _ =  InitAsync();
+            Initialize();
 
             RangeClickedCommand = new RelayCommand(param =>
             {
@@ -58,10 +58,10 @@ namespace StockApp.ViewModels
         /************************************************* Commands ****************************************************/
 
         /* Async tasks are not quite working at the moment - needs refining */
-        public async Task LoadData()
+        public void LoadStockData()
         {
             if (SelectedCompany == null) return;
-            StockDTO dto = _service.LoadData(SelectedCompany, SelectedRange, ShowTop10, SearchText);
+            StockDTO dto = _service.LoadStockData(SelectedCompany, SelectedRange, ShowTop10, SearchText);
 
             PercentageVariation = dto.PercentageVariation;
             CurrentPrice = dto.CurrentPrice;
@@ -69,32 +69,43 @@ namespace StockApp.ViewModels
             RangeText = dto.RangeText;
             HighestPrice = dto.HighestPrice;
             LowestPrice = dto.LowestPrice;
-            CompaniesPerformance = dto.Performers;
-            PerformersColor = dto.PerformersColor;
             ChartData = dto.ChartData;
             ChartColor = dto.ChartColor;
+        }
+
+        public void LoadPerformersData()
+        {
+            if (SelectedCompany == null) return;
+            PerformersDTO dto = _service.LoadPerformersData(ShowTop10, SelectedRange);
+
+            CompaniesPerformance = dto.Performers;
+            PerformersColor = dto.PerformersColor;
             PerformerRangeText = dto.PerformerRangeText;
         }
 
-        /* Async tasks are not quite working at the moment - needs refining */
-        public async Task InitAsync()
+        public void Initialize()
         {
-            Companies = _service.GetAllCompanies();
-            CompaniesView = CollectionViewSource.GetDefaultView(Companies);
+            CompaniesView = CollectionViewSource.GetDefaultView(_service.GetAllCompanies());
             CompaniesView.Filter = CompanyMatches;
             SelectedCompany = _service.GetFilteredCompanies(SearchText).FirstOrDefault();
             SelectedRange = _service.GetInitialRange();
 
-            await LoadData();
+            LoadStockData();
+            LoadPerformersData();
 
             isInitialized = true;
         }
 
-        /* Async tasks are not quite working at the moment - needs refining */
-        public async Task  RequestRefresh()
+        public void  RequestStockRefresh()
         {
             if (!isInitialized) return;
-            await LoadData();
+            LoadStockData();
+        }
+
+        public void RequestPerformerRefresh()
+        {
+            if (!isInitialized) return;
+            LoadPerformersData();
         }
 
         /* This metod was created by ChatGPT inorder to resolve null reference errors 
@@ -146,7 +157,7 @@ namespace StockApp.ViewModels
                 if (showTop10 == value) return;
                 showTop10 = value;
                 OnPropertyChanged();
-                _ = RequestRefresh();
+                RequestPerformerRefresh();
             }
         }
 
@@ -265,7 +276,8 @@ namespace StockApp.ViewModels
                 if (selectedRange == value) return;
                 selectedRange = value;
                 OnPropertyChanged();
-                _ = RequestRefresh();
+                RequestStockRefresh();
+                RequestPerformerRefresh();
             }
         }
 
@@ -292,7 +304,7 @@ namespace StockApp.ViewModels
                 /* This section was created using ChatGPT to resolve null reference errors - will refine later */
                 selectedCompany = value;
                 OnPropertyChanged();
-                _ = RequestRefresh();
+                RequestStockRefresh();
             }
         }
 

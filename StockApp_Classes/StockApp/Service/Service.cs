@@ -69,7 +69,7 @@ namespace StockApp.StockService
             return isTop10 ? new SolidColorBrush(Colors.LimeGreen) : new SolidColorBrush(Colors.IndianRed);
         }
 
-        public StockDTO LoadData(Company selectedCompany, string selectedRange, bool isTop10, string searchText)
+        public StockDTO LoadStockData(Company selectedCompany, string selectedRange, bool isTop10, string searchText)
         {
             
             ChartBuilder chartBuilder = new ChartBuilder(selectedCompany.Name);
@@ -86,17 +86,15 @@ namespace StockApp.StockService
             var highestPrice = _processing.GetHighestPriceInRange(selectedCompany.Symbol, selectedRange);
             var lowestPrice = _processing.GetLowestPriceInRange(selectedCompany.Symbol, selectedRange);
             var rangeText = _processing.GetRangeDescription(Convert.ToDouble(priceVariation), selectedRange);
-            var performerRangeText = rangeText.Substring(2);
-            var performersColor = GetPerformersColor(isTop10);
-            var performers = GetTopPerformers(isTop10, selectedRange);
+            
+            
+            
             var chartColor = priceVariation > 0 ? new SolidColorBrush(Colors.LimeGreen) : new SolidColorBrush(Colors.IndianRed);
 
             return new StockDTO
             {
                 Companies = companies,
-                Performers = performers,
                 ChartData = chartData,
-                PerformersColor = performersColor,
                 CurrentPrice = currentPrice,
                 PriceVariation = priceVariation,
                 PercentageVariation = percentageVariation,
@@ -104,8 +102,21 @@ namespace StockApp.StockService
                 LowestPrice = lowestPrice,
                 RangeText = rangeText,
                 ChartColor = chartColor,
-                PerformerRangeText = performerRangeText
+            };
+        }
 
+        public PerformersDTO LoadPerformersData(bool isTop10, string selectedRange)
+        {
+            var performers = GetTopPerformers(isTop10, selectedRange);
+            var performersColor = GetPerformersColor(isTop10);
+            var rangeText = _processing.GetRangeDescription(1, selectedRange);
+            var performerRangeText = rangeText.Substring(2);
+
+            return new PerformersDTO
+            {
+                Performers = performers,
+                PerformersColor = performersColor,
+                PerformerRangeText = performerRangeText
             };
         }
     }
