@@ -83,7 +83,6 @@ namespace StockApp.ViewModels
             PerformerRangeText = dto.PerformerRangeText;
         }
 
-        
         public void Initialize()
         {
             CompaniesView = CollectionViewSource.GetDefaultView(_service.GetAllCompanies());
