@@ -1,11 +1,5 @@
 ﻿namespace StockApp.Models
 {
-    public class DailyEntriesCollection
-    {
-        public required List<DailyEntry> TimeSeriesDaily { get; set; }
-
-    }
-
     public class CompanyPerformance
     {
         public string Symbol { get; set; }

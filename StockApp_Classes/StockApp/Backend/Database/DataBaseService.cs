@@ -41,14 +41,14 @@ namespace StockApp.DataBaseServices
             
             DateTime end = DateTime.Today;
             DateTime start;
-            DateTimeHelper dtHelper = new DateTimeHelper();
+            
             if (range == "5D")
             {
                 start = GetLast5TradingDays().Last().TradeDate;
             }
             else
             {
-                start = dtHelper.GetStartDate(range);
+                start = DateTimeHelper.GetStartDate(range);
             }
                 
             const string queryString = @"EXEC GetTopPerformingCompanies @startDate=@start, @endDate=@end";
@@ -63,8 +63,7 @@ namespace StockApp.DataBaseServices
         public List<CompanyPerformance> GetLowestPerformingCompanies(string range)
         {
             DateTime end = DateTime.Today;
-            DateTimeHelper dtHelper = new DateTimeHelper();
-            DateTime start = dtHelper.GetStartDate(range);
+            DateTime start = DateTimeHelper.GetStartDate(range);
 
             string queryString = @"EXEC GetLowestPerformingCompanies @startDate=@start, @endDate=@end";
 
@@ -114,7 +113,6 @@ namespace StockApp.DataBaseServices
         public List<DailyEntry> GetStockEntriesBetweenDates(string symbol, string range)
         {
             DateTime endDate = DateTime.Today;
-            DateTimeHelper dtHelper = new DateTimeHelper(); 
 
             if(range == "Max")
             {
@@ -123,7 +121,7 @@ namespace StockApp.DataBaseServices
             }
             else
             {
-                DateTime startDate = dtHelper.GetStartDate(range);
+                DateTime startDate = DateTimeHelper.GetStartDate(range);
                 var stockID = GetCompanyIDFromSymbol(symbol);
 
                 const string queryString = "SELECT * " +

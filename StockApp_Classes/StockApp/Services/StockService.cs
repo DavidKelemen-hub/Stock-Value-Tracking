@@ -6,29 +6,23 @@ using StockApp.ProcessingService;
 using System.Collections.ObjectModel;
 using System.Windows.Media;
 
-namespace StockApp.StockService
+namespace StockApp.Services
 {
-    public interface IService
+    public interface IStockService
     {
         public ObservableCollection<Company> GetAllCompanies();
         public ObservableCollection<Company> GetFilteredCompanies(string searchText);
         public string GetInitialRange();
-        public List<CompanyPerformance> GetTopPerformers(bool isTop10, string selectedRange);
-        public Brush GetPerformersColor(bool isTop10);
         public StockDTO LoadStockData(Company selectedCompany, string selectedRange, bool isTop10, string searchText);
-        public PerformersDTO LoadPerformersData(bool isTop10, string selectedRange);
     }
-    public class Service : IService
+    public class StockService : IStockService
     {
         private readonly IProcessing _processing;
-
-        private readonly SearchHelper _searchHelper;
         private readonly string InitSelectedRange = "1Y";
 
-        public Service(IProcessing _processing)
+        public StockService(IProcessing _processing)
         {
             this._processing = _processing;
-            _searchHelper = new SearchHelper();
         }
 
         public ObservableCollection<Company> GetAllCompanies()
@@ -47,7 +41,7 @@ namespace StockApp.StockService
             }
             else
             {
-                _companies = new ObservableCollection<Company>(_searchHelper.GetMatchingCompanies(searchText.ToLower(), _companiesCopy));
+                _companies = new ObservableCollection<Company>(SearchHelper.GetMatchingCompanies(searchText.ToLower(), _companiesCopy));
             }
             return _companies;
         }
@@ -55,23 +49,6 @@ namespace StockApp.StockService
         public string GetInitialRange()
         {
             return InitSelectedRange;
-        }
-
-        public List<CompanyPerformance> GetTopPerformers(bool isTop10, string selectedRange)
-        {
-            if (isTop10)
-            {
-                return _processing.GetTopPerformingCompanies(selectedRange);
-            }
-            else
-            {
-                return _processing.GetLowestPerformingCompanies(selectedRange);
-            }
-        }   
-
-        public Brush GetPerformersColor(bool isTop10)
-        {
-            return isTop10 ? new SolidColorBrush(Colors.LimeGreen) : new SolidColorBrush(Colors.IndianRed);
         }
 
         public StockDTO LoadStockData(Company selectedCompany, string selectedRange, bool isTop10, string searchText)
@@ -107,19 +84,6 @@ namespace StockApp.StockService
             };
         }
 
-        public PerformersDTO LoadPerformersData(bool isTop10, string selectedRange)
-        {
-            var performers = GetTopPerformers(isTop10, selectedRange);
-            var performersColor = GetPerformersColor(isTop10);
-            var rangeText = _processing.GetRangeDescription(1, selectedRange);
-            var performerRangeText = rangeText.Substring(2);
-
-            return new PerformersDTO
-            {
-                Performers = performers,
-                PerformersColor = performersColor,
-                PerformerRangeText = performerRangeText
-            };
-        }
+        
     }
 }

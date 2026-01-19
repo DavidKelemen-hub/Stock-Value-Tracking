@@ -3,9 +3,9 @@ using System.Collections.ObjectModel;
 
 namespace StockApp.Helpers
 {
-    public class SearchHelper
+    public static class SearchHelper
     {
-        public List<Company> GetMatchingCompanies(string searchString, ObservableCollection<Company> companies)
+        public static List<Company> GetMatchingCompanies(string searchString, ObservableCollection<Company> companies)
         {
             List<Company> matchingCompanies = new List<Company>();
             foreach (var item in companies)

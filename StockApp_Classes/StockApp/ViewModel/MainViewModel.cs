@@ -6,12 +6,11 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using System.Windows.Media;
-using StockApp.StockService;
+using StockApp.Services;
 using StockApp.DTO;
 using System.Windows.Data;
 using StockApp.DataBaseServices;
 using StockApp.ProcessingService;
-using StockApp.StockService;
 
 namespace StockApp.ViewModels
 {
@@ -42,14 +41,17 @@ namespace StockApp.ViewModels
         private bool isInitialized;
         private bool _isRefreshing;
 
-        private readonly IService _service;
+        private readonly IStockService _stockService;
+        private readonly IPerformersService _performersService;
 
         /************************************************ Bindable properties ****************************************************/
 
-        public MainViewModel(IService service)
+        public MainViewModel(IStockService stockService, IPerformersService performersService)
         {
+            
+            this._stockService = stockService;
+            this._performersService = performersService;
             isInitialized = false;
-            this._service = service;
 
             Initialize();
 
@@ -66,7 +68,7 @@ namespace StockApp.ViewModels
         public void LoadStockData()
         {
             if (SelectedCompany == null) return;
-            StockDTO dto = _service.LoadStockData(SelectedCompany, SelectedRange, ShowTop10, SearchText);
+            StockDTO dto = _stockService.LoadStockData(SelectedCompany, SelectedRange, ShowTop10, SearchText);
 
             PercentageVariation = dto.PercentageVariation;
             CurrentPrice = dto.CurrentPrice;
@@ -81,7 +83,7 @@ namespace StockApp.ViewModels
         public void LoadPerformersData()
         {
             if (SelectedCompany == null) return;
-            PerformersDTO dto = _service.LoadPerformersData(ShowTop10, SelectedRange);
+            PerformersDTO dto = _performersService.LoadPerformersData(ShowTop10, SelectedRange);
 
             CompaniesPerformance = dto.Performers;
             PerformersColor = dto.PerformersColor;
@@ -90,10 +92,10 @@ namespace StockApp.ViewModels
 
         public void Initialize()
         {
-            CompaniesView = CollectionViewSource.GetDefaultView(_service.GetAllCompanies());
+            CompaniesView = CollectionViewSource.GetDefaultView(_stockService.GetAllCompanies());
             CompaniesView.Filter = CompanyMatches;
-            SelectedCompany = _service.GetFilteredCompanies(SearchText).FirstOrDefault();
-            SelectedRange = _service.GetInitialRange();
+            SelectedCompany = _stockService.GetFilteredCompanies(SearchText).FirstOrDefault();
+            SelectedRange = _stockService.GetInitialRange();
 
             LoadStockData();
             LoadPerformersData();
