@@ -1,19 +1,8 @@
-﻿using StockApp.ViewModels;
-using StockApp.Models;
-using StockApp.Services;
-using System.Collections.ObjectModel;
-using System.Configuration;
-using System.Text;
+﻿using StockApp.DataBaseServices;
+using StockApp.ProcessingService;
+using StockApp.StockService;
+using StockApp.ViewModels;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using StockApp.DataProcessing;
 
 namespace StockApp
 {
@@ -22,14 +11,19 @@ namespace StockApp
     /// </summary>
     public partial class MainWindow : Window
     {
- 
+
         public MainWindow()
         {
             InitializeComponent();
 
-            DataContext = new MainViewModel();
+            IDataBaseService db = new DataBaseService();
+            IProcessing processing = new Processing(db);
+            IService service = new Service(processing); 
+
+            DataContext = new MainViewModel(service);
         }
 
-      
+
+
     }
 }

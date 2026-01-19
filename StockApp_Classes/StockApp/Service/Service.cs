@@ -2,21 +2,32 @@
 using StockApp.DTO;
 using StockApp.Helpers;
 using StockApp.Models;
-using StockApp.DataProcessing;
+using StockApp.ProcessingService;
 using System.Collections.ObjectModel;
 using System.Windows.Media;
 
 namespace StockApp.StockService
 {
-    public class Service
+    public interface IService
     {
-        private readonly Processing _processing;
+        public ObservableCollection<Company> GetAllCompanies();
+        public ObservableCollection<Company> GetFilteredCompanies(string searchText);
+        public string GetInitialRange();
+        public List<CompanyPerformance> GetTopPerformers(bool isTop10, string selectedRange);
+        public Brush GetPerformersColor(bool isTop10);
+        public StockDTO LoadStockData(Company selectedCompany, string selectedRange, bool isTop10, string searchText);
+        public PerformersDTO LoadPerformersData(bool isTop10, string selectedRange);
+    }
+    public class Service : IService
+    {
+        private readonly IProcessing _processing;
+
         private readonly SearchHelper _searchHelper;
         private readonly string InitSelectedRange = "1Y";
 
-        public Service()
+        public Service(IProcessing _processing)
         {
-            _processing = new Processing();
+            this._processing = _processing;
             _searchHelper = new SearchHelper();
         }
 
@@ -39,12 +50,6 @@ namespace StockApp.StockService
                 _companies = new ObservableCollection<Company>(_searchHelper.GetMatchingCompanies(searchText.ToLower(), _companiesCopy));
             }
             return _companies;
-        }
-
-        public Company GetInitialCompany()
-        {
-            ObservableCollection<Company> _companiesCopy = new ObservableCollection<Company>(_processing.GetAllCompanies());
-            return _companiesCopy.FirstOrDefault();
         }
 
         public string GetInitialRange()
@@ -86,9 +91,6 @@ namespace StockApp.StockService
             var highestPrice = _processing.GetHighestPriceInRange(selectedCompany.Symbol, selectedRange);
             var lowestPrice = _processing.GetLowestPriceInRange(selectedCompany.Symbol, selectedRange);
             var rangeText = _processing.GetRangeDescription(Convert.ToDouble(priceVariation), selectedRange);
-            
-            
-            
             var chartColor = priceVariation > 0 ? new SolidColorBrush(Colors.LimeGreen) : new SolidColorBrush(Colors.IndianRed);
 
             return new StockDTO

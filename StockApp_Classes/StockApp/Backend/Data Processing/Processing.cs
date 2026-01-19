@@ -4,17 +4,32 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using StockApp.Models;
-using StockApp.Services;
+using StockApp.DataBaseServices;
 
-namespace StockApp.DataProcessing
+namespace StockApp.ProcessingService
 {
-    public class Processing
+    public interface IProcessing
     {
-        DataBaseService dbService { get; set; }
+        public double GetHighestPriceInRange(string symbol, string range);
+        public double GetLowestPriceInRange(string symbol, string range);
+        public double GetPercentageVariationInRange(string symbol, string range);
+        public double GetPriceVariationInRange(string symbol, string range);
+        public string GetRangeDescription(double priceVariation, string range);
+        public List<Company> GetAllCompanies();
+        public List<CompanyPerformance> GetTopPerformingCompanies(string range);
+        public List<CompanyPerformance> GetLowestPerformingCompanies(string range);
+        public List<DailyEntry> GetStockEntriesBetweenDates(string symbol, string range);
+        public double GetCurrentPrice(string symbol);
+    }
 
-        public Processing()
+
+    public class Processing : IProcessing
+    {
+        private readonly IDataBaseService dbService;
+
+        public Processing(IDataBaseService dbService)
         {
-            dbService = new DataBaseService(System.Configuration.ConfigurationManager.ConnectionStrings["dbconnection"].ConnectionString);
+            this.dbService = dbService;
         }
 
         public double GetHighestPriceInRange(string symbol, string range)
@@ -51,7 +66,8 @@ namespace StockApp.DataProcessing
             return dbService.GetTopPerformingCompanies(range); ;
         }
 
-        public List<CompanyPerformance> GetLowestPerformingCompanies(string range){
+        public List<CompanyPerformance> GetLowestPerformingCompanies(string range)
+        {
 
             return dbService.GetLowestPerformingCompanies(range);
         }

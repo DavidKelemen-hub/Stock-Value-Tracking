@@ -9,12 +9,15 @@ using System.Windows.Media;
 using StockApp.StockService;
 using StockApp.DTO;
 using System.Windows.Data;
+using StockApp.DataBaseServices;
+using StockApp.ProcessingService;
+using StockApp.StockService;
 
 namespace StockApp.ViewModels
 {
     public class MainViewModel : INotifyPropertyChanged
     {     
-        
+         
         /************************************************ Bindable properties ****************************************************/
         public ObservableCollection<Company> companiesCollection { get; set; }
         public ObservableCollection<Company> companiesCopy { get; set; }
@@ -35,16 +38,18 @@ namespace StockApp.ViewModels
         private double highestPrice { get; set; }
         private double lowestPrice { get; set; }
         public List<CompanyPerformance> companiesPerformance { get; set; }
-        private Service _service;
+        
         private bool isInitialized;
         private bool _isRefreshing;
 
+        private readonly IService _service;
+
         /************************************************ Bindable properties ****************************************************/
 
-        public MainViewModel()
+        public MainViewModel(IService service)
         {
             isInitialized = false;
-            _service = new Service();
+            this._service = service;
 
             Initialize();
 
