@@ -3,14 +3,26 @@ using StockApp.Helpers;
 using Microsoft.Data.SqlClient;
 using Dapper;
 
-namespace StockApp.Services
+namespace StockApp.DataBaseServices
 {
-    public class DataBaseService
+
+    public interface IDataBaseService
+    {
+        public List<Company> GetAllCompanies();
+        public List<CompanyPerformance> GetTopPerformingCompanies(string range);
+        public List<CompanyPerformance> GetLowestPerformingCompanies(string range);
+        public List<DailyEntry> GetCompleteStockData(string symbol);
+        public List<DailyEntry> GetLast5TradingDays();
+        public List<DailyEntry> GetStockEntriesBetweenDates(string symbol, string range);
+        public double GetClosePriceOnDate(string symbol, DateTime date);
+        public double GetLatestClosePrice(string symbol);
+    }
+    public class DataBaseService : IDataBaseService
     {
         private readonly string connectionString;
-        public DataBaseService(string connectionString)
+        public DataBaseService()
         {
-            this.connectionString = connectionString;
+            this.connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["dbconnection"].ConnectionString;
         }
 
         public List<Company> GetAllCompanies()
@@ -70,17 +82,6 @@ namespace StockApp.Services
             using (var connection = new SqlConnection(this.connectionString))
             {
                 var result = connection.QuerySingleOrDefault<int>(queryString, new { symbol });
-                return result;
-            }
-        }
-
-        public int GetCompanyIDFromName(string name)
-        {
-            const string queryString = "SELECT StockID FROM Company WHERE Name = @name";
-
-            using (var connection = new SqlConnection(this.connectionString))
-            {
-                var result = connection.QuerySingleOrDefault<int>(queryString, new { name });
                 return result;
             }
         }
