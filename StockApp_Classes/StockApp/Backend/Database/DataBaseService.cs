@@ -31,7 +31,7 @@ namespace StockApp.DataBaseServices
                                        
             using (var connection = new SqlConnection(this.connectionString))
             {
-                var result = connection.Query<Company>(queryString).ToList();
+                var result = connection.Query<Company>(queryString).AsList();
                 return result;
             }
         }
@@ -55,7 +55,7 @@ namespace StockApp.DataBaseServices
 
             using (var connection = new SqlConnection(this.connectionString))
             {
-                var result = connection.Query<CompanyPerformance>(queryString, new { start, end } ).ToList();
+                var result = connection.Query<CompanyPerformance>(queryString, new { start, end } ).AsList();
                 return result;
             }
         }
@@ -70,7 +70,7 @@ namespace StockApp.DataBaseServices
 
             using (var connection = new SqlConnection(this.connectionString))
             {
-                var result = connection.Query<CompanyPerformance>(queryString,new {start, end}).ToList();
+                var result = connection.Query<CompanyPerformance>(queryString,new {start, end}).AsList();
                 return result;
             }
         }
@@ -95,7 +95,7 @@ namespace StockApp.DataBaseServices
             using (var connection = new SqlConnection(this.connectionString))
             {
                 var result = connection.Query<DailyEntry>(queryString, new { stockID });
-                return result.ToList();
+                return result.AsList();
             }
         }
 
@@ -107,7 +107,7 @@ namespace StockApp.DataBaseServices
             using (var connection = new SqlConnection(this.connectionString))
             {
                 var result = connection.Query<DailyEntry>(queryString);
-                return result.ToList();
+                return result.AsList();
             }
         }
 
@@ -119,7 +119,7 @@ namespace StockApp.DataBaseServices
             if(range == "Max")
             {
                 var result = GetCompleteStockData(symbol);
-                return result.ToList();
+                return result.AsList();
             }
             else
             {
@@ -133,7 +133,7 @@ namespace StockApp.DataBaseServices
                 using (var connection = new SqlConnection(this.connectionString))
                 {
                     var result = connection.Query<DailyEntry>(queryString, new { stockID, startDate, endDate });
-                    return result.ToList();
+                    return result.AsList();
                 }
             }
         }
