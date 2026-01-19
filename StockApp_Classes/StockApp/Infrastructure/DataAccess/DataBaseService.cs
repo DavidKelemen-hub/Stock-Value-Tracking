@@ -1,9 +1,9 @@
-﻿using StockApp.Models;
-using StockApp.Helpers;
-using Microsoft.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
 using Dapper;
+using StockApp.Domain.Models;
+using StockApp.Common.Helpers;
 
-namespace StockApp.DataBaseServices
+namespace StockApp.Infrastructure.DataAccess
 {
 
     public interface IDataBaseService
@@ -22,14 +22,14 @@ namespace StockApp.DataBaseServices
         private readonly string connectionString;
         public DataBaseService()
         {
-            this.connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["dbconnection"].ConnectionString;
+            connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["dbconnection"].ConnectionString;
         }
 
         public List<Company> GetAllCompanies()
         {
             const string queryString = "SELECT Name, Symbol FROM Company ORDER BY Symbol ASC";
                                        
-            using (var connection = new SqlConnection(this.connectionString))
+            using (var connection = new SqlConnection(connectionString))
             {
                 var result = connection.Query<Company>(queryString).AsList();
                 return result;
@@ -53,7 +53,7 @@ namespace StockApp.DataBaseServices
                 
             const string queryString = @"EXEC GetTopPerformingCompanies @startDate=@start, @endDate=@end";
 
-            using (var connection = new SqlConnection(this.connectionString))
+            using (var connection = new SqlConnection(connectionString))
             {
                 var result = connection.Query<CompanyPerformance>(queryString, new { start, end } ).AsList();
                 return result;
@@ -67,7 +67,7 @@ namespace StockApp.DataBaseServices
 
             string queryString = @"EXEC GetLowestPerformingCompanies @startDate=@start, @endDate=@end";
 
-            using (var connection = new SqlConnection(this.connectionString))
+            using (var connection = new SqlConnection(connectionString))
             {
                 var result = connection.Query<CompanyPerformance>(queryString,new {start, end}).AsList();
                 return result;
@@ -78,7 +78,7 @@ namespace StockApp.DataBaseServices
         {
             const string queryString = "SELECT StockID FROM Company WHERE Symbol = @symbol";
 
-            using (var connection = new SqlConnection(this.connectionString))
+            using (var connection = new SqlConnection(connectionString))
             {
                 var result = connection.QuerySingleOrDefault<int>(queryString, new { symbol });
                 return result;
@@ -91,7 +91,7 @@ namespace StockApp.DataBaseServices
             const string queryString = "SELECT * " +
                                        "FROM DailyPrices WHERE StockID = @stockID";
 
-            using (var connection = new SqlConnection(this.connectionString))
+            using (var connection = new SqlConnection(connectionString))
             {
                 var result = connection.Query<DailyEntry>(queryString, new { stockID });
                 return result.AsList();
@@ -103,7 +103,7 @@ namespace StockApp.DataBaseServices
             
             const string queryString = "SELECT DISTINCT TOP 5 TradeDate FROM DailyPrices ORDER BY TradeDate DESC";
 
-            using (var connection = new SqlConnection(this.connectionString))
+            using (var connection = new SqlConnection(connectionString))
             {
                 var result = connection.Query<DailyEntry>(queryString);
                 return result.AsList();
@@ -128,7 +128,7 @@ namespace StockApp.DataBaseServices
                                            "FROM DailyPrices WHERE StockID = @stockID " +
                                            "AND TradeDate BETWEEN @startDate AND @endDate";
 
-                using (var connection = new SqlConnection(this.connectionString))
+                using (var connection = new SqlConnection(connectionString))
                 {
                     var result = connection.Query<DailyEntry>(queryString, new { stockID, startDate, endDate });
                     return result.AsList();
@@ -142,7 +142,7 @@ namespace StockApp.DataBaseServices
             const string queryString = "SELECT ClosePrice " +
                                        "FROM DailyPrices WHERE StockID = @stockID " +
                                        "AND TradeDate = @date";
-            using (var connection = new SqlConnection(this.connectionString))
+            using (var connection = new SqlConnection(connectionString))
             {
                 var result = connection.QuerySingleOrDefault<double>(queryString, new { stockID, date });
                 return result;
@@ -155,7 +155,7 @@ namespace StockApp.DataBaseServices
             const string queryString = "SELECT TOP 1 ClosePrice " +
                                        "FROM DailyPrices WHERE StockID = @stockID " +
                                        "ORDER BY TradeDate DESC";
-            using (var connection = new SqlConnection(this.connectionString))
+            using (var connection = new SqlConnection(connectionString))
             {
                 var result = connection.QuerySingleOrDefault<double>(queryString, new { stockID });
                 return result;

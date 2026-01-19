@@ -1,12 +1,12 @@
 ﻿using Microsoft.IdentityModel.Tokens;
-using StockApp.DTO;
-using StockApp.Helpers;
-using StockApp.Models;
-using StockApp.ProcessingService;
+using StockApp.Appl.DTO;
+using StockApp.Common.Helpers;
+using StockApp.Domain.Models;
+using StockApp.Domain.Processing;
 using System.Collections.ObjectModel;
 using System.Windows.Media;
 
-namespace StockApp.Services
+namespace StockApp.Appl.Services
 {
     public interface IStockService
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
 
-namespace StockApp.Helpers
+namespace StockApp.Common.Helpers
 {
     public class RelayCommand : ICommand
     {

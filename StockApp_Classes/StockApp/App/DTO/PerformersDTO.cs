@@ -1,4 +1,4 @@
-﻿using StockApp.Models;
+﻿using StockApp.Domain.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
 
-namespace StockApp.DTO
+namespace StockApp.Appl.DTO
 {
     public class PerformersDTO
     {

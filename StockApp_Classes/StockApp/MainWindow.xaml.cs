@@ -1,6 +1,6 @@
-﻿using StockApp.DataBaseServices;
-using StockApp.ProcessingService;
-using StockApp.Services;
+﻿using StockApp.Appl.Services;
+using StockApp.Domain.Processing;
+using StockApp.Infrastructure.DataAccess;
 using StockApp.ViewModels;
 using System.Windows;
 
