@@ -1,46 +1,39 @@
 ﻿namespace StockApp.Helpers
 {
-    public class DateTimeHelper
+    public static class DateTimeHelper
     {
-        private string range { get; set; }
-        public DateTime startDate { get; set; }
-
-        public DateTimeHelper()
+        
+        public static DateTime GetStartDate(string range)
         {
-            this.startDate = DateTime.Today;
-        }
-
-        public DateTime GetStartDate(string range)
-        {
-            this.range = range;
-            switch (this.range)
+            DateTime startDate = DateTime.Today;
+            switch (range)
             {
                 case "5D":
-                    this.startDate = DateTime.Today.AddDays(-5);
+                    startDate = DateTime.Today.AddDays(-5);
                     break;
                 case "1M":
-                    this.startDate = DateTime.Today.AddMonths(-1);
+                    startDate = DateTime.Today.AddMonths(-1);
                     break;
                 case "3M":
-                    this.startDate = DateTime.Today.AddMonths(-3);
+                    startDate = DateTime.Today.AddMonths(-3);
                     break;
                 case "6M":
-                    this.startDate = DateTime.Today.AddMonths(-6);
+                    startDate = DateTime.Today.AddMonths(-6);
                     break;
                 case "1Y":
-                    this.startDate = DateTime.Today.AddYears(-1);
+                    startDate = DateTime.Today.AddYears(-1);
                     break;
                 case "YTD":
-                    this.startDate = new DateTime(DateTime.Today.Year, 1, 1);
+                    startDate = new DateTime(DateTime.Today.Year, 1, 1);
                     break;
                 case "5Y":
-                    this.startDate = DateTime.Today.AddYears(-5);
+                    startDate = DateTime.Today.AddYears(-5);
                     break;
                 default:
-                    this.startDate = DateTime.Today.AddYears(-5);
+                    startDate = DateTime.Today.AddYears(-5);
                     break;
             }
-            return this.startDate;
+            return startDate;
         }
 
     }

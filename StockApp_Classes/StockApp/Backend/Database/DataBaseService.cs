@@ -31,7 +31,7 @@ namespace StockApp.DataBaseServices
                                        
             using (var connection = new SqlConnection(this.connectionString))
             {
-                var result = connection.Query<Company>(queryString).ToList();
+                var result = connection.Query<Company>(queryString).AsList();
                 return result;
             }
         }
@@ -41,21 +41,21 @@ namespace StockApp.DataBaseServices
             
             DateTime end = DateTime.Today;
             DateTime start;
-            DateTimeHelper dtHelper = new DateTimeHelper();
+            
             if (range == "5D")
             {
                 start = GetLast5TradingDays().Last().TradeDate;
             }
             else
             {
-                start = dtHelper.GetStartDate(range);
+                start = DateTimeHelper.GetStartDate(range);
             }
                 
             const string queryString = @"EXEC GetTopPerformingCompanies @startDate=@start, @endDate=@end";
 
             using (var connection = new SqlConnection(this.connectionString))
             {
-                var result = connection.Query<CompanyPerformance>(queryString, new { start, end } ).ToList();
+                var result = connection.Query<CompanyPerformance>(queryString, new { start, end } ).AsList();
                 return result;
             }
         }
@@ -63,14 +63,13 @@ namespace StockApp.DataBaseServices
         public List<CompanyPerformance> GetLowestPerformingCompanies(string range)
         {
             DateTime end = DateTime.Today;
-            DateTimeHelper dtHelper = new DateTimeHelper();
-            DateTime start = dtHelper.GetStartDate(range);
+            DateTime start = DateTimeHelper.GetStartDate(range);
 
             string queryString = @"EXEC GetLowestPerformingCompanies @startDate=@start, @endDate=@end";
 
             using (var connection = new SqlConnection(this.connectionString))
             {
-                var result = connection.Query<CompanyPerformance>(queryString,new {start, end}).ToList();
+                var result = connection.Query<CompanyPerformance>(queryString,new {start, end}).AsList();
                 return result;
             }
         }
@@ -95,7 +94,7 @@ namespace StockApp.DataBaseServices
             using (var connection = new SqlConnection(this.connectionString))
             {
                 var result = connection.Query<DailyEntry>(queryString, new { stockID });
-                return result.ToList();
+                return result.AsList();
             }
         }
 
@@ -107,23 +106,22 @@ namespace StockApp.DataBaseServices
             using (var connection = new SqlConnection(this.connectionString))
             {
                 var result = connection.Query<DailyEntry>(queryString);
-                return result.ToList();
+                return result.AsList();
             }
         }
 
         public List<DailyEntry> GetStockEntriesBetweenDates(string symbol, string range)
         {
             DateTime endDate = DateTime.Today;
-            DateTimeHelper dtHelper = new DateTimeHelper(); 
 
             if(range == "Max")
             {
                 var result = GetCompleteStockData(symbol);
-                return result.ToList();
+                return result.AsList();
             }
             else
             {
-                DateTime startDate = dtHelper.GetStartDate(range);
+                DateTime startDate = DateTimeHelper.GetStartDate(range);
                 var stockID = GetCompanyIDFromSymbol(symbol);
 
                 const string queryString = "SELECT * " +
@@ -133,7 +131,7 @@ namespace StockApp.DataBaseServices
                 using (var connection = new SqlConnection(this.connectionString))
                 {
                     var result = connection.Query<DailyEntry>(queryString, new { stockID, startDate, endDate });
-                    return result.ToList();
+                    return result.AsList();
                 }
             }
         }

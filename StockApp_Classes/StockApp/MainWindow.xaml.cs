@@ -1,6 +1,6 @@
 ﻿using StockApp.DataBaseServices;
 using StockApp.ProcessingService;
-using StockApp.StockService;
+using StockApp.Services;
 using StockApp.ViewModels;
 using System.Windows;
 
@@ -18,12 +18,10 @@ namespace StockApp
 
             IDataBaseService db = new DataBaseService();
             IProcessing processing = new Processing(db);
-            IService service = new Service(processing); 
+            IStockService stockService = new StockService(processing);
+            IPerformersService performersService = new PerformersService(processing);
 
-            DataContext = new MainViewModel(service);
+            DataContext = new MainViewModel(stockService, performersService);
         }
-
-
-
     }
 }
