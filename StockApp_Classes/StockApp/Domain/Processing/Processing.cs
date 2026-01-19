@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using StockApp.Models;
-using StockApp.DataBaseServices;
+using StockApp.Domain.Models;
+using StockApp.Infrastructure.DataAccess;
 
-namespace StockApp.ProcessingService
+namespace StockApp.Domain.Processing
 {
     public interface IProcessing
     {
@@ -52,7 +52,7 @@ namespace StockApp.ProcessingService
             double startPrice = stockEntries.First().ClosePrice;
             double endPrice = stockEntries.Last().ClosePrice;
 
-            percentageVariation = ((endPrice - startPrice) * 100) / startPrice;
+            percentageVariation = (endPrice - startPrice) * 100 / startPrice;
             return Math.Round(percentageVariation, 2);
         }
 

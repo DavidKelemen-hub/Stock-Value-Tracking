@@ -1,6 +1,6 @@
-﻿using StockApp.DTO;
-using StockApp.Models;
-using StockApp.ProcessingService;
+﻿using StockApp.Appl.DTO;
+using StockApp.Domain.Models;
+using StockApp.Domain.Processing;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
 
-namespace StockApp.Services
+namespace StockApp.Appl.Services
 {
     public interface IPerformersService
     {

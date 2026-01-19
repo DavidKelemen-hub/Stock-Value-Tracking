@@ -1,9 +1,9 @@
 ﻿using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Series;
-using StockApp.Models;
+using StockApp.Domain.Models;
 
-namespace StockApp.Helpers
+namespace StockApp.Common.Helpers
 {
     public class ChartBuilder
     {
@@ -12,14 +12,14 @@ namespace StockApp.Helpers
 
         public ChartBuilder(string title)
         { 
-            this.chartData = new PlotModel();
-            this.chartData.Title = $"Stock Price for {title}";
+            chartData = new PlotModel();
+            chartData.Title = $"Stock Price for {title}";
         }
 
         public PlotModel LoadChartData(string range, List<DailyEntry> dailyEntries, int sign)
         {
-            this.chartData.Series.Clear();
-            this.chartData.Axes.Clear();
+            chartData.Series.Clear();
+            chartData.Axes.Clear();
             string dateFormat = string.Empty;
             int majorStep = 0;
             var intervalType = DateTimeIntervalType.Days;
@@ -27,49 +27,49 @@ namespace StockApp.Helpers
             switch (range)
             {
                 case "5D":
-                    this.chartData.Title = this.chartData.Title + " - Last 5 Days";
+                    chartData.Title = chartData.Title + " - Last 5 Days";
                     dateFormat = "MMM dd";
                     majorStep = 1;
                     intervalType = DateTimeIntervalType.Days;
                     break;
                 case "1M":
-                    this.chartData.Title = this.chartData.Title + " - Last Month";
+                    chartData.Title = chartData.Title + " - Last Month";
                     dateFormat = "MMM dd";
                     majorStep = 8;
                     intervalType = DateTimeIntervalType.Days;
                     break;
                 case "6M":
-                    this.chartData.Title = this.chartData.Title + " - Last 6 Months";
+                    chartData.Title = chartData.Title + " - Last 6 Months";
                     dateFormat = "MMM yyyy";
                     majorStep = 48;
                     intervalType = DateTimeIntervalType.Months;
                     break;
                 case "YTD":
-                    this.chartData.Title = this.chartData.Title + " - Year to Date";
+                    chartData.Title = chartData.Title + " - Year to Date";
                     dateFormat = "dd MMM";
                     majorStep = 1;
                     intervalType = DateTimeIntervalType.Auto;
                     break;
                 case "1Y":
-                    this.chartData.Title = this.chartData.Title + " - Last Year";
+                    chartData.Title = chartData.Title + " - Last Year";
                     dateFormat = "MMM yyyy";
                     majorStep = 96;
                     intervalType = DateTimeIntervalType.Years;
                     break;
                 case "5Y":
-                    this.chartData.Title = this.chartData.Title + " - Last 5 Years";
+                    chartData.Title = chartData.Title + " - Last 5 Years";
                     dateFormat = "yyyy";
                     majorStep = 480;
                     intervalType = DateTimeIntervalType.Years;
                     break;
                 case "Max":
-                    this.chartData.Title = this.chartData.Title + " - All time";
+                    chartData.Title = chartData.Title + " - All time";
                     dateFormat = "yyyy";
                     majorStep = 2000;
                     intervalType = DateTimeIntervalType.Years;
                     break;
             }
-            this.chartData.Axes.Add(new DateTimeAxis
+            chartData.Axes.Add(new DateTimeAxis
             {
                 Position = AxisPosition.Bottom,
                 StringFormat = dateFormat,
@@ -82,7 +82,7 @@ namespace StockApp.Helpers
 
             }); 
 
-            this.chartData.Axes.Add(new LinearAxis
+            chartData.Axes.Add(new LinearAxis
             {
                 Position = AxisPosition.Left,
                 AxislineStyle = LineStyle.Dot,
@@ -104,10 +104,10 @@ namespace StockApp.Helpers
                 foreach (var p in dailyEntries)
                     series.Points.Add(DateTimeAxis.CreateDataPoint(p.TradeDate, p.ClosePrice));
 
-            this.chartData.Series.Add(series);
-            this.chartData.InvalidatePlot(true);
+            chartData.Series.Add(series);
+            chartData.InvalidatePlot(true);
 
-            return this.chartData;
+            return chartData;
         }
     }
 }

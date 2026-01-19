@@ -1,4 +1,4 @@
-﻿namespace StockApp.Helpers
+﻿namespace StockApp.Common.Helpers
 {
     public static class DateTimeHelper
     {

@@ -1,16 +1,14 @@
 ﻿using OxyPlot;
-using StockApp.Helpers;
-using StockApp.Models;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using System.Windows.Media;
-using StockApp.Services;
-using StockApp.DTO;
 using System.Windows.Data;
-using StockApp.DataBaseServices;
-using StockApp.ProcessingService;
+using StockApp.Appl.DTO;
+using StockApp.Appl.Services;
+using StockApp.Domain.Models;
+using StockApp.Common.Helpers;
 
 namespace StockApp.ViewModels
 {

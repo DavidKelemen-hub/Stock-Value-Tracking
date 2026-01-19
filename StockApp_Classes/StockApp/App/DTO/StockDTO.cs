@@ -1,9 +1,9 @@
 ﻿using OxyPlot;
-using StockApp.Models;
+using StockApp.Domain.Models;
 using System.Collections.ObjectModel;
 using System.Windows.Media;
 
-namespace StockApp.DTO
+namespace StockApp.Appl.DTO
 {
     public class StockDTO
     {
@@ -17,7 +17,7 @@ namespace StockApp.DTO
         public double HighestPrice { get; set; }
         public double LowestPrice { get; set; }
         public string RangeText { get; set; }
-        public String SelectedRange { get; set; }
+        public string SelectedRange { get; set; }
         public string SearchText { get; set; }
     }
 
