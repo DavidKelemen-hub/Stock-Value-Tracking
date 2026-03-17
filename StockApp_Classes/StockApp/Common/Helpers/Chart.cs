@@ -47,7 +47,7 @@ namespace StockApp.Common.Helpers
                 case "YTD":
                     chartData.Title = chartData.Title + " - Year to Date";
                     dateFormat = "dd MMM";
-                    majorStep = 1;
+                    majorStep = 10; //check this - as time passes, we have to shrink this
                     intervalType = DateTimeIntervalType.Auto;
                     break;
                 case "1Y":
