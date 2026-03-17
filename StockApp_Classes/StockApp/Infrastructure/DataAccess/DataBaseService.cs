@@ -2,6 +2,7 @@
 using Dapper;
 using StockApp.Domain.Models;
 using StockApp.Common.Helpers;
+using System.Runtime.Caching;
 
 namespace StockApp.Infrastructure.DataAccess
 {
@@ -20,6 +21,11 @@ namespace StockApp.Infrastructure.DataAccess
     public class DataBaseService : IDataBaseService
     {
         private readonly string connectionString;
+        private static readonly MemoryCache _cache = MemoryCache.Default;
+        private readonly CacheItemPolicy policy = new CacheItemPolicy
+        {
+            AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(5)
+        };
         public DataBaseService()
         {
             connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["dbconnection"].ConnectionString;
@@ -76,11 +82,14 @@ namespace StockApp.Infrastructure.DataAccess
 
         public int GetCompanyIDFromSymbol(string symbol)
         {
+            if (_cache[symbol] is int cached) return cached;
             const string queryString = "SELECT StockID FROM Company WHERE Symbol = @symbol";
 
             using (var connection = new SqlConnection(connectionString))
             {
                 var result = connection.QuerySingleOrDefault<int>(queryString, new { symbol });
+                
+                _cache.Set(symbol,result, policy);
                 return result;
             }
         }

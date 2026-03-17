@@ -9,6 +9,7 @@ using StockApp.Appl.DTO;
 using StockApp.Appl.Services;
 using StockApp.Domain.Models;
 using StockApp.Common.Helpers;
+using System.Runtime.Caching;
 
 namespace StockApp.ViewModels
 {
@@ -38,6 +39,13 @@ namespace StockApp.ViewModels
         
         private bool isInitialized;
         private bool _isRefreshing;
+
+        private readonly CacheItemPolicy policy = new CacheItemPolicy
+        {
+            AbsoluteExpiration = DateTimeOffset.Now.AddDays(1)
+        };
+
+        private readonly MemoryCache _cache = MemoryCache.Default;
 
         private readonly IStockService _stockService;
         private readonly IPerformersService _performersService;
@@ -80,9 +88,20 @@ namespace StockApp.ViewModels
 
         public void LoadPerformersData()
         {
-            if (SelectedCompany == null) return;
-            PerformersDTO dto = _performersService.LoadPerformersData(ShowTop10, SelectedRange);
-
+            
+            PerformersDTO dto;
+            string cacheKey = $"{ShowTop10}_{SelectedRange}";
+            
+            if (_cache[cacheKey] is PerformersDTO cached)
+            {
+                dto = cached;
+            }
+            else
+            {
+                dto = _performersService.LoadPerformersData(ShowTop10, SelectedRange);
+                _cache.Set(cacheKey, dto, policy);
+            }
+                
             CompaniesPerformance = dto.Performers;
             PerformersColor = dto.PerformersColor;
             PerformerRangeText = dto.PerformerRangeText;
