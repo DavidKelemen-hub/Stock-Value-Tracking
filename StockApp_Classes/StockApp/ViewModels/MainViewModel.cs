@@ -46,7 +46,6 @@ namespace StockApp.ViewModels
         };
 
         private readonly MemoryCache _cache = MemoryCache.Default;
-        private readonly MemoryCache _individualStockCache = MemoryCache.Default;
 
         private readonly IStockService _stockService;
         private readonly IPerformersService _performersService;
@@ -79,14 +78,14 @@ namespace StockApp.ViewModels
 
             string cacheKey = $"{SelectedCompany.Name}_{SelectedRange}";
 
-            if (_individualStockCache[cacheKey] is StockDTO cached)
+            if (_cache[cacheKey] is StockDTO cached)
             {
                 dto = cached;
             }
             else
             {
                 dto = _stockService.LoadStockData(SelectedCompany, SelectedRange, ShowTop10, SearchText);
-                _individualStockCache.Set(cacheKey, dto, policy);
+                _cache.Set(cacheKey, dto, policy);
             }
 
             PercentageVariation = dto.PercentageVariation;
