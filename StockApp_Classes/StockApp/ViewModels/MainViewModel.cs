@@ -84,7 +84,7 @@ namespace StockApp.ViewModels
             }
             else
             {
-                dto = _stockService.LoadStockData(SelectedCompany, SelectedRange, ShowTop10, SearchText);
+                dto = _stockService.LoadStockData(SelectedCompany, SelectedRange);
                 _cache.Set(cacheKey, dto, policy);
             }
 

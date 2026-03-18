@@ -13,7 +13,7 @@ namespace StockApp.Appl.Services
         public ObservableCollection<Company> GetAllCompanies();
         public ObservableCollection<Company> GetFilteredCompanies(string searchText);
         public string GetInitialRange();
-        public StockDTO LoadStockData(Company selectedCompany, string selectedRange, bool isTop10, string searchText);
+        public StockDTO LoadStockData(Company selectedCompany, string selectedRange);
     }
     public class StockService : IStockService
     {
@@ -51,15 +51,13 @@ namespace StockApp.Appl.Services
             return InitSelectedRange;
         }
 
-        public StockDTO LoadStockData(Company selectedCompany, string selectedRange, bool isTop10, string searchText)
+        public StockDTO LoadStockData(Company selectedCompany, string selectedRange)
         {
-            
             ChartBuilder chartBuilder = new ChartBuilder(selectedCompany.Name);
             var dailyEntries = _processing.GetStockEntriesBetweenDates(selectedCompany.Symbol, selectedRange);
             var percentageVariation = _processing.GetPercentageVariationInRange(selectedCompany.Symbol, selectedRange);
             var prices = _processing.GetStockEntriesBetweenDates(selectedCompany.Symbol, selectedRange);
             var priceVariation = _processing.GetPriceVariationInRange(selectedCompany.Symbol, selectedRange);
-            var companies = GetFilteredCompanies(searchText);
             var chartData = chartBuilder.LoadChartData(selectedRange,
                                                        dailyEntries,
                                                        Math.Sign(Convert.ToDouble(percentageVariation)));
@@ -72,7 +70,6 @@ namespace StockApp.Appl.Services
 
             return new StockDTO
             {
-                Companies = companies,
                 ChartData = chartData,
                 CurrentPrice = currentPrice,
                 PriceVariation = priceVariation,
