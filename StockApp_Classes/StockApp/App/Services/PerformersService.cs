@@ -1,4 +1,5 @@
 ﻿using StockApp.Appl.DTO;
+using StockApp.Common.Helpers;
 using StockApp.Domain.Models;
 using StockApp.Domain.Processing;
 using System;
@@ -28,8 +29,8 @@ namespace StockApp.Appl.Services
         public PerformersDTO LoadPerformersData(bool isTop10, string selectedRange)
         {
             var performers = GetTopPerformers(isTop10, selectedRange);
-            var performersColor = GetPerformersColor(isTop10);
-            var rangeText = _processing.GetRangeDescription(1, selectedRange);
+            var performersColor = ColorHelper.GetTrendingColor(isTop10);
+            var rangeText = DescriptionHelper.GetRangeDescription(1, selectedRange);
             var performerRangeText = rangeText.Substring(2);
 
             return new PerformersDTO
@@ -50,11 +51,6 @@ namespace StockApp.Appl.Services
             {
                 return _processing.GetLowestPerformingCompanies(selectedRange);
             }
-        }
-
-        public Brush GetPerformersColor(bool isTop10)
-        {
-            return isTop10 ? new SolidColorBrush(Colors.LimeGreen) : new SolidColorBrush(Colors.IndianRed);
         }
     }
 }

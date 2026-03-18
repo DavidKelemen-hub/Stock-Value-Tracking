@@ -54,19 +54,21 @@ namespace StockApp.Appl.Services
         public StockDTO LoadStockData(Company selectedCompany, string selectedRange)
         {
             ChartBuilder chartBuilder = new ChartBuilder(selectedCompany.Name);
-            var dailyEntries = _processing.GetStockEntriesBetweenDates(selectedCompany.Symbol, selectedRange);
-            var percentageVariation = _processing.GetPercentageVariationInRange(selectedCompany.Symbol, selectedRange);
-            var prices = _processing.GetStockEntriesBetweenDates(selectedCompany.Symbol, selectedRange);
-            var priceVariation = _processing.GetPriceVariationInRange(selectedCompany.Symbol, selectedRange);
+            IndividualStockData stockData = _processing.GetIndividualStockData(selectedCompany.Symbol, selectedRange);
+
+            var dailyEntries = stockData.DailyValues;
+            var percentageVariation = stockData.PercentageVariation;
+            var priceVariation = stockData.PriceVariation;
+            var currentPrice = stockData.CurrentPrice;
+            var lowestPrice = stockData.LowestPrice;
+            var highestPrice = stockData.HighestPrice;
+
             var chartData = chartBuilder.LoadChartData(selectedRange,
                                                        dailyEntries,
                                                        Math.Sign(Convert.ToDouble(percentageVariation)));
 
-            var currentPrice = _processing.GetCurrentPrice(selectedCompany.Symbol);
-            var highestPrice = _processing.GetHighestPriceInRange(selectedCompany.Symbol, selectedRange);
-            var lowestPrice = _processing.GetLowestPriceInRange(selectedCompany.Symbol, selectedRange);
-            var rangeText = _processing.GetRangeDescription(Convert.ToDouble(priceVariation), selectedRange);
-            var chartColor = priceVariation > 0 ? new SolidColorBrush(Colors.LimeGreen) : new SolidColorBrush(Colors.IndianRed);
+            var rangeText = DescriptionHelper.GetRangeDescription(priceVariation, selectedRange);
+            var chartColor = ColorHelper.GetTrendingColor(priceVariation);
 
             return new StockDTO
             {
