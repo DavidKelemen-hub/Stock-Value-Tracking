@@ -13,7 +13,7 @@ namespace StockApp.Domain.Processing
         public List<Company> GetAllCompanies();
         public List<CompanyPerformance> GetTopPerformingCompanies(string range);
         public List<CompanyPerformance> GetLowestPerformingCompanies(string range);
-        public IndividualStockData GetIndividualStockData(string symbol, string range);
+        public Task<IndividualStockData> GetIndividualStockData(string symbol, string range);
     }
 
 
@@ -26,21 +26,19 @@ namespace StockApp.Domain.Processing
             this.dbService = dbService;
         }
 
-        public List<DailyEntry> GetStockEntriesBetweenDates(string symbol, string range)
-        {
-            return dbService.GetStockEntriesBetweenDates(symbol, range);
-        }
 
-        public IndividualStockData GetIndividualStockData(string symbol, string range)
+        public async Task<IndividualStockData> GetIndividualStockData(string symbol, string range)
         {
-            var result = GetStockEntriesBetweenDates(symbol, range);
+            var result = await dbService.GetStockEntriesBetweenDates(symbol, range);
+            var First = result.First();
+            var Last = result.Last();
 
             return new IndividualStockData
             {
                 DailyValues = result,
-                CurrentPrice = result.Last().ClosePrice,
-                PriceVariation = result.Last().ClosePrice - result.First().ClosePrice,
-                PercentageVariation = (result.Last().ClosePrice - result.First().ClosePrice) * 100 / result.First().ClosePrice,
+                CurrentPrice = Last.ClosePrice,
+                PriceVariation = Last.ClosePrice - First.ClosePrice,
+                PercentageVariation = (Last.ClosePrice - First.ClosePrice) * 100 / First.ClosePrice,
                 HighestPrice = result.Max(entry => entry.HighPrice),
                 LowestPrice = result.Min(entry => entry.LowPrice)
             };

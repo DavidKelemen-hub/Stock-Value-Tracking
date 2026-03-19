@@ -12,9 +12,9 @@ namespace StockApp.Infrastructure.DataAccess
         public List<Company> GetAllCompanies();
         public List<CompanyPerformance> GetTopPerformingCompanies(string range);
         public List<CompanyPerformance> GetLowestPerformingCompanies(string range);
-        public List<DailyEntry> GetCompleteStockData(string symbol);
+        public Task<List<DailyEntry>> GetCompleteStockData(string symbol);
         public List<DailyEntry> GetLast5TradingDays();
-        public List<DailyEntry> GetStockEntriesBetweenDates(string symbol, string range);
+        public Task <List<DailyEntry>> GetStockEntriesBetweenDates(string symbol, string range);
         public double GetClosePriceOnDate(string symbol, DateTime date);
         public double GetLatestClosePrice(string symbol);
     }
@@ -80,29 +80,33 @@ namespace StockApp.Infrastructure.DataAccess
             }
         }
 
-        public int GetCompanyIDFromSymbol(string symbol)
+        public async Task<int> GetCompanyIDFromSymbol(string symbol)
         {
             if (_cache[symbol] is int cached) return cached;
             const string queryString = "SELECT StockID FROM Company WHERE Symbol = @symbol";
 
             using (var connection = new SqlConnection(connectionString))
             {
-                var result = connection.QuerySingleOrDefault<int>(queryString, new { symbol });
+                await connection.OpenAsync();
+
+                var result = await connection.QuerySingleOrDefaultAsync<int>(queryString, new { symbol });
                 
                 _cache.Set(symbol,result, policy);
                 return result;
             }
         }
 
-        public List<DailyEntry> GetCompleteStockData(string symbol)
+        public async Task<List<DailyEntry>> GetCompleteStockData(string symbol)
         {
-            var stockID = GetCompanyIDFromSymbol(symbol);
+            var stockID = await GetCompanyIDFromSymbol(symbol);
             const string queryString = "SELECT * " +
                                        "FROM DailyPrices WHERE StockID = @stockID";
 
             using (var connection = new SqlConnection(connectionString))
             {
-                var result = connection.Query<DailyEntry>(queryString, new { stockID });
+                await connection.OpenAsync();
+                var result = await connection.QueryAsync<DailyEntry>(queryString, new { stockID });
+
                 return result.AsList();
             }
         }
@@ -119,19 +123,18 @@ namespace StockApp.Infrastructure.DataAccess
             }
         }
 
-        public List<DailyEntry> GetStockEntriesBetweenDates(string symbol, string range)
+        public async Task<List<DailyEntry>> GetStockEntriesBetweenDates(string symbol, string range)
         {
             DateTime endDate = DateTime.Today;
 
             if(range == "Max")
             {
-                var result = GetCompleteStockData(symbol);
-                return result.AsList();
+                return (await GetCompleteStockData(symbol)).AsList();
             }
             else
             {
                 DateTime startDate = DateTimeHelper.GetStartDate(range);
-                var stockID = GetCompanyIDFromSymbol(symbol);
+                var stockID = await GetCompanyIDFromSymbol(symbol);
 
                 const string queryString = "SELECT * " +
                                            "FROM DailyPrices WHERE StockID = @stockID " +
@@ -139,7 +142,9 @@ namespace StockApp.Infrastructure.DataAccess
 
                 using (var connection = new SqlConnection(connectionString))
                 {
-                    var result = connection.Query<DailyEntry>(queryString, new { stockID, startDate, endDate });
+                    await connection.OpenAsync();
+                    var result = await connection.QueryAsync<DailyEntry>(queryString, new { stockID, startDate, endDate });
+
                     return result.AsList();
                 }
             }

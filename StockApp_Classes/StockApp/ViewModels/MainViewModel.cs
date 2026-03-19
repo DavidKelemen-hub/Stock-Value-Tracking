@@ -10,12 +10,13 @@ using StockApp.Appl.Services;
 using StockApp.Domain.Models;
 using StockApp.Common.Helpers;
 using System.Runtime.Caching;
+using System.Diagnostics;
 
 namespace StockApp.ViewModels
 {
     public class MainViewModel : INotifyPropertyChanged
-    {     
-         
+    {
+
         /************************************************ Bindable properties ****************************************************/
         public ObservableCollection<Company> companiesCollection { get; set; }
         public ObservableCollection<Company> companiesCopy { get; set; }
@@ -36,7 +37,7 @@ namespace StockApp.ViewModels
         private double highestPrice { get; set; }
         private double lowestPrice { get; set; }
         public List<CompanyPerformance> companiesPerformance { get; set; }
-        
+
         private bool isInitialized;
         private bool _isRefreshing;
 
@@ -54,7 +55,7 @@ namespace StockApp.ViewModels
 
         public MainViewModel(IStockService stockService, IPerformersService performersService)
         {
-            
+
             this._stockService = stockService;
             this._performersService = performersService;
             isInitialized = false;
@@ -71,31 +72,39 @@ namespace StockApp.ViewModels
         /************************************************* Commands ****************************************************/
 
         /* Async tasks are not quite working at the moment - needs refining */
-        public void LoadStockData()
+        public async void LoadStockDataAsync()
         {
             if (SelectedCompany == null) return;
-            StockDTO dto;
 
+            try
+            {
+                StockDTO dto;
             string cacheKey = $"{SelectedCompany.Name}_{SelectedRange}";
 
-            if (_cache[cacheKey] is StockDTO cached)
-            {
-                dto = cached;
-            }
-            else
-            {
-                dto = _stockService.LoadStockData(SelectedCompany, SelectedRange);
-                _cache.Set(cacheKey, dto, policy);
-            }
+            
+                if (_cache[cacheKey] is StockDTO cached)
+                {
+                    dto = cached;
+                }
+                else
+                {
+                    dto = await _stockService.LoadStockData(SelectedCompany, SelectedRange);
+                    _cache.Set(cacheKey, dto, policy);
+                }
 
-            PercentageVariation = dto.PercentageVariation;
-            CurrentPrice = dto.CurrentPrice;
-            PriceVariation = dto.PriceVariation;
-            RangeText = dto.RangeText;
-            HighestPrice = dto.HighestPrice;
-            LowestPrice = dto.LowestPrice;
-            ChartData = dto.ChartData;
-            ChartColor = dto.ChartColor;
+                PercentageVariation = dto.PercentageVariation;
+                CurrentPrice = dto.CurrentPrice;
+                PriceVariation = dto.PriceVariation;
+                RangeText = dto.RangeText;
+                HighestPrice = dto.HighestPrice;
+                LowestPrice = dto.LowestPrice;
+                ChartData = dto.ChartData;
+                ChartColor = dto.ChartColor;
+            }
+            catch(Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
         }
 
         public void LoadPerformersData()
@@ -126,17 +135,12 @@ namespace StockApp.ViewModels
             SelectedCompany = _stockService.GetFilteredCompanies(SearchText).FirstOrDefault();
             SelectedRange = _stockService.GetInitialRange();
 
-            LoadStockData();
+            LoadStockDataAsync();
             LoadPerformersData();
 
             isInitialized = true;
         }
 
-        public void  RequestStockRefresh()
-        {
-            if (!isInitialized) return;
-            LoadStockData();
-        }
 
         public void RequestPerformerRefresh()
         {
@@ -312,7 +316,7 @@ namespace StockApp.ViewModels
                 if (selectedRange == value) return;
                 selectedRange = value;
                 OnPropertyChanged();
-                RequestStockRefresh();
+                LoadStockDataAsync();
                 RequestPerformerRefresh();
             }
         }
@@ -340,7 +344,7 @@ namespace StockApp.ViewModels
                 /* This section was created using ChatGPT to resolve null reference errors - will refine later */
                 selectedCompany = value;
                 OnPropertyChanged();
-                RequestStockRefresh();
+                LoadStockDataAsync();
             }
         }
 
