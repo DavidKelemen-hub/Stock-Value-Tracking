@@ -12,13 +12,11 @@ namespace StockApp.Appl.Services
     {
         public ObservableCollection<Company> GetAllCompanies();
         public ObservableCollection<Company> GetFilteredCompanies(string searchText);
-        public string GetInitialRange();
         public Task<StockDTO> LoadStockData(Company selectedCompany, string selectedRange);
     }
     public class StockService : IStockService
     {
         private readonly IProcessing _processing;
-        private readonly string InitSelectedRange = "1Y";
 
         public StockService(IProcessing _processing)
         {
@@ -44,11 +42,6 @@ namespace StockApp.Appl.Services
                 _companies = new ObservableCollection<Company>(SearchHelper.GetMatchingCompanies(searchText.ToLower(), _companiesCopy));
             }
             return _companies;
-        }
-
-        public string GetInitialRange()
-        {
-            return InitSelectedRange;
         }
 
         public async Task<StockDTO> LoadStockData(Company selectedCompany, string selectedRange)

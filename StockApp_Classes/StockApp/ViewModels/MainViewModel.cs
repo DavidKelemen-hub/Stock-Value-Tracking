@@ -56,8 +56,8 @@ namespace StockApp.ViewModels
         public MainViewModel(IStockService stockService, IPerformersService performersService)
         {
 
-            this._stockService = stockService;
-            this._performersService = performersService;
+            _stockService = stockService;
+            _performersService = performersService;
             isInitialized = false;
 
             Initialize();
@@ -76,10 +76,9 @@ namespace StockApp.ViewModels
 
             try
             {
+                string cacheKey = $"{SelectedCompany.Name}_{SelectedRange}";
                 StockDTO dto;
-            string cacheKey = $"{SelectedCompany.Name}_{SelectedRange}";
 
-            
                 if (_cache[cacheKey] is StockDTO cached)
                 {
                     dto = cached;
@@ -107,9 +106,8 @@ namespace StockApp.ViewModels
 
         public async void LoadPerformersDataAsync()
         {
-            
-            PerformersDTO dto;
             string cacheKey = $"{ShowTop10}_{SelectedRange}";
+            PerformersDTO dto;
             
             if (_cache[cacheKey] is PerformersDTO cached)
             {
@@ -131,16 +129,13 @@ namespace StockApp.ViewModels
             CompaniesView = CollectionViewSource.GetDefaultView(_stockService.GetAllCompanies());
             CompaniesView.Filter = CompanyMatches;
             SelectedCompany = _stockService.GetFilteredCompanies(SearchText).FirstOrDefault();
-            SelectedRange = _stockService.GetInitialRange();
+            SelectedRange = "1Y";
 
             LoadStockDataAsync();
             LoadPerformersDataAsync();
 
             isInitialized = true;
         }
-
-
-        
 
         /* This metod was created by ChatGPT inorder to resolve null reference errors 
            for SelectedCompany when filtering the CollectionView - will refine later */
