@@ -11,8 +11,8 @@ namespace StockApp.Domain.Processing
     public interface IProcessing
     {
         public List<Company> GetAllCompanies();
-        public List<CompanyPerformance> GetTopPerformingCompanies(string range);
-        public List<CompanyPerformance> GetLowestPerformingCompanies(string range);
+        public Task<List<CompanyPerformance>> GetTopPerformingCompanies(string range);
+        public Task<List<CompanyPerformance>> GetLowestPerformingCompanies(string range);
         public Task<IndividualStockData> GetIndividualStockData(string symbol, string range);
     }
 
@@ -50,15 +50,15 @@ namespace StockApp.Domain.Processing
             return dbService.GetAllCompanies();
         }
 
-        public List<CompanyPerformance> GetTopPerformingCompanies(string range)
+        public async Task<List<CompanyPerformance>> GetTopPerformingCompanies(string range)
         {
-            return dbService.GetTopPerformingCompanies(range);
+            return await dbService.GetTopPerformingCompanies(range);
         }
 
-        public List<CompanyPerformance> GetLowestPerformingCompanies(string range)
+        public async Task<List<CompanyPerformance>> GetLowestPerformingCompanies(string range)
         {
 
-            return dbService.GetLowestPerformingCompanies(range);
+            return await dbService.GetLowestPerformingCompanies(range);
         }
     }
 }

@@ -70,8 +70,6 @@ namespace StockApp.ViewModels
             });
         }
         /************************************************* Commands ****************************************************/
-
-        /* Async tasks are not quite working at the moment - needs refining */
         public async void LoadStockDataAsync()
         {
             if (SelectedCompany == null) return;
@@ -107,7 +105,7 @@ namespace StockApp.ViewModels
             }
         }
 
-        public void LoadPerformersData()
+        public async void LoadPerformersDataAsync()
         {
             
             PerformersDTO dto;
@@ -119,7 +117,7 @@ namespace StockApp.ViewModels
             }
             else
             {
-                dto = _performersService.LoadPerformersData(ShowTop10, SelectedRange);
+                dto = await _performersService.LoadPerformersData(ShowTop10, SelectedRange);
                 _cache.Set(cacheKey, dto, policy);
             }
                 
@@ -136,17 +134,13 @@ namespace StockApp.ViewModels
             SelectedRange = _stockService.GetInitialRange();
 
             LoadStockDataAsync();
-            LoadPerformersData();
+            LoadPerformersDataAsync();
 
             isInitialized = true;
         }
 
 
-        public void RequestPerformerRefresh()
-        {
-            if (!isInitialized) return;
-            LoadPerformersData();
-        }
+        
 
         /* This metod was created by ChatGPT inorder to resolve null reference errors 
            for SelectedCompany when filtering the CollectionView - will refine later */
@@ -197,7 +191,7 @@ namespace StockApp.ViewModels
                 if (showTop10 == value) return;
                 showTop10 = value;
                 OnPropertyChanged();
-                RequestPerformerRefresh();
+                LoadPerformersDataAsync();
             }
         }
 
@@ -317,7 +311,7 @@ namespace StockApp.ViewModels
                 selectedRange = value;
                 OnPropertyChanged();
                 LoadStockDataAsync();
-                RequestPerformerRefresh();
+                LoadPerformersDataAsync();
             }
         }
 
