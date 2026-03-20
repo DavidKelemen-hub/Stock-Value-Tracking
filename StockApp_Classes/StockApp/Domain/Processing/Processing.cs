@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using StockApp.Common.Helpers;
 using StockApp.Domain.Models;
 using StockApp.Infrastructure.DataAccess;
 
@@ -30,6 +31,8 @@ namespace StockApp.Domain.Processing
         public async Task<IndividualStockData> GetIndividualStockData(string symbol, string range)
         {
             var result = await dbService.GetStockEntriesBetweenDates(symbol, range);
+            NullEntryHelper.SanitizeInput(result);
+
             var First = result.First();
             var Last = result.Last();
 

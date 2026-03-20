@@ -48,6 +48,7 @@ namespace StockApp.Appl.Services
         {
             
             IndividualStockData stockData = await _processing.GetIndividualStockData(selectedCompany.Symbol, selectedRange);
+
             ChartBuilder chartBuilder = new ChartBuilder(selectedCompany.Name);
 
             return new StockDTO
