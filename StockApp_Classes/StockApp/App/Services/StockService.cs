@@ -12,13 +12,11 @@ namespace StockApp.Appl.Services
     {
         public ObservableCollection<Company> GetAllCompanies();
         public ObservableCollection<Company> GetFilteredCompanies(string searchText);
-        public string GetInitialRange();
-        public StockDTO LoadStockData(Company selectedCompany, string selectedRange);
+        public Task<StockDTO> LoadStockData(Company selectedCompany, string selectedRange);
     }
     public class StockService : IStockService
     {
         private readonly IProcessing _processing;
-        private readonly string InitSelectedRange = "1Y";
 
         public StockService(IProcessing _processing)
         {
@@ -46,40 +44,24 @@ namespace StockApp.Appl.Services
             return _companies;
         }
 
-        public string GetInitialRange()
+        public async Task<StockDTO> LoadStockData(Company selectedCompany, string selectedRange)
         {
-            return InitSelectedRange;
-        }
-
-        public StockDTO LoadStockData(Company selectedCompany, string selectedRange)
-        {
+            
+            IndividualStockData stockData = await _processing.GetIndividualStockData(selectedCompany.Symbol, selectedRange);
             ChartBuilder chartBuilder = new ChartBuilder(selectedCompany.Name);
-            IndividualStockData stockData = _processing.GetIndividualStockData(selectedCompany.Symbol, selectedRange);
-
-            var dailyEntries = stockData.DailyValues;
-            var percentageVariation = stockData.PercentageVariation;
-            var priceVariation = stockData.PriceVariation;
-            var currentPrice = stockData.CurrentPrice;
-            var lowestPrice = stockData.LowestPrice;
-            var highestPrice = stockData.HighestPrice;
-
-            var chartData = chartBuilder.LoadChartData(selectedRange,
-                                                       dailyEntries,
-                                                       Math.Sign(Convert.ToDouble(percentageVariation)));
-
-            var rangeText = DescriptionHelper.GetRangeDescription(priceVariation, selectedRange);
-            var chartColor = ColorHelper.GetTrendingColor(priceVariation);
 
             return new StockDTO
             {
-                ChartData = chartData,
-                CurrentPrice = currentPrice,
-                PriceVariation = priceVariation,
-                PercentageVariation = percentageVariation,
-                HighestPrice = highestPrice,
-                LowestPrice = lowestPrice,
-                RangeText = rangeText,
-                ChartColor = chartColor,
+                ChartData = chartBuilder.LoadChartData(selectedRange,
+                                                       stockData.DailyValues,
+                                                       Math.Sign(Convert.ToDouble(stockData.PercentageVariation))),
+                CurrentPrice = stockData.CurrentPrice,
+                PriceVariation = stockData.PriceVariation,
+                PercentageVariation = stockData.PercentageVariation,
+                HighestPrice = stockData.HighestPrice,
+                LowestPrice = stockData.LowestPrice,
+                RangeText = DescriptionHelper.GetRangeDescription(stockData.PriceVariation, selectedRange),
+                ChartColor = ColorHelper.GetTrendingColor(stockData.PriceVariation),
             };
         }
 

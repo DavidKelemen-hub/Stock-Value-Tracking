@@ -10,12 +10,13 @@ using StockApp.Appl.Services;
 using StockApp.Domain.Models;
 using StockApp.Common.Helpers;
 using System.Runtime.Caching;
+using System.Diagnostics;
 
 namespace StockApp.ViewModels
 {
     public class MainViewModel : INotifyPropertyChanged
-    {     
-         
+    {
+
         /************************************************ Bindable properties ****************************************************/
         public ObservableCollection<Company> companiesCollection { get; set; }
         public ObservableCollection<Company> companiesCopy { get; set; }
@@ -36,7 +37,7 @@ namespace StockApp.ViewModels
         private double highestPrice { get; set; }
         private double lowestPrice { get; set; }
         public List<CompanyPerformance> companiesPerformance { get; set; }
-        
+
         private bool isInitialized;
         private bool _isRefreshing;
 
@@ -54,9 +55,9 @@ namespace StockApp.ViewModels
 
         public MainViewModel(IStockService stockService, IPerformersService performersService)
         {
-            
-            this._stockService = stockService;
-            this._performersService = performersService;
+
+            _stockService = stockService;
+            _performersService = performersService;
             isInitialized = false;
 
             Initialize();
@@ -69,40 +70,44 @@ namespace StockApp.ViewModels
             });
         }
         /************************************************* Commands ****************************************************/
-
-        /* Async tasks are not quite working at the moment - needs refining */
-        public void LoadStockData()
+        public async void LoadStockDataAsync()
         {
             if (SelectedCompany == null) return;
-            StockDTO dto;
 
-            string cacheKey = $"{SelectedCompany.Name}_{SelectedRange}";
-
-            if (_cache[cacheKey] is StockDTO cached)
+            try
             {
-                dto = cached;
-            }
-            else
-            {
-                dto = _stockService.LoadStockData(SelectedCompany, SelectedRange);
-                _cache.Set(cacheKey, dto, policy);
-            }
+                string cacheKey = $"{SelectedCompany.Name}_{SelectedRange}";
+                StockDTO dto;
 
-            PercentageVariation = dto.PercentageVariation;
-            CurrentPrice = dto.CurrentPrice;
-            PriceVariation = dto.PriceVariation;
-            RangeText = dto.RangeText;
-            HighestPrice = dto.HighestPrice;
-            LowestPrice = dto.LowestPrice;
-            ChartData = dto.ChartData;
-            ChartColor = dto.ChartColor;
+                if (_cache[cacheKey] is StockDTO cached)
+                {
+                    dto = cached;
+                }
+                else
+                {
+                    dto = await _stockService.LoadStockData(SelectedCompany, SelectedRange);
+                    _cache.Set(cacheKey, dto, policy);
+                }
+
+                PercentageVariation = dto.PercentageVariation;
+                CurrentPrice = dto.CurrentPrice;
+                PriceVariation = dto.PriceVariation;
+                RangeText = dto.RangeText;
+                HighestPrice = dto.HighestPrice;
+                LowestPrice = dto.LowestPrice;
+                ChartData = dto.ChartData;
+                ChartColor = dto.ChartColor;
+            }
+            catch(Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
         }
 
-        public void LoadPerformersData()
+        public async void LoadPerformersDataAsync()
         {
-            
-            PerformersDTO dto;
             string cacheKey = $"{ShowTop10}_{SelectedRange}";
+            PerformersDTO dto;
             
             if (_cache[cacheKey] is PerformersDTO cached)
             {
@@ -110,7 +115,7 @@ namespace StockApp.ViewModels
             }
             else
             {
-                dto = _performersService.LoadPerformersData(ShowTop10, SelectedRange);
+                dto = await _performersService.LoadPerformersData(ShowTop10, SelectedRange);
                 _cache.Set(cacheKey, dto, policy);
             }
                 
@@ -124,24 +129,12 @@ namespace StockApp.ViewModels
             CompaniesView = CollectionViewSource.GetDefaultView(_stockService.GetAllCompanies());
             CompaniesView.Filter = CompanyMatches;
             SelectedCompany = _stockService.GetFilteredCompanies(SearchText).FirstOrDefault();
-            SelectedRange = _stockService.GetInitialRange();
+            SelectedRange = "1Y";
 
-            LoadStockData();
-            LoadPerformersData();
+            LoadStockDataAsync();
+            LoadPerformersDataAsync();
 
             isInitialized = true;
-        }
-
-        public void  RequestStockRefresh()
-        {
-            if (!isInitialized) return;
-            LoadStockData();
-        }
-
-        public void RequestPerformerRefresh()
-        {
-            if (!isInitialized) return;
-            LoadPerformersData();
         }
 
         /* This metod was created by ChatGPT inorder to resolve null reference errors 
@@ -193,7 +186,7 @@ namespace StockApp.ViewModels
                 if (showTop10 == value) return;
                 showTop10 = value;
                 OnPropertyChanged();
-                RequestPerformerRefresh();
+                LoadPerformersDataAsync();
             }
         }
 
@@ -312,8 +305,8 @@ namespace StockApp.ViewModels
                 if (selectedRange == value) return;
                 selectedRange = value;
                 OnPropertyChanged();
-                RequestStockRefresh();
-                RequestPerformerRefresh();
+                LoadStockDataAsync();
+                LoadPerformersDataAsync();
             }
         }
 
@@ -340,7 +333,7 @@ namespace StockApp.ViewModels
                 /* This section was created using ChatGPT to resolve null reference errors - will refine later */
                 selectedCompany = value;
                 OnPropertyChanged();
-                RequestStockRefresh();
+                LoadStockDataAsync();
             }
         }
 

@@ -14,7 +14,7 @@ namespace StockApp.Appl.Services
 {
     public interface IPerformersService
     {
-        public PerformersDTO LoadPerformersData(bool isTop10, string selectedRange);
+        public Task<PerformersDTO> LoadPerformersData(bool isTop10, string selectedRange);
     }
     public class PerformersService : IPerformersService
     {
@@ -26,30 +26,25 @@ namespace StockApp.Appl.Services
             this._processing = _processing;
         }
 
-        public PerformersDTO LoadPerformersData(bool isTop10, string selectedRange)
+        public async Task<PerformersDTO> LoadPerformersData(bool isTop10, string selectedRange)
         {
-            var performers = GetTopPerformers(isTop10, selectedRange);
-            var performersColor = ColorHelper.GetTrendingColor(isTop10);
-            var rangeText = DescriptionHelper.GetRangeDescription(1, selectedRange);
-            var performerRangeText = rangeText.Substring(2);
-
             return new PerformersDTO
             {
-                Performers = performers,
-                PerformersColor = performersColor,
-                PerformerRangeText = performerRangeText
+                Performers = await GetTopPerformers(isTop10, selectedRange),
+                PerformersColor = ColorHelper.GetTrendingColor(isTop10),
+                PerformerRangeText = DescriptionHelper.GetRangeDescription(1, selectedRange).Substring(2)
             };
         }
 
-        public List<CompanyPerformance> GetTopPerformers(bool isTop10, string selectedRange)
+        public async Task<List<CompanyPerformance>> GetTopPerformers(bool isTop10, string selectedRange)
         {
             if (isTop10)
             {
-                return _processing.GetTopPerformingCompanies(selectedRange);
+                return await _processing.GetTopPerformingCompanies(selectedRange);
             }
             else
             {
-                return _processing.GetLowestPerformingCompanies(selectedRange);
+                return await _processing.GetLowestPerformingCompanies(selectedRange);
             }
         }
     }
