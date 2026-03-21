@@ -8,7 +8,7 @@
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:local="clr-namespace:StockApp"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="SP500 Stock Application" Height="450" Width="800">
     
     <!-- This XAML document was created by ChatGPT -->
     
@@ -28,6 +28,9 @@
             VerticalContentAlignment="Center"
             Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
             />
+
+            
+            
 
             <ListBox
             ItemsSource="{Binding CompaniesView}"
@@ -49,6 +52,8 @@
                 </ListBox.ItemTemplate>
             </ListBox>
         </DockPanel>
+
+        
 
         <!-- Right panel (placeholder) -->
         <Border Grid.Column="2"
@@ -133,6 +138,11 @@
                  Style="{StaticResource RangeRadioButtonStyle}"
                  Command="{Binding RangeClickedCommand}"
                  CommandParameter="Max"/>
+                </StackPanel>
+
+                <StackPanel>
+                    <Image Width="75" Height="75" Source="{Binding CompanyLogoPath}"/>
+                    <TextBlock Text="{Binding CompanyLogoPath}" />
                 </StackPanel>
 
 

@@ -1,16 +1,18 @@
 ﻿using OxyPlot;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Data;
 using StockApp.Appl.DTO;
 using StockApp.Appl.Services;
-using StockApp.Domain.Models;
 using StockApp.Common.Helpers;
-using System.Runtime.Caching;
+using StockApp.Domain.Models;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
+using System.Resources;
+using System.Runtime.Caching;
+using System.Runtime.CompilerServices;
+using System.Windows.Data;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace StockApp.ViewModels
 {
@@ -37,6 +39,7 @@ namespace StockApp.ViewModels
         private double highestPrice { get; set; }
         private double lowestPrice { get; set; }
         public List<CompanyPerformance> companiesPerformance { get; set; }
+        private ImageSource _companyLogoPath{ get; set; }
 
         private bool isInitialized;
         private bool _isRefreshing;
@@ -334,6 +337,18 @@ namespace StockApp.ViewModels
                 selectedCompany = value;
                 OnPropertyChanged();
                 LoadStockDataAsync();
+
+                try
+                {
+                    var uri = new Uri($"pack://application:,,,/StockApp;component/Presentation/Resources/{SelectedCompany!.Symbol}.png", UriKind.Absolute);
+                    CompanyLogoPath = new BitmapImage(uri);
+                }
+                catch(Exception ex)
+                {
+                    var uri = new Uri($"pack://application:,,,/StockApp;component/Presentation/Resources/notfound.png", UriKind.Absolute);
+                    CompanyLogoPath = new BitmapImage(uri);
+                }
+                
             }
         }
 
@@ -344,6 +359,17 @@ namespace StockApp.ViewModels
             {
                 if (chartData == value) return;
                 chartData = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public ImageSource CompanyLogoPath
+        {
+            get { return _companyLogoPath; }
+            set
+            {
+                if (_companyLogoPath == value) return;
+                _companyLogoPath = value;
                 OnPropertyChanged();
             }
         }
