@@ -62,20 +62,30 @@
 
 
             <StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                <StackPanel Orientation="Horizontal" 
+                            Margin="0,0,0,12" 
+                            VerticalAlignment="Center">
+
+                    <Image Width="75" Height="75" 
+                           Source="{Binding CompanyLogoPath}"
+                           Margin="0,0,10,0"
+                           VerticalAlignment="Center"/>
 
                     <TextBlock FontSize="18"
-                   FontWeight="Bold"
-                   Text="{Binding SelectedCompany.Name}" />
+                               FontWeight="Bold"
+                               VerticalAlignment="Center"
+                               Text="{Binding SelectedCompany.Name}" />
 
                     <TextBlock Opacity="0.7"
                                FontSize="18"
                                Margin="8,0,0,0"
-                    Text="{Binding SelectedCompany.Symbol, StringFormat={}({0})}" />
-                    
+                               VerticalAlignment="Center"
+                               Text="{Binding SelectedCompany.Symbol, StringFormat={}({0})}" />
+
                     <TextBlock FontSize="18"
                                FontWeight="Bold"
                                Margin="8,0,0,0"
+                               VerticalAlignment="Center"
                                Text="{Binding CurrentPrice, StringFormat={}{0}$}" />
                 </StackPanel>
 
@@ -140,11 +150,8 @@
                  CommandParameter="Max"/>
                 </StackPanel>
 
-                <StackPanel>
-                    <Image Width="75" Height="75" Source="{Binding CompanyLogoPath}"/>
-                    <TextBlock Text="{Binding CompanyLogoPath}" />
-                </StackPanel>
-
+                    
+               
 
                 <!-- Chart lipit -->
                 <oxy:PlotView Model="{Binding ChartData}"
