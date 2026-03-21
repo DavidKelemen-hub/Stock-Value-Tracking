@@ -34,7 +34,7 @@ namespace StockApp.Appl.Services
         {
             ObservableCollection<Company> _companies;
             var result = await _processing.GetAllCompanies();
-            ObservableCollection<Company> _companiesCopy = new ObservableCollection<Company>(result);
+            ObservableCollection<Company> _companiesCopy = new(result);
 
             if (searchText.IsNullOrEmpty())
             {
@@ -49,15 +49,15 @@ namespace StockApp.Appl.Services
 
         public async Task<StockDTO> LoadStockData(Company selectedCompany, string selectedRange)
         {
-            
-            IndividualStockData stockData = await _processing.GetIndividualStockData(selectedCompany.Symbol, selectedRange);
 
-            ChartBuilder chartBuilder = new ChartBuilder(selectedCompany.Name);
-            
+            IndividualStockData stockData = await _processing.GetIndividualStockData(selectedCompany.Symbol!, selectedRange);
+
+            ChartBuilder chartBuilder = new(selectedCompany.Name!);
+
             return new StockDTO
             {
                 ChartData = chartBuilder.LoadChartData(selectedRange,
-                                                       stockData.DailyValues,
+                                                       stockData.DailyValues!,
                                                        Math.Sign(Convert.ToDouble(stockData.PercentageVariation))),
                 CurrentPrice = stockData.CurrentPrice,
                 PriceVariation = stockData.PriceVariation,
@@ -66,10 +66,10 @@ namespace StockApp.Appl.Services
                 LowestPrice = stockData.LowestPrice,
                 RangeText = DescriptionHelper.GetRangeDescription(stockData.PriceVariation, selectedRange),
                 ChartColor = ColorHelper.GetTrendingColor(stockData.PriceVariation),
-                CompanyLogo = LogoHelper.GetCompanyLogo(selectedCompany.Symbol)
+                CompanyLogo = LogoHelper.GetCompanyLogo(selectedCompany.Symbol!)
             };
         }
 
-        
+
     }
 }

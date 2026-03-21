@@ -9,7 +9,7 @@ namespace StockApp.Domain.Models
     public class Company
     {
         public int StockID { get; set; }
-        public string Symbol { get; set; }
-        public string Name { get; set; }
+        public string? Symbol { get; set; }
+        public string? Name { get; set; }
     }
 }

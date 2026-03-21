@@ -24,30 +24,27 @@ namespace StockApp.ViewModels
     {
 
         /************************************************ Bindable properties ****************************************************/
-        public ObservableCollection<Company> companiesCollection { get; set; }
-        public ICollectionView companiesView { get; set; }
-        private Company selectedCompany;
-        private PlotModel chartData;
-        private double percentageVariation { get; set; }
-        private double currentPrice { get; set; }
-        private string selectedRange { get; set; }
-        private string searchText { get; set; }
-        private double priceVariation { get; set; }
-        private string rangeText { get; set; }
-        private string performerRangeText { get; set; }
+        public ObservableCollection<Company>? companiesCollection { get; set; }
+        public ICollectionView? companiesView { get; set; }
+        private Company? selectedCompany;
+        private PlotModel? chartData;
+        private double? percentageVariation { get; set; }
+        private double? currentPrice { get; set; }
+        private string? selectedRange { get; set; }
+        private string? searchText { get; set; }
+        private double? priceVariation { get; set; }
+        private string? rangeText { get; set; }
+        private string? performerRangeText { get; set; }
         private bool showTop10 { get; set; }
-        private Brush chartColor { get; set; }
-        private Brush performersColor { get; set; }
+        private Brush? chartColor { get; set; }
+        private Brush? performersColor { get; set; }
         public ICommand RangeClickedCommand { get; set; }
-        private double highestPrice { get; set; }
-        private double lowestPrice { get; set; }
-        public List<CompanyPerformance> companiesPerformance { get; set; }
-        private ImageSource _companyLogo{ get; set; }
+        private double? highestPrice { get; set; }
+        private double? lowestPrice { get; set; }
+        public List<CompanyPerformance>? companiesPerformance { get; set; }
+        private ImageSource? companyLogo { get; set; }
 
-        private bool isInitialized;
-        private bool _isRefreshing;
-
-        private readonly CacheItemPolicy policy = new CacheItemPolicy
+        private readonly CacheItemPolicy policy = new()
         {
             AbsoluteExpiration = DateTimeOffset.Now.AddDays(1)
         };
@@ -56,18 +53,14 @@ namespace StockApp.ViewModels
 
         private readonly IStockService _stockService;
         private readonly IPerformersService _performersService;
-
-        //public List<string> missingLogos = new List<string>(); debug
-
         /************************************************ Bindable properties ****************************************************/
 
-        
+
         public MainViewModel(IStockService stockService, IPerformersService performersService)
         {
 
             _stockService = stockService;
             _performersService = performersService;
-            isInitialized = false;
 
             _ = Initialize();
 
@@ -94,7 +87,7 @@ namespace StockApp.ViewModels
                 }
                 else
                 {
-                    dto = await _stockService.LoadStockData(SelectedCompany, SelectedRange);
+                    dto = await _stockService.LoadStockData(SelectedCompany, SelectedRange!);
                     _cache.Set(cacheKey, dto, policy);
                 }
 
@@ -104,11 +97,11 @@ namespace StockApp.ViewModels
                 RangeText = dto.RangeText;
                 HighestPrice = dto.HighestPrice;
                 LowestPrice = dto.LowestPrice;
-                ChartData = dto.ChartData;
-                ChartColor = dto.ChartColor;
+                ChartData = dto.ChartData!;
+                ChartColor = dto.ChartColor!;
                 CompanyLogo = dto.CompanyLogo;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
             }
@@ -118,17 +111,17 @@ namespace StockApp.ViewModels
         {
             string cacheKey = $"{ShowTop10}_{SelectedRange}";
             PerformersDTO dto;
-            
+
             if (_cache[cacheKey] is PerformersDTO cached)
             {
                 dto = cached;
             }
             else
             {
-                dto = await _performersService.LoadPerformersData(ShowTop10, SelectedRange);
+                dto = await _performersService.LoadPerformersData(ShowTop10, SelectedRange!);
                 _cache.Set(cacheKey, dto, policy);
             }
-                
+
             CompaniesPerformance = dto.Performers;
             PerformersColor = dto.PerformersColor;
             PerformerRangeText = dto.PerformerRangeText;
@@ -145,8 +138,6 @@ namespace StockApp.ViewModels
 
             await LoadStockDataAsync();
             await LoadPerformersDataAsync();
-
-            isInitialized = true;
         }
 
         private bool CompanyMatches(object obj)
@@ -156,13 +147,13 @@ namespace StockApp.ViewModels
             var s = SearchText?.Trim();
             if (string.IsNullOrEmpty(s)) return true;
 
-            return c.Name.Contains(s)
-                || c.Symbol.Contains(s);
+            return c.Name!.Contains(s)
+                || c.Symbol!.Contains(s);
         }
         /************************************************* Commands ****************************************************/
 
         /*********************************************** Model Properties ****************************************************/
-        public ObservableCollection<Company> Companies
+        public ObservableCollection<Company>? Companies
         {
             get { return companiesCollection; }
             set
@@ -172,7 +163,7 @@ namespace StockApp.ViewModels
                 OnPropertyChanged();
             }
         }
-        public List<CompanyPerformance> CompaniesPerformance
+        public List<CompanyPerformance>? CompaniesPerformance
         {
             get { return companiesPerformance; }
             set
@@ -195,7 +186,7 @@ namespace StockApp.ViewModels
             }
         }
 
-        public double HighestPrice
+        public double? HighestPrice
         {
             get { return highestPrice; }
             set
@@ -206,7 +197,7 @@ namespace StockApp.ViewModels
             }
         }
 
-        public double LowestPrice
+        public double? LowestPrice
         {
             get { return lowestPrice; }
             set
@@ -217,7 +208,7 @@ namespace StockApp.ViewModels
             }
         }
 
-        public Brush ChartColor
+        public Brush? ChartColor
         {
             get { return chartColor; }
             set
@@ -228,7 +219,7 @@ namespace StockApp.ViewModels
             }
         }
 
-        public Brush PerformersColor
+        public Brush? PerformersColor
         {
             get { return performersColor; }
             set
@@ -238,7 +229,7 @@ namespace StockApp.ViewModels
                 OnPropertyChanged();
             }
         }
-        public string RangeText
+        public string? RangeText
         {
             get { return rangeText; }
             set
@@ -249,7 +240,7 @@ namespace StockApp.ViewModels
             }
         }
 
-        public string PerformerRangeText
+        public string? PerformerRangeText
         {
             get { return performerRangeText; }
             set
@@ -259,7 +250,7 @@ namespace StockApp.ViewModels
                 OnPropertyChanged();
             }
         }
-        public double PriceVariation
+        public double? PriceVariation
         {
             get { return priceVariation; }
             set
@@ -269,7 +260,7 @@ namespace StockApp.ViewModels
                 OnPropertyChanged();
             }
         }
-        public string SearchText
+        public string? SearchText
         {
             get => searchText;
             set
@@ -277,10 +268,10 @@ namespace StockApp.ViewModels
                 if (searchText == value) return;
                 searchText = value;
                 OnPropertyChanged();
-                CompaniesView.Refresh();
+                CompaniesView!.Refresh();
             }
         }
-        public double PercentageVariation
+        public double? PercentageVariation
         {
             get { return percentageVariation; }
             set
@@ -291,7 +282,7 @@ namespace StockApp.ViewModels
             }
         }
 
-        public string SelectedRange
+        public string? SelectedRange
         {
             get { return selectedRange; }
             set
@@ -304,7 +295,7 @@ namespace StockApp.ViewModels
             }
         }
 
-        public double CurrentPrice
+        public double? CurrentPrice
         {
             get { return currentPrice; }
             set
@@ -328,7 +319,7 @@ namespace StockApp.ViewModels
             }
         }
 
-        public PlotModel ChartData
+        public PlotModel? ChartData
         {
             get { return chartData; }
             set
@@ -339,18 +330,18 @@ namespace StockApp.ViewModels
             }
         }
 
-        public ImageSource CompanyLogo
+        public ImageSource? CompanyLogo
         {
-            get { return _companyLogo; }
+            get { return companyLogo; }
             set
             {
-                if (_companyLogo == value) return;
-                _companyLogo = value;
+                if (companyLogo == value) return;
+                companyLogo = value;
                 OnPropertyChanged();
             }
         }
 
-        public ICollectionView CompaniesView
+        public ICollectionView? CompaniesView
         {
             get { return companiesView; }
             set

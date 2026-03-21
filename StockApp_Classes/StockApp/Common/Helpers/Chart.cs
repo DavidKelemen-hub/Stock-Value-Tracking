@@ -11,7 +11,7 @@ namespace StockApp.Common.Helpers
         public PlotModel chartData;
 
         public ChartBuilder(string title)
-        { 
+        {
             chartData = new PlotModel();
             chartData.Title = $"Stock Price for {title}";
         }
@@ -80,7 +80,7 @@ namespace StockApp.Common.Helpers
                 IsPanEnabled = false,
                 IntervalType = intervalType
 
-            }); 
+            });
 
             chartData.Axes.Add(new LinearAxis
             {
@@ -93,7 +93,7 @@ namespace StockApp.Common.Helpers
 
 
             var series = new LineSeries();
-            if(sign == 0 || sign == 1)
+            if (sign == 0 || sign == 1)
             {
                 series.Color = OxyColors.LimeGreen;
             }
@@ -101,8 +101,8 @@ namespace StockApp.Common.Helpers
             {
                 series.Color = OxyColors.IndianRed;
             }
-                foreach (var p in dailyEntries)
-                    series.Points.Add(DateTimeAxis.CreateDataPoint(p.TradeDate, p.ClosePrice));
+            foreach (var p in dailyEntries)
+                series.Points.Add(DateTimeAxis.CreateDataPoint(p.TradeDate, p.ClosePrice));
 
             chartData.Series.Add(series);
             chartData.InvalidatePlot(true);

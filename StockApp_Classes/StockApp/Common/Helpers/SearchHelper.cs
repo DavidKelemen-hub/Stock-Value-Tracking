@@ -7,11 +7,11 @@ namespace StockApp.Common.Helpers
     {
         public static List<Company> GetMatchingCompanies(string searchString, ObservableCollection<Company> companies)
         {
-            List<Company> matchingCompanies = new List<Company>();
+            List<Company> matchingCompanies = [];
             foreach (var item in companies)
             {
-                if (item.Name.ToLower().StartsWith(searchString) || item.Name.ToLower().Contains(searchString) ||
-                    item.Symbol.ToLower().StartsWith(searchString) || item.Symbol.ToLower().Contains(searchString))
+                if (item.Name!.ToLower().StartsWith(searchString) || item.Name.ToLower().Contains(searchString) ||
+                    item.Symbol!.ToLower().StartsWith(searchString) || item.Symbol.ToLower().Contains(searchString))
                 {
                     matchingCompanies.Add(item);
                 }

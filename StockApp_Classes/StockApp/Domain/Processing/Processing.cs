@@ -45,7 +45,7 @@ namespace StockApp.Domain.Processing
                 HighestPrice = result.Max(entry => entry.HighPrice),
                 LowestPrice = result.Min(entry => entry.LowPrice)
             };
-            
+
         }
 
         public async Task<List<Company>> GetAllCompanies()

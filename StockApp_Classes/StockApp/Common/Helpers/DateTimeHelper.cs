@@ -2,7 +2,7 @@
 {
     public static class DateTimeHelper
     {
-        
+
         public static DateTime GetStartDate(string range)
         {
             DateTime startDate = DateTime.Today;

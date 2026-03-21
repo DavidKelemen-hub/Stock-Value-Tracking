@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,7 +9,7 @@ namespace StockApp.Common.Helpers
 {
     public static class DescriptionHelper
     {
-        public static string GetRangeDescription(double priceVariation, string range)
+        public static string GetRangeDescription(double? priceVariation, string range)
         {
             string description = range switch
             {
@@ -19,7 +20,8 @@ namespace StockApp.Common.Helpers
                 "YTD" => "year to date",
                 "1Y" => "past year",
                 "5Y" => "past 5 years",
-                "Max" => "all time"
+                "Max" => "all time",
+                _ => throw new InvalidDataException()
             };
 
             string trendArrow = priceVariation >= 0 ? "▲ " : "▼ ";

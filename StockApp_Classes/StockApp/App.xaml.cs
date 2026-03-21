@@ -14,7 +14,7 @@ namespace StockApp
     /// </summary>
     public partial class App : Application
     {
-        private IServiceProvider _serviceProvider;
+        private IServiceProvider? _serviceProvider;
 
         protected override void OnStartup(StartupEventArgs e)
         {
