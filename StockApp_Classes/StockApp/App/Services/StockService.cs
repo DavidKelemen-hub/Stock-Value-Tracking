@@ -5,6 +5,7 @@ using StockApp.Domain.Models;
 using StockApp.Domain.Processing;
 using System.Collections.ObjectModel;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace StockApp.Appl.Services
 {
@@ -50,7 +51,7 @@ namespace StockApp.Appl.Services
             IndividualStockData stockData = await _processing.GetIndividualStockData(selectedCompany.Symbol, selectedRange);
 
             ChartBuilder chartBuilder = new ChartBuilder(selectedCompany.Name);
-
+            
             return new StockDTO
             {
                 ChartData = chartBuilder.LoadChartData(selectedRange,
@@ -63,6 +64,7 @@ namespace StockApp.Appl.Services
                 LowestPrice = stockData.LowestPrice,
                 RangeText = DescriptionHelper.GetRangeDescription(stockData.PriceVariation, selectedRange),
                 ChartColor = ColorHelper.GetTrendingColor(stockData.PriceVariation),
+                CompanyLogo = LogoHelper.GetCompanyLogo(selectedCompany.Symbol)
             };
         }
 
