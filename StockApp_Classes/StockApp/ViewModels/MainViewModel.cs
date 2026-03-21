@@ -149,8 +149,6 @@ namespace StockApp.ViewModels
             isInitialized = true;
         }
 
-        /* This metod was created by ChatGPT inorder to resolve null reference errors 
-           for SelectedCompany when filtering the CollectionView - will refine later */
         private bool CompanyMatches(object obj)
         {
             if (obj is not Company c) return false;
@@ -158,14 +156,9 @@ namespace StockApp.ViewModels
             var s = SearchText?.Trim();
             if (string.IsNullOrEmpty(s)) return true;
 
-            var name = c.Name ?? "";
-            var symbol = c.Symbol ?? "";
-
-            return name.Contains(s, StringComparison.OrdinalIgnoreCase)
-                || symbol.Contains(s, StringComparison.OrdinalIgnoreCase);
+            return c.Name.Contains(s)
+                || c.Symbol.Contains(s);
         }
-        /* This metod was created by ChatGPT inorder to resolve null reference errors 
-           for SelectedCompany when filtering the CollectionView - will refine later */
         /************************************************* Commands ****************************************************/
 
         /*********************************************** Model Properties ****************************************************/
@@ -284,18 +277,7 @@ namespace StockApp.ViewModels
                 if (searchText == value) return;
                 searchText = value;
                 OnPropertyChanged();
-
-                /* This section was created using ChatGPT to resolve null reference errors - will refine later */
-                var old = SelectedCompany;
-
-                _isRefreshing = true;
-                try { CompaniesView.Refresh(); }
-                finally { _isRefreshing = false; }
-
-                // keep selection if still visible
-                if (old != null && CompaniesView.Contains(old))
-                    SelectedCompany = old;
-                /* This section was created using ChatGPT to resolve null reference errors - will refine later */
+                CompaniesView.Refresh();
             }
         }
         public double PercentageVariation
@@ -338,11 +320,8 @@ namespace StockApp.ViewModels
             get => selectedCompany;
             set
             {
-                /* This section was created using ChatGPT to resolve null reference errors - will refine later */
-                if (value == null && _isRefreshing) return;
+                if (value == null || selectedCompany == value) return;
 
-                if (ReferenceEquals(selectedCompany, value)) return;
-                /* This section was created using ChatGPT to resolve null reference errors - will refine later */
                 selectedCompany = value;
                 OnPropertyChanged();
                 _ = LoadStockDataAsync();
