@@ -54,6 +54,8 @@ namespace StockApp.ViewModels
         private readonly IStockService _stockService;
         private readonly IPerformersService _performersService;
 
+        //public List<string> missingLogos = new List<string>(); debug
+
         /************************************************ Bindable properties ****************************************************/
 
         public MainViewModel(IStockService stockService, IPerformersService performersService)
@@ -100,6 +102,7 @@ namespace StockApp.ViewModels
                 LowestPrice = dto.LowestPrice;
                 ChartData = dto.ChartData;
                 ChartColor = dto.ChartColor;
+                CompanyLogo = dto.CompanyLogo;
             }
             catch(Exception ex)
             {
@@ -337,18 +340,6 @@ namespace StockApp.ViewModels
                 selectedCompany = value;
                 OnPropertyChanged();
                 LoadStockDataAsync();
-
-                try
-                {
-                    var uri = new Uri($"pack://application:,,,/StockApp;component/Presentation/Resources/{SelectedCompany!.Symbol}.png", UriKind.Absolute);
-                    CompanyLogo = new BitmapImage(uri);
-                }
-                catch(Exception ex)
-                {
-                    var uri = new Uri($"pack://application:,,,/StockApp;component/Presentation/Resources/notfound.png", UriKind.Absolute);
-                    CompanyLogo = new BitmapImage(uri);
-                }
-                
             }
         }
 
