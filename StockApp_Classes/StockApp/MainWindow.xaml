@@ -67,7 +67,7 @@
                             VerticalAlignment="Center">
 
                     <Image Width="75" Height="75" 
-                           Source="{Binding CompanyLogoPath}"
+                           Source="{Binding CompanyLogo}"
                            Margin="0,0,10,0"
                            VerticalAlignment="Center"/>
 

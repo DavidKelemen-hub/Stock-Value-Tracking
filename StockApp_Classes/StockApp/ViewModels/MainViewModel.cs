@@ -39,7 +39,7 @@ namespace StockApp.ViewModels
         private double highestPrice { get; set; }
         private double lowestPrice { get; set; }
         public List<CompanyPerformance> companiesPerformance { get; set; }
-        private ImageSource _companyLogoPath{ get; set; }
+        private ImageSource _companyLogo{ get; set; }
 
         private bool isInitialized;
         private bool _isRefreshing;
@@ -341,12 +341,12 @@ namespace StockApp.ViewModels
                 try
                 {
                     var uri = new Uri($"pack://application:,,,/StockApp;component/Presentation/Resources/{SelectedCompany!.Symbol}.png", UriKind.Absolute);
-                    CompanyLogoPath = new BitmapImage(uri);
+                    CompanyLogo = new BitmapImage(uri);
                 }
                 catch(Exception ex)
                 {
                     var uri = new Uri($"pack://application:,,,/StockApp;component/Presentation/Resources/notfound.png", UriKind.Absolute);
-                    CompanyLogoPath = new BitmapImage(uri);
+                    CompanyLogo = new BitmapImage(uri);
                 }
                 
             }
@@ -363,13 +363,13 @@ namespace StockApp.ViewModels
             }
         }
 
-        public ImageSource CompanyLogoPath
+        public ImageSource CompanyLogo
         {
-            get { return _companyLogoPath; }
+            get { return _companyLogo; }
             set
             {
-                if (_companyLogoPath == value) return;
-                _companyLogoPath = value;
+                if (_companyLogo == value) return;
+                _companyLogo = value;
                 OnPropertyChanged();
             }
         }
