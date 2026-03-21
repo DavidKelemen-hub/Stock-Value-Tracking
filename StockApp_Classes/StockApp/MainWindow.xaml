@@ -29,12 +29,9 @@
             Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
             />
 
-            
-            
-
             <ListBox
             ItemsSource="{Binding CompaniesView}"
-            SelectedItem="{Binding SelectedCompany, Mode=TwoWay}"
+            SelectedItem="{Binding SelectedCompany}"
             
             ScrollViewer.VerticalScrollBarVisibility="Auto">
                 
