@@ -25,8 +25,7 @@ namespace StockApp.ViewModels
 
         /************************************************ Bindable properties ****************************************************/
         public ObservableCollection<Company> companiesCollection { get; set; }
-        public ObservableCollection<Company> companiesCopy { get; set; }
-        public ICollectionView CompaniesView { get; set; }
+        public ICollectionView companiesView { get; set; }
         private Company selectedCompany;
         private PlotModel chartData;
         private double percentageVariation { get; set; }
@@ -70,7 +69,7 @@ namespace StockApp.ViewModels
             _performersService = performersService;
             isInitialized = false;
 
-            Initialize();
+            _ = Initialize();
 
             RangeClickedCommand = new RelayCommand(param =>
             {
@@ -135,15 +134,17 @@ namespace StockApp.ViewModels
             PerformerRangeText = dto.PerformerRangeText;
         }
 
-        public void Initialize()
+        public async Task Initialize()
         {
-            CompaniesView = CollectionViewSource.GetDefaultView(_stockService.GetAllCompanies());
+            var companiesView = await _stockService.GetAllCompanies();
+
+            CompaniesView = CollectionViewSource.GetDefaultView(companiesView);
             CompaniesView.Filter = CompanyMatches;
-            SelectedCompany = _stockService.GetFilteredCompanies(SearchText).FirstOrDefault();
+            SelectedCompany = companiesView.FirstOrDefault();
             SelectedRange = "1Y";
 
-            _ = LoadStockDataAsync();
-            _ = LoadPerformersDataAsync();
+            await LoadStockDataAsync();
+            await LoadPerformersDataAsync();
 
             isInitialized = true;
         }
@@ -366,6 +367,17 @@ namespace StockApp.ViewModels
             {
                 if (_companyLogo == value) return;
                 _companyLogo = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public ICollectionView CompaniesView
+        {
+            get { return companiesView; }
+            set
+            {
+                if (companiesView == value) return;
+                companiesView = value;
                 OnPropertyChanged();
             }
         }

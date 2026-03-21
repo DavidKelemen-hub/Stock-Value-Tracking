@@ -27,43 +27,43 @@ namespace StockApp.Common.Helpers
             switch (range)
             {
                 case "5D":
-                    chartData.Title = chartData.Title + " - Last 5 Days";
+                    chartData.Title = $"{chartData.Title} - Last 5 Days";
                     dateFormat = "MMM dd";
                     majorStep = 1;
                     intervalType = DateTimeIntervalType.Days;
                     break;
                 case "1M":
-                    chartData.Title = chartData.Title + " - Last Month";
+                    chartData.Title = $"{chartData.Title} - Last Month";
                     dateFormat = "MMM dd";
                     majorStep = 8;
                     intervalType = DateTimeIntervalType.Days;
                     break;
                 case "6M":
-                    chartData.Title = chartData.Title + " - Last 6 Months";
+                    chartData.Title = $"{chartData.Title} - Last 6 Months";
                     dateFormat = "MMM yyyy";
                     majorStep = 48;
                     intervalType = DateTimeIntervalType.Months;
                     break;
                 case "YTD":
-                    chartData.Title = chartData.Title + " - Year to Date";
+                    chartData.Title = $"{chartData.Title} - Year to Date";
                     dateFormat = "dd MMM";
                     majorStep = 10; //check this - as time passes, we have to shrink this
                     intervalType = DateTimeIntervalType.Auto;
                     break;
                 case "1Y":
-                    chartData.Title = chartData.Title + " - Last Year";
+                    chartData.Title = $"{chartData.Title} - Last Year";
                     dateFormat = "MMM yyyy";
                     majorStep = 96;
                     intervalType = DateTimeIntervalType.Years;
                     break;
                 case "5Y":
-                    chartData.Title = chartData.Title + " - Last 5 Years";
+                    chartData.Title = $"{chartData.Title} - Last 5 Years";
                     dateFormat = "yyyy";
                     majorStep = 480;
                     intervalType = DateTimeIntervalType.Years;
                     break;
                 case "Max":
-                    chartData.Title = chartData.Title + " - All time";
+                    chartData.Title = $"{chartData.Title} - All time";
                     dateFormat = "yyyy";
                     majorStep = 2000;
                     intervalType = DateTimeIntervalType.Years;
