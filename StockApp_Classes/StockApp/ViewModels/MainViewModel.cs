@@ -16,13 +16,16 @@ using System.Windows.Media.Imaging;
 
 namespace StockApp.ViewModels
 {
-    public class MainViewModel : INotifyPropertyChanged
+    public interface IMainViewModel
+    {
+
+    }
+    public class MainViewModel : INotifyPropertyChanged, IMainViewModel
     {
 
         /************************************************ Bindable properties ****************************************************/
         public ObservableCollection<Company> companiesCollection { get; set; }
-        public ObservableCollection<Company> companiesCopy { get; set; }
-        public ICollectionView CompaniesView { get; set; }
+        public ICollectionView companiesView { get; set; }
         private Company selectedCompany;
         private PlotModel chartData;
         private double percentageVariation { get; set; }
@@ -58,6 +61,7 @@ namespace StockApp.ViewModels
 
         /************************************************ Bindable properties ****************************************************/
 
+        
         public MainViewModel(IStockService stockService, IPerformersService performersService)
         {
 
@@ -65,7 +69,7 @@ namespace StockApp.ViewModels
             _performersService = performersService;
             isInitialized = false;
 
-            Initialize();
+            _ = Initialize();
 
             RangeClickedCommand = new RelayCommand(param =>
             {
@@ -75,7 +79,7 @@ namespace StockApp.ViewModels
             });
         }
         /************************************************* Commands ****************************************************/
-        public async void LoadStockDataAsync()
+        public async Task LoadStockDataAsync()
         {
             if (SelectedCompany == null) return;
 
@@ -110,7 +114,7 @@ namespace StockApp.ViewModels
             }
         }
 
-        public async void LoadPerformersDataAsync()
+        public async Task LoadPerformersDataAsync()
         {
             string cacheKey = $"{ShowTop10}_{SelectedRange}";
             PerformersDTO dto;
@@ -130,15 +134,17 @@ namespace StockApp.ViewModels
             PerformerRangeText = dto.PerformerRangeText;
         }
 
-        public void Initialize()
+        public async Task Initialize()
         {
-            CompaniesView = CollectionViewSource.GetDefaultView(_stockService.GetAllCompanies());
+            var companiesView = await _stockService.GetAllCompanies();
+
+            CompaniesView = CollectionViewSource.GetDefaultView(companiesView);
             CompaniesView.Filter = CompanyMatches;
-            SelectedCompany = _stockService.GetFilteredCompanies(SearchText).FirstOrDefault();
+            SelectedCompany = companiesView.FirstOrDefault();
             SelectedRange = "1Y";
 
-            LoadStockDataAsync();
-            LoadPerformersDataAsync();
+            await LoadStockDataAsync();
+            await LoadPerformersDataAsync();
 
             isInitialized = true;
         }
@@ -192,7 +198,7 @@ namespace StockApp.ViewModels
                 if (showTop10 == value) return;
                 showTop10 = value;
                 OnPropertyChanged();
-                LoadPerformersDataAsync();
+                _ = LoadPerformersDataAsync();
             }
         }
 
@@ -311,8 +317,8 @@ namespace StockApp.ViewModels
                 if (selectedRange == value) return;
                 selectedRange = value;
                 OnPropertyChanged();
-                LoadStockDataAsync();
-                LoadPerformersDataAsync();
+                _ = LoadStockDataAsync();
+                _ = LoadPerformersDataAsync();
             }
         }
 
@@ -339,7 +345,7 @@ namespace StockApp.ViewModels
                 /* This section was created using ChatGPT to resolve null reference errors - will refine later */
                 selectedCompany = value;
                 OnPropertyChanged();
-                LoadStockDataAsync();
+                _ = LoadStockDataAsync();
             }
         }
 
@@ -361,6 +367,17 @@ namespace StockApp.ViewModels
             {
                 if (_companyLogo == value) return;
                 _companyLogo = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public ICollectionView CompaniesView
+        {
+            get { return companiesView; }
+            set
+            {
+                if (companiesView == value) return;
+                companiesView = value;
                 OnPropertyChanged();
             }
         }

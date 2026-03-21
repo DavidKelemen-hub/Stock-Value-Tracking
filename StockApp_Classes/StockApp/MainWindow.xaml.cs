@@ -12,16 +12,10 @@ namespace StockApp
     public partial class MainWindow : Window
     {
 
-        public MainWindow()
+        public MainWindow(IMainViewModel viewModel)
         {
             InitializeComponent();
-
-            IDataBaseService db = new DataBaseService();
-            IProcessing processing = new Processing(db);
-            IStockService stockService = new StockService(processing);
-            IPerformersService performersService = new PerformersService(processing);
-
-            DataContext = new MainViewModel(stockService, performersService);
+            DataContext = viewModel;
         }
     }
 }

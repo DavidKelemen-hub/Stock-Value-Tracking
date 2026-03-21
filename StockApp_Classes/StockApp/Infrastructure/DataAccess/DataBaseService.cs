@@ -9,14 +9,12 @@ namespace StockApp.Infrastructure.DataAccess
 
     public interface IDataBaseService
     {
-        public List<Company> GetAllCompanies();
+        public Task<List<Company>> GetAllCompanies();
         public Task<List<CompanyPerformance>> GetTopPerformingCompanies(string range);
         public Task<List<CompanyPerformance>> GetLowestPerformingCompanies(string range);
         public Task<List<DailyEntry>> GetCompleteStockData(string symbol);
         public Task<List<DailyEntry>> GetLast5TradingDays();
         public Task <List<DailyEntry>> GetStockEntriesBetweenDates(string symbol, string range);
-        public double GetClosePriceOnDate(string symbol, DateTime date);
-        public double GetLatestClosePrice(string symbol);
     }
     public class DataBaseService : IDataBaseService
     {
@@ -31,14 +29,14 @@ namespace StockApp.Infrastructure.DataAccess
             connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["dbconnection"].ConnectionString;
         }
 
-        public List<Company> GetAllCompanies()
+        public async Task<List<Company>> GetAllCompanies()
         {
             const string queryString = "SELECT Name, Symbol FROM Company ORDER BY Symbol ASC";
                                        
             using (var connection = new SqlConnection(connectionString))
             {
-                var result = connection.Query<Company>(queryString).AsList();
-                return result;
+                await connection.OpenAsync();
+                return (await connection.QueryAsync<Company>(queryString)).AsList();
             }
         }
 
@@ -151,32 +149,6 @@ namespace StockApp.Infrastructure.DataAccess
 
                     return result.AsList();
                 }
-            }
-        }
-
-        public double GetClosePriceOnDate(string symbol, DateTime date)
-        {
-            var stockID = GetCompanyIDFromSymbol(symbol);
-            const string queryString = "SELECT ClosePrice " +
-                                       "FROM DailyPrices WHERE StockID = @stockID " +
-                                       "AND TradeDate = @date";
-            using (var connection = new SqlConnection(connectionString))
-            {
-                var result = connection.QuerySingleOrDefault<double>(queryString, new { stockID, date });
-                return result;
-            }
-        }
-
-        public double GetLatestClosePrice(string symbol)
-        {
-            var stockID = GetCompanyIDFromSymbol(symbol);
-            const string queryString = "SELECT TOP 1 ClosePrice " +
-                                       "FROM DailyPrices WHERE StockID = @stockID " +
-                                       "ORDER BY TradeDate DESC";
-            using (var connection = new SqlConnection(connectionString))
-            {
-                var result = connection.QuerySingleOrDefault<double>(queryString, new { stockID });
-                return result;
             }
         }
     }

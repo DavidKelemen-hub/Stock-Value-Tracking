@@ -12,10 +12,10 @@ namespace StockApp.Common.Helpers
         public static void SanitizeInput(List<DailyEntry> dailyEntries)
         {
             dailyEntries.RemoveAll(item =>
-                (item.OpenPrice == 0 || item.OpenPrice == null) &&
-                (item.LowPrice == 0 || item.LowPrice == null) &&
-                (item.ClosePrice == 0 || item.ClosePrice == null) &&
-                (item.HighPrice == 0 || item.HighPrice == null));
+                (item.OpenPrice == 0) &&
+                (item.LowPrice == 0) &&
+                (item.ClosePrice == 0) &&
+                (item.HighPrice == 0));
         }
     }
 }

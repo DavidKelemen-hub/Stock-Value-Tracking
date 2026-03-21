@@ -11,8 +11,8 @@ namespace StockApp.Appl.Services
 {
     public interface IStockService
     {
-        public ObservableCollection<Company> GetAllCompanies();
-        public ObservableCollection<Company> GetFilteredCompanies(string searchText);
+        public Task<ObservableCollection<Company>> GetAllCompanies();
+        public Task<ObservableCollection<Company>> GetFilteredCompanies(string searchText);
         public Task<StockDTO> LoadStockData(Company selectedCompany, string selectedRange);
     }
     public class StockService : IStockService
@@ -24,15 +24,17 @@ namespace StockApp.Appl.Services
             this._processing = _processing;
         }
 
-        public ObservableCollection<Company> GetAllCompanies()
+        public async Task<ObservableCollection<Company>> GetAllCompanies()
         {
-            return new ObservableCollection<Company>(_processing.GetAllCompanies());
+            var result = await _processing.GetAllCompanies();
+            return new ObservableCollection<Company>(result);
         }
 
-        public ObservableCollection<Company> GetFilteredCompanies(string searchText)
+        public async Task<ObservableCollection<Company>> GetFilteredCompanies(string searchText)
         {
             ObservableCollection<Company> _companies;
-            ObservableCollection<Company> _companiesCopy = new ObservableCollection<Company>(_processing.GetAllCompanies());
+            var result = await _processing.GetAllCompanies();
+            ObservableCollection<Company> _companiesCopy = new ObservableCollection<Company>(result);
 
             if (searchText.IsNullOrEmpty())
             {
