@@ -147,8 +147,11 @@ namespace StockApp.ViewModels
             var s = SearchText?.Trim();
             if (string.IsNullOrEmpty(s)) return true;
 
-            return c.Name!.Contains(s)
-                || c.Symbol!.Contains(s);
+            var name = c.Name ?? "";
+            var symbol = c.Symbol ?? "";
+
+            return name.Contains(s, StringComparison.OrdinalIgnoreCase)
+                || symbol.Contains(s, StringComparison.OrdinalIgnoreCase);
         }
         /************************************************* Commands ****************************************************/
 
