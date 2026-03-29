@@ -28,14 +28,14 @@ namespace StockApp.Appl.Services
 
         public async Task<ObservableCollection<Company>> GetAllCompanies()
         {
-            var result = await _processing.GetAllCompanies();
+            var result = await _processing.GetAllCompanies().ConfigureAwait(false);
             return new ObservableCollection<Company>(result);
         }
 
         public async Task<ObservableCollection<Company>> GetFilteredCompanies(string searchText)
         {
             ObservableCollection<Company> _companies;
-            var result = await _processing.GetAllCompanies();
+            var result = await _processing.GetAllCompanies().ConfigureAwait(false);
             ObservableCollection<Company> _companiesCopy = new(result);
 
             if (searchText.IsNullOrEmpty())
@@ -48,11 +48,16 @@ namespace StockApp.Appl.Services
             }
             return _companies;
         }
-        public EstimatedFairValues values;
+
         public async Task<StockDTO> LoadStockData(Company selectedCompany, string selectedRange)
         {
-            IndividualStockData stockData = await _processing.GetIndividualStockData(selectedCompany.Symbol!, selectedRange);
-            EstimatedFairValues fairValues = await _processing.GetEstimatedFairValues(selectedCompany.Symbol!);
+            var stockTask = _processing.GetIndividualStockData(selectedCompany.Symbol!, selectedRange);
+            var fairValuesTask = _processing.GetEstimatedFairValues(selectedCompany.Symbol!);
+
+            await Task.WhenAll(stockTask, fairValuesTask);
+
+            IndividualStockData stockData = stockTask.Result;
+            EstimatedFairValues fairValues = fairValuesTask.Result;
             ChartBuilder chartBuilder = new(selectedCompany.Name!);
 
             return new StockDTO

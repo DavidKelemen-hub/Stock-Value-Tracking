@@ -30,7 +30,7 @@ namespace StockApp.Domain.Processing
 
         public async Task<IndividualStockData> GetIndividualStockData(string symbol, string range)
         {
-            var result = await dbService.GetStockEntriesBetweenDates(symbol, range);
+            var result = await dbService.GetStockEntriesBetweenDates(symbol, range).ConfigureAwait(false);
             NullEntryHelper.SanitizeInput(result);
 
             var First = result.First();
@@ -50,26 +50,33 @@ namespace StockApp.Domain.Processing
 
         public async Task<List<Company>> GetAllCompanies()
         {
-            return await dbService.GetAllCompanies();
+            return await dbService.GetAllCompanies().ConfigureAwait(false);
         }
 
         public async Task<List<CompanyPerformance>> GetTopPerformingCompanies(string range)
         {
-            return await dbService.GetTopPerformingCompanies(range);
+            return await dbService.GetTopPerformingCompanies(range).ConfigureAwait(false);
         }
 
         public async Task<List<CompanyPerformance>> GetLowestPerformingCompanies(string range)
         {
 
-            return await dbService.GetLowestPerformingCompanies(range);
+            return await dbService.GetLowestPerformingCompanies(range).ConfigureAwait(false);
         }
 
         public async Task<EstimatedFairValues> GetEstimatedFairValues(string symbol)
         {
-            var statement = await dbService.GetFinancialStatement(symbol);
-            var sectorMedianPE = await dbService.GetSectorMedianPE(statement.Sector);
-            var sectorMedianEV_EBITDA = await dbService.GetSectorMedianEV_EBITDA(statement.Sector);
-            var riskFreeRate = await dbService.GetRiskFreeRate();
+            var statement = await dbService.GetFinancialStatement(symbol).ConfigureAwait(false);
+
+            var sectorMedianPETask = dbService.GetSectorMedianPE(statement.Sector);
+            var sectorMedianEV_EBITDATask = dbService.GetSectorMedianEV_EBITDA(statement.Sector);
+            var riskFreeRateTask = dbService.GetRiskFreeRate();
+
+            await Task.WhenAll(sectorMedianPETask, sectorMedianEV_EBITDATask, riskFreeRateTask);
+
+            decimal? sectorMedianPE = sectorMedianPETask.Result;
+            decimal? sectorMedianEV_EBITDA = sectorMedianEV_EBITDATask.Result;
+            double? riskFreeRate = riskFreeRateTask.Result;
 
             return new EstimatedFairValues
             {
