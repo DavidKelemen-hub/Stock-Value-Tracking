@@ -4,6 +4,8 @@ using StockApp.Common.Helpers;
 using StockApp.Domain.Models;
 using StockApp.Domain.Processing;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.IO;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
@@ -46,12 +48,11 @@ namespace StockApp.Appl.Services
             }
             return _companies;
         }
-
+        public EstimatedFairValues values;
         public async Task<StockDTO> LoadStockData(Company selectedCompany, string selectedRange)
         {
-
             IndividualStockData stockData = await _processing.GetIndividualStockData(selectedCompany.Symbol!, selectedRange);
-
+            EstimatedFairValues fairValues = await _processing.GetEstimatedFairValues(selectedCompany.Symbol!);
             ChartBuilder chartBuilder = new(selectedCompany.Name!);
 
             return new StockDTO
@@ -66,10 +67,9 @@ namespace StockApp.Appl.Services
                 LowestPrice = stockData.LowestPrice,
                 RangeText = DescriptionHelper.GetRangeDescription(stockData.PriceVariation, selectedRange),
                 ChartColor = ColorHelper.GetTrendingColor(stockData.PriceVariation),
-                CompanyLogo = LogoHelper.GetCompanyLogo(selectedCompany.Symbol!)
+                CompanyLogo = LogoHelper.GetCompanyLogo(selectedCompany.Symbol!),
+                FairValues = fairValues
             };
         }
-
-
     }
 }

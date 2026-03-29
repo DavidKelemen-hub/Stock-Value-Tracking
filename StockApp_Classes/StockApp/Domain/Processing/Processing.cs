@@ -76,7 +76,7 @@ namespace StockApp.Domain.Processing
                 GrahamFairValue = FairValueHelper.Graham_Value(statement),
                 PEBasedFairValue = FairValueHelper.PE_Value(statement, sectorMedianPE),
                 EbitdaBasedFairValue = FairValueHelper.EbitdaBased_Value(statement, sectorMedianEV_EBITDA),
-                DiscountedCashFlow = FairValueHelper.DividendDiscountModel_Value(statement, riskFreeRate)
+                DividendDiscountModelFairValue = FairValueHelper.DividendDiscountModel_Value(statement, riskFreeRate)
             };
             
         }

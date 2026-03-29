@@ -20,6 +20,7 @@ namespace StockApp.Appl.DTO
         public string RangeText { get; set; } = String.Empty;
         public string SelectedRange { get; set; } = String.Empty;
         public string SearchText { get; set; } = String.Empty;
+        public EstimatedFairValues? FairValues { get; set; }
     }
 
 

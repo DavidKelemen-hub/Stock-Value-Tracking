@@ -44,6 +44,8 @@ namespace StockApp.ViewModels
         public List<CompanyPerformance>? companiesPerformance { get; set; }
         private ImageSource? companyLogo { get; set; }
 
+        private EstimatedFairValues? fairValues { get; set; }
+
         private readonly CacheItemPolicy policy = new()
         {
             AbsoluteExpiration = DateTimeOffset.Now.AddDays(1)
@@ -100,6 +102,7 @@ namespace StockApp.ViewModels
                 ChartData = dto.ChartData!;
                 ChartColor = dto.ChartColor!;
                 CompanyLogo = dto.CompanyLogo;
+                FairValues = dto.FairValues;
             }
             catch (Exception ex)
             {
@@ -351,6 +354,17 @@ namespace StockApp.ViewModels
             {
                 if (companiesView == value) return;
                 companiesView = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public EstimatedFairValues? FairValues
+         {
+            get { return fairValues; }
+            set
+            {
+                if (fairValues == value) return;
+                fairValues = value;
                 OnPropertyChanged();
             }
         }
