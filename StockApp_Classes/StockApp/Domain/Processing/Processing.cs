@@ -15,6 +15,7 @@ namespace StockApp.Domain.Processing
         public Task<List<CompanyPerformance>> GetTopPerformingCompanies(string range);
         public Task<List<CompanyPerformance>> GetLowestPerformingCompanies(string range);
         public Task<IndividualStockData> GetIndividualStockData(string symbol, string range);
+        public Task<EstimatedFairValues> GetEstimatedFairValues(string symbol);
     }
 
 
@@ -26,7 +27,6 @@ namespace StockApp.Domain.Processing
         {
             this.dbService = dbService;
         }
-
 
         public async Task<IndividualStockData> GetIndividualStockData(string symbol, string range)
         {
@@ -62,6 +62,23 @@ namespace StockApp.Domain.Processing
         {
 
             return await dbService.GetLowestPerformingCompanies(range);
+        }
+
+        public async Task<EstimatedFairValues> GetEstimatedFairValues(string symbol)
+        {
+            var statement = await dbService.GetFinancialStatement(symbol);
+            var sectorMedianPE = await dbService.GetSectorMedianPE(statement.Sector);
+            var sectorMedianEV_EBITDA = await dbService.GetSectorMedianEV_EBITDA(statement.Sector);
+            var riskFreeRate = await dbService.GetRiskFreeRate();
+
+            return new EstimatedFairValues
+            {
+                GrahamFairValue = FairValueHelper.Graham_Value(statement),
+                PEBasedFairValue = FairValueHelper.PE_Value(statement, sectorMedianPE),
+                EbitdaBasedFairValue = FairValueHelper.EbitdaBased_Value(statement, sectorMedianEV_EBITDA),
+                DiscountedCashFlow = FairValueHelper.DividendDiscountModel_Value(statement, riskFreeRate)
+            };
+            
         }
     }
 }

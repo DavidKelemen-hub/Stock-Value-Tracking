@@ -15,6 +15,10 @@ namespace StockApp.Infrastructure.DataAccess
         public Task<List<DailyEntry>> GetCompleteStockData(string symbol);
         public Task<List<DailyEntry>> GetLast5TradingDays();
         public Task<List<DailyEntry>> GetStockEntriesBetweenDates(string symbol, string range);
+        public Task<FinancialStatement> GetFinancialStatement(string symbol);
+        public Task<decimal> GetSectorMedianPE(string? industrySector);
+        public Task<decimal> GetSectorMedianEV_EBITDA(string? industrySector);
+        public Task<double> GetRiskFreeRate();
     }
     public class DataBaseService : IDataBaseService
     {
@@ -27,6 +31,17 @@ namespace StockApp.Infrastructure.DataAccess
         public DataBaseService()
         {
             connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["dbconnection"].ConnectionString;
+        }
+
+        public async Task<FinancialStatement> GetFinancialStatement(string symbol)
+        {
+            var stockID = await GetCompanyIDFromSymbol(symbol);
+            const string queryString = "SELECT * FROM Earnings WHERE StockID=@stockID";
+
+            using var connection = new SqlConnection(connectionString);
+            await connection.OpenAsync();
+
+            return await connection.QuerySingleOrDefaultAsync<FinancialStatement>(queryString, new { stockID });
         }
 
         public async Task<List<Company>> GetAllCompanies()
@@ -131,6 +146,36 @@ namespace StockApp.Infrastructure.DataAccess
                 await connection.OpenAsync();
                 return (await connection.QueryAsync<DailyEntry>(queryString, new { stockID, startDate, endDate })).AsList();
             }
+        }
+
+        public async Task<decimal> GetSectorMedianPE(string? industrySector)
+        {
+            string queryString = @"EXEC GetSectorMedianPE @sector=@industrySector";
+
+            using var connection = new SqlConnection(connectionString);
+            await connection.OpenAsync();
+
+            return await connection.QuerySingleOrDefaultAsync<decimal>(queryString, new { industrySector});
+        }
+
+        public async Task<decimal> GetSectorMedianEV_EBITDA(string? industrySector)
+        {
+            string queryString = @"EXEC GetSectorMedianEV_EBITDA @sector=@industrySector";
+
+            using var connection = new SqlConnection(connectionString);
+            await connection.OpenAsync();
+
+            return await connection.QuerySingleOrDefaultAsync<decimal>(queryString, new { industrySector });
+        }
+
+        public async Task<double> GetRiskFreeRate()
+        {
+            string queryString = "select DISTINCT RiskFreeRate from Earnings";
+
+            using var connection = new SqlConnection(connectionString);
+            await connection.OpenAsync();
+
+            return await connection.QuerySingleOrDefaultAsync<double>(queryString);
         }
     }
 }

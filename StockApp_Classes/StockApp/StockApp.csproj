@@ -513,6 +513,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="Domain\Models\EstimatedFairValues.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Dapper" Version="2.1.66" />
     <PackageReference Include="LiveCharts.Core" Version="0.9.8" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.3" />
