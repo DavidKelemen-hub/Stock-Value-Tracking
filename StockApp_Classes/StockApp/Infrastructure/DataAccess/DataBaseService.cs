@@ -17,8 +17,8 @@ namespace StockApp.Infrastructure.DataAccess
         public Task<List<DailyEntry>> GetLast5TradingDays();
         public Task<List<DailyEntry>> GetStockEntriesBetweenDates(string symbol, string range);
         public Task<FinancialStatement> GetFinancialStatement(string symbol);
-        public Task<decimal> GetSectorMedianPE(string? industrySector);
-        public Task<decimal> GetSectorMedianEV_EBITDA(string? industrySector);
+        public Task<decimal?> GetSectorMedianPE(string? industrySector);
+        public Task<decimal?> GetSectorMedianEV_EBITDA(string? industrySector);
         public Task<double> GetRiskFreeRate();
     }
     public class DataBaseService : IDataBaseService
@@ -150,7 +150,7 @@ namespace StockApp.Infrastructure.DataAccess
             }
         }
 
-        public async Task<decimal> GetSectorMedianPE(string? industrySector)
+        public async Task<decimal?> GetSectorMedianPE(string? industrySector)
         {
                 string queryString = "SELECT Median_PE " +
                                  "FROM SectorMedians " +
@@ -162,7 +162,7 @@ namespace StockApp.Infrastructure.DataAccess
                 return await connection.QuerySingleOrDefaultAsync<decimal>(queryString, new { industrySector }).ConfigureAwait(false);
         }
 
-        public async Task<decimal> GetSectorMedianEV_EBITDA(string? industrySector)
+        public async Task<decimal?> GetSectorMedianEV_EBITDA(string? industrySector)
         {
             string queryString = "SELECT Median_EV_EBITDA " +
                                  "FROM SectorMedians " +

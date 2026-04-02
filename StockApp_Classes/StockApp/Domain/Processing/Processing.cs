@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using StockApp.Common.Helpers;
+﻿using StockApp.Common.Helpers;
 using StockApp.Domain.Models;
 using StockApp.Infrastructure.DataAccess;
 
@@ -16,6 +11,7 @@ namespace StockApp.Domain.Processing
         public Task<List<CompanyPerformance>> GetLowestPerformingCompanies(string range);
         public Task<IndividualStockData> GetIndividualStockData(string symbol, string range);
         public Task<EstimatedFairValues> GetEstimatedFairValues(string symbol);
+        public Task<FinancialStatement> GetFinancialStatement(string symbol);
     }
 
 
@@ -64,9 +60,11 @@ namespace StockApp.Domain.Processing
             return await dbService.GetLowestPerformingCompanies(range).ConfigureAwait(false);
         }
 
-        public async Task<EstimatedFairValues> GetEstimatedFairValues(string symbol)
+        public async Task<EstimatedFairValues?> GetEstimatedFairValues(string symbol)
         {
             var statement = await dbService.GetFinancialStatement(symbol).ConfigureAwait(false);
+
+            if (statement == null) return null;
 
             var sectorMedianPETask = dbService.GetSectorMedianPE(statement.Sector);
             var sectorMedianEV_EBITDATask = dbService.GetSectorMedianEV_EBITDA(statement.Sector);
@@ -86,6 +84,11 @@ namespace StockApp.Domain.Processing
                 DividendDiscountModelFairValue = FairValueHelper.DividendDiscountModel_Value(statement, riskFreeRate)
             };
             
+        }
+
+        public async Task<FinancialStatement> GetFinancialStatement(string symbol)
+        {
+            return await dbService.GetFinancialStatement(symbol).ConfigureAwait(false);
         }
     }
 }

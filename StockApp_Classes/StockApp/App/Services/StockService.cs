@@ -1,13 +1,9 @@
 ﻿using Microsoft.IdentityModel.Tokens;
-using StockApp.Appl.DTO;
 using StockApp.Common.Helpers;
 using StockApp.Domain.Models;
 using StockApp.Domain.Processing;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.IO;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
+using StockApp.Appl.DTO;
 
 namespace StockApp.Appl.Services
 {
@@ -16,6 +12,7 @@ namespace StockApp.Appl.Services
         public Task<ObservableCollection<Company>> GetAllCompanies();
         public Task<ObservableCollection<Company>> GetFilteredCompanies(string searchText);
         public Task<StockDTO> LoadStockData(Company selectedCompany, string selectedRange);
+        public Task<FinancialStatementDTO> LoadFinancialStatement(Company selectedCompany);
     }
     public class StockService : IStockService
     {
@@ -74,6 +71,27 @@ namespace StockApp.Appl.Services
                 ChartColor = ColorHelper.GetTrendingColor(stockData.PriceVariation),
                 CompanyLogo = LogoHelper.GetCompanyLogo(selectedCompany.Symbol!),
                 FairValues = fairValues
+            };
+        }
+
+        public async Task<FinancialStatementDTO> LoadFinancialStatement(Company selectedCompany)
+        {
+            var statement = await _processing.GetFinancialStatement(selectedCompany.Symbol!).ConfigureAwait(false);
+
+            return new FinancialStatementDTO
+            {
+                FreeCashFlow = statement.FreeCashFlow.HasValue ? LargeNumberHelper.FormatLargeNumber(statement.FreeCashFlow.Value) : "N/A",
+                ReturnOnEquity = statement.ReturnOnEquity.HasValue ? $"{statement.ReturnOnEquity.Value:P1}" : "N/A",
+                DebtToEquity = statement.DebtToEquity.HasValue ? $"{statement.DebtToEquity.Value:F2}x" : "N/A",
+                GrossMargins = statement.GrossMargins.HasValue ? $"{statement.GrossMargins.Value:P1}" : "N/A",
+                OperatingMargins = statement.OperatingMargins.HasValue ? $"{statement.OperatingMargins.Value:P1}" : "N/A",
+                CurrentRatio = statement.CurrentRatio.HasValue ? $"{statement.CurrentRatio.Value:F2}x" : "N/A",
+                Ebitda = statement.EBITDA.HasValue ? LargeNumberHelper.FormatLargeNumber(statement.EBITDA.Value) : "N/A",
+                TrailingEPS = statement.TrailingEPS.HasValue ? $"${statement.TrailingEPS.Value:F2}" : "N/A",
+                RevenueGrowth = statement.RevenueGrowth.HasValue ? $"{(statement.RevenueGrowth.Value > 0 ? "+" : "")}{statement.RevenueGrowth.Value:P1}" : "N/A",
+                NetCashPosition = (statement.TotalCash.HasValue && statement.TotalDebt.HasValue)
+                ? LargeNumberHelper.FormatLargeNumber(statement.TotalCash.Value - statement.TotalDebt.Value)
+                : "N/A"
             };
         }
     }

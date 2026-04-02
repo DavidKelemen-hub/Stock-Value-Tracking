@@ -12,9 +12,17 @@ namespace StockApp.Common.Helpers
     {
         public static decimal? Graham_Value(FinancialStatement st)
         {
-            if (st.TrailingEPS == null || st.BookValue == null) return null;
+            if (st.TrailingEPS == null || st.BookValue == null)
+                return null;
 
-            return Decimal.Round((decimal)Math.Sqrt((double)(22.5 * st.TrailingEPS * st.BookValue)),2);
+            decimal raw = (decimal)(22.5 * st.TrailingEPS.Value * st.BookValue.Value);
+
+            if (raw < 0)
+                return null; // or handle differently
+
+            double sqrt = Math.Sqrt((double)raw);
+
+            return decimal.Round((decimal)sqrt, 2);
         }
 
         public static decimal? PE_Value(FinancialStatement st, decimal? sectorMedianPE)
