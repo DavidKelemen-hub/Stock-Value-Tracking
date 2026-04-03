@@ -74,24 +74,42 @@ namespace StockApp.Appl.Services
             };
         }
 
-        public async Task<FinancialStatementDTO> LoadFinancialStatement(Company selectedCompany)
+        public async Task<FinancialStatementDTO?> LoadFinancialStatement(Company selectedCompany)
         {
             var statement = await _processing.GetFinancialStatement(selectedCompany.Symbol!).ConfigureAwait(false);
 
+            if (statement == null) return new FinancialStatementDTO { };
+
             return new FinancialStatementDTO
             {
-                FreeCashFlow = statement.FreeCashFlow.HasValue ? LargeNumberHelper.FormatLargeNumber(statement.FreeCashFlow.Value) : "N/A",
-                ReturnOnEquity = statement.ReturnOnEquity.HasValue ? $"{statement.ReturnOnEquity.Value:P1}" : "N/A",
-                DebtToEquity = statement.DebtToEquity.HasValue ? $"{statement.DebtToEquity.Value:F2}x" : "N/A",
+                // Valuation & Per Share
+                TrailingEPS = statement.TrailingEPS.HasValue ? $"${statement.TrailingEPS.Value:F2}" : "N/A",
+                ForwardEPS = statement.ForwardEPS.HasValue ? $"${statement.ForwardEPS.Value:F2}" : "N/A",
+                BookValue = statement.BookValue.HasValue ? $"${statement.BookValue.Value:F2}" : "N/A",
+
+                // Profitability & Margins
                 GrossMargins = statement.GrossMargins.HasValue ? $"{statement.GrossMargins.Value:P1}" : "N/A",
                 OperatingMargins = statement.OperatingMargins.HasValue ? $"{statement.OperatingMargins.Value:P1}" : "N/A",
-                CurrentRatio = statement.CurrentRatio.HasValue ? $"{statement.CurrentRatio.Value:F2}x" : "N/A",
                 Ebitda = statement.EBITDA.HasValue ? LargeNumberHelper.FormatLargeNumber(statement.EBITDA.Value) : "N/A",
-                TrailingEPS = statement.TrailingEPS.HasValue ? $"${statement.TrailingEPS.Value:F2}" : "N/A",
+
+                // Growth
                 RevenueGrowth = statement.RevenueGrowth.HasValue ? $"{(statement.RevenueGrowth.Value > 0 ? "+" : "")}{statement.RevenueGrowth.Value:P1}" : "N/A",
-                NetCashPosition = (statement.TotalCash.HasValue && statement.TotalDebt.HasValue)
-                ? LargeNumberHelper.FormatLargeNumber(statement.TotalCash.Value - statement.TotalDebt.Value)
-                : "N/A"
+                EarningsGrowth = statement.EarningsGrowth.HasValue ? $"{(statement.EarningsGrowth.Value > 0 ? "+" : "")}{statement.EarningsGrowth.Value:P1}" : "N/A",
+
+                // Financial Health
+                TotalDebt = statement.TotalDebt.HasValue ? LargeNumberHelper.FormatLargeNumber(statement.TotalDebt.Value) : "N/A",
+                NetCashPosition = statement.TotalCash.HasValue &&
+                                    statement.TotalDebt.HasValue ? LargeNumberHelper.FormatLargeNumber(statement.TotalCash.Value - statement.TotalDebt.Value) : "N/A",
+                FreeCashFlow = statement.FreeCashFlow.HasValue ? LargeNumberHelper.FormatLargeNumber(statement.FreeCashFlow.Value) : "N/A",
+                CurrentRatio = statement.CurrentRatio.HasValue ? $"{statement.CurrentRatio.Value:F2}x" : "N/A",
+
+                // Dividends
+                DividendRate = statement.DividendRate.HasValue ? $"${statement.DividendRate.Value:F2}" : "N/A",
+                DividendYield = statement.DividendYield.HasValue ? $"{statement.DividendYield.Value:F2}%" : "N/A",
+
+                // Market & Risk
+                Beta = statement.Beta.HasValue ? $"{statement.Beta.Value:F2}" : "N/A",
+                SharesOutstanding = statement.SharesOutstanding.HasValue ? LargeNumberHelper.FormatLargeNumber(statement.SharesOutstanding.Value) : "N/A",
             };
         }
     }

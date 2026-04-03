@@ -49,17 +49,22 @@ namespace StockApp.ViewModels
         /********** Stock Data **********/
 
         /********** Financial Statement Data **********/
-        private string? _freeCashFlow { get; set; }
-        private string? _returnOnEquity { get; set; }
-        private string? _debtToEquity { get; set; }
+        private string? _trailingEPS { get; set; }
+        private string? _forwardEPS { get; set; }
+        private string? _bookValue { get; set; }
         private string? _grossMargins { get; set; }
         private string? _operatingMargins { get; set; }
-        private string? _currentRatio { get; set; }
         private string? _ebitda { get; set; }
-        private string? _trailingEPS { get; set; }
         private string? _revenueGrowth { get; set; }
+        private string? _earningsGrowth { get; set; }
+        private string? _totalDebt { get; set; }
         private string? _netCashPosition { get; set; }
-
+        private string? _freeCashFlow { get; set; }
+        private string? _currentRatio { get; set; }
+        private string? _dividendRate { get; set; }
+        private string? _dividendYield { get; set; }
+        private string? _beta { get; set; }
+        private string? _sharesOutstanding { get; set; }
         /********** Financial Statement Data **********/
 
         private EstimatedFairValues? fairValues { get; set; }
@@ -130,16 +135,22 @@ namespace StockApp.ViewModels
         {
             var statement = await _stockService.LoadFinancialStatement(SelectedCompany!);
 
-            FreeCashFlow = statement.FreeCashFlow;
-            ReturnOnEquity = statement.ReturnOnEquity;
-            DebtToEquity = statement.DebtToEquity;
+            TrailingEPS = statement.TrailingEPS;
+            ForwardEPS = statement.ForwardEPS;
+            BookValue = statement.BookValue;
             GrossMargins = statement.GrossMargins;
             OperatingMargins = statement.OperatingMargins;
-            CurrentRatio = statement.CurrentRatio;
             Ebitda = statement.Ebitda;
-            TrailingEPS = statement.TrailingEPS;
             RevenueGrowth = statement.RevenueGrowth;
+            EarningsGrowth = statement.EarningsGrowth;
+            TotalDebt = statement.TotalDebt;
             NetCashPosition = statement.NetCashPosition;
+            FreeCashFlow = statement.FreeCashFlow;
+            CurrentRatio = statement.CurrentRatio;
+            DividendRate = statement.DividendRate;
+            DividendYield = statement.DividendYield;
+            Beta = statement.Beta;
+            SharesOutstanding = statement.SharesOutstanding;
         }
 
         public async Task Initialize()
@@ -170,26 +181,6 @@ namespace StockApp.ViewModels
                 || symbol.Contains(s, StringComparison.OrdinalIgnoreCase);
         }
 
-        /*
-public async Task LoadPerformersDataAsync()
-{
-    string cacheKey = $"{ShowTop10}_{SelectedRange}";
-    PerformersDTO dto;
-
-    if (_cache[cacheKey] is PerformersDTO cached)
-    {
-        dto = cached;
-    }
-    else
-    {
-        dto = await _performersService.LoadPerformersData(ShowTop10, SelectedRange!);
-        _cache.Set(cacheKey, dto, policy);
-    }
-
-    CompaniesPerformance = dto.Performers;
-    PerformersColor = dto.PerformersColor;
-    PerformerRangeText = dto.PerformerRangeText;
-} */
         /************************************************* Commands ****************************************************/
 
         /*********************************************** Model Properties ****************************************************/
@@ -222,7 +213,6 @@ public async Task LoadPerformersDataAsync()
                 if (showTop10 == value) return;
                 showTop10 = value;
                 OnPropertyChanged();
-                //_ = LoadPerformersDataAsync();
             }
         }
 
@@ -331,7 +321,6 @@ public async Task LoadPerformersDataAsync()
                 selectedRange = value;
                 OnPropertyChanged();
                 _ = LoadStockDataAsync();
-                //_ = LoadPerformersDataAsync();
             }
         }
 
@@ -404,35 +393,35 @@ public async Task LoadPerformersDataAsync()
             }
         }
 
-        public string? FreeCashFlow
+        public string? TrailingEPS
         {
-            get { return _freeCashFlow; }
+            get { return _trailingEPS; }
             set
             {
-                if (_freeCashFlow == value || value == null) return;
-                _freeCashFlow = value;
+                if (_trailingEPS == value || value == null) return;
+                _trailingEPS = value;
                 OnPropertyChanged();
             }
         }
 
-        public string? ReturnOnEquity
+        public string? ForwardEPS
         {
-            get { return _returnOnEquity; }
+            get { return _forwardEPS; }
             set
             {
-                if (_returnOnEquity == value || value == null) return;
-                _returnOnEquity = value;
+                if (_forwardEPS == value || value == null) return;
+                _forwardEPS = value;
                 OnPropertyChanged();
             }
         }
 
-        public string? DebtToEquity
+        public string? BookValue
         {
-            get { return _debtToEquity; }
+            get { return _bookValue; }
             set
             {
-                if (_debtToEquity == value || value == null) return;
-                _debtToEquity = value;
+                if (_bookValue == value || value == null) return;
+                _bookValue = value;
                 OnPropertyChanged();
             }
         }
@@ -458,18 +447,6 @@ public async Task LoadPerformersDataAsync()
                 OnPropertyChanged();
             }
         }
-
-        public string? CurrentRatio
-        {
-            get { return _currentRatio; }
-            set
-            {
-                if (_currentRatio == value || value == null) return;
-                _currentRatio = value;
-                OnPropertyChanged();
-            }
-        }
-
         public string? Ebitda
         {
             get { return _ebitda; }
@@ -480,18 +457,6 @@ public async Task LoadPerformersDataAsync()
                 OnPropertyChanged();
             }
         }
-
-        public string? TrailingEPS
-        {
-            get { return _trailingEPS; }
-            set
-            {
-                if (_trailingEPS == value || value == null) return;
-                _trailingEPS = value;
-                OnPropertyChanged();
-            }
-        }
-
         public string? RevenueGrowth
         {
             get { return _revenueGrowth; }
@@ -503,6 +468,27 @@ public async Task LoadPerformersDataAsync()
             }
         }
 
+        public string? EarningsGrowth
+        {
+            get { return _earningsGrowth; }
+            set
+            {
+                if (_earningsGrowth == value || value == null) return;
+                _earningsGrowth = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string? TotalDebt
+        {
+            get { return _totalDebt; }
+            set
+            {
+                if (_totalDebt == value || value == null) return;
+                _totalDebt = value;
+                OnPropertyChanged();
+            }
+        }
         public string? NetCashPosition
         {
             get { return _netCashPosition; }
@@ -513,6 +499,73 @@ public async Task LoadPerformersDataAsync()
                 OnPropertyChanged();
             }
         }
+        public string? FreeCashFlow
+        {
+            get { return _freeCashFlow; }
+            set
+            {
+                if (_freeCashFlow == value || value == null) return;
+                _freeCashFlow = value;
+                OnPropertyChanged();
+            }
+        }
+        public string? CurrentRatio
+        {
+            get { return _currentRatio; }
+            set
+            {
+                if (_currentRatio == value || value == null) return;
+                _currentRatio = value;
+                OnPropertyChanged();
+            }
+        }
+        public string? DividendRate
+        {
+            get { return _dividendRate; }
+            set
+            {
+                if (_dividendRate == value || value == null) return;
+                _dividendRate = value;
+                OnPropertyChanged();
+            }
+        }
+        public string? DividendYield
+        {
+            get { return _dividendYield; }
+            set
+            {
+                if (_dividendYield == value || value == null) return;
+                _dividendYield = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string? Beta
+        {
+            get { return _beta; }
+            set
+            {
+                if (_beta == value || value == null) return;
+                _beta = value;
+                OnPropertyChanged();
+            }
+        }
+        public string? SharesOutstanding
+        {
+            get { return _sharesOutstanding; }
+            set
+            {
+                if (_sharesOutstanding == value || value == null) return;
+                _sharesOutstanding = value;
+                OnPropertyChanged();
+            }
+        }
+
+
+
+
+
+
         /*********************************************** Model Properties ****************************************************/
 
         /*********************************************** INotifyPropertyChanged Implementation ****************************************************/
