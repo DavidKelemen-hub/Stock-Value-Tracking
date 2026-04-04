@@ -158,13 +158,12 @@ namespace StockApp.ViewModels
         private async Task LoadNewsAsync()
         {
             if (SelectedCompany == null) return;
-            Root root;
+            NewsFeed result;
             try
             {
                 string cacheKey = $"{SelectedCompany.Symbol}";
-                Root result;
 
-                if (_cache[cacheKey] is Root cached)
+                if (_cache[cacheKey] is NewsFeed cached)
                 {
                     result = cached;
                 }
@@ -175,7 +174,7 @@ namespace StockApp.ViewModels
                 }
 
                 NewsItems.Clear();
-                foreach (var msg in result.Messages ?? [])
+                foreach (var msg in result.News ?? [])
                 {
                     NewsItems.Add(new NewsCardViewModel
                     {

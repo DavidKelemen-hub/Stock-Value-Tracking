@@ -17,9 +17,9 @@ namespace StockApp.Domain.Models
         public string? Thumbnail { get; set; }
     }
 
-    public class Root
+    public class NewsFeed
     {
-        [JsonPropertyName("message")] 
-        public List<Message> Messages { get; set; }
+        [JsonPropertyName("newsfeed")] 
+        public List<Message> News { get; set; }
     }
 }

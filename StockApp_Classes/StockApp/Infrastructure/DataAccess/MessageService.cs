@@ -13,7 +13,7 @@ namespace StockApp.Infrastructure.DataAccess
 {
     public interface IMessageService
     {
-        public Task<Root> GetNewsFeed(string symbol, int size);
+        public Task<NewsFeed> GetNewsFeed(string symbol, int size);
     }
     public class MessageService : IMessageService
     {
@@ -29,16 +29,16 @@ namespace StockApp.Infrastructure.DataAccess
             };
         }
 
-        public async Task<Root> GetNewsFeed(string symbol, int size)
+        public async Task<NewsFeed> GetNewsFeed(string symbol, int size)
         {
             string requestString = $"{this.url}news?symbol={symbol}&size={size}";
             HttpResponseMessage response = await httpClient.GetAsync(requestString);
-            Root myDeserializedClass = new();
+            NewsFeed myDeserializedClass = new();
 
             if (response.IsSuccessStatusCode)
             {
                 string jsonResponse = await response.Content.ReadAsStringAsync();
-                myDeserializedClass = JsonSerializer.Deserialize<Root>(jsonResponse);
+                myDeserializedClass = JsonSerializer.Deserialize<NewsFeed>(jsonResponse);
 
             }
             return myDeserializedClass;

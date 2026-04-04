@@ -13,7 +13,7 @@ namespace StockApp.Common.Helpers
         public ChartBuilder(string title)
         {
             chartData = new PlotModel();
-            chartData.Title = $"Stock Price for {title}";
+            chartData.Title = $"Price evolution for {title}";
         }
 
         public PlotModel LoadChartData(string range, List<DailyEntry> dailyEntries, int sign)

@@ -13,7 +13,7 @@ namespace StockApp.Domain.Processing
         public Task<IndividualStockData> GetIndividualStockData(string symbol, string range);
         public Task<EstimatedFairValues> GetEstimatedFairValues(string symbol);
         public Task<FinancialStatement> GetFinancialStatement(string symbol);
-        public Task<Root> GetNewsFeed(string symbol, int size);
+        public Task<NewsFeed> GetNewsFeed(string symbol, int size);
     }
 
 
@@ -95,7 +95,7 @@ namespace StockApp.Domain.Processing
             return await dbService.GetFinancialStatement(symbol).ConfigureAwait(false);
         }
 
-        public async Task<Root> GetNewsFeed(string symbol, int size)
+        public async Task<NewsFeed> GetNewsFeed(string symbol, int size)
         {
             return await msgService.GetNewsFeed(symbol, size).ConfigureAwait(false);
         }
