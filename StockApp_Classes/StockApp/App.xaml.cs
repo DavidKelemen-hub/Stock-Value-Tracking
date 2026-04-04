@@ -16,15 +16,23 @@ namespace StockApp
     {
         private IServiceProvider? _serviceProvider;
 
-        protected override void OnStartup(StartupEventArgs e)
+        protected override async void OnStartup(StartupEventArgs e)
         {
+            var splash = new SplashScreenWindow();
+            splash.Show();
+
             var serviceCollection = new ServiceCollection();
             ConfigureServices(serviceCollection);
-
             _serviceProvider = serviceCollection.BuildServiceProvider();
 
             var mainWindow = _serviceProvider.GetRequiredService<MainWindow>();
+
+            // simulate loading while services are being built
+            await Task.Delay(5000);
+
             mainWindow.Show();
+
+            await splash.CloseWithFade();
         }
 
         private void ConfigureServices(IServiceCollection services)

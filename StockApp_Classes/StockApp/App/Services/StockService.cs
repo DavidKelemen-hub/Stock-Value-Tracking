@@ -13,7 +13,7 @@ namespace StockApp.Appl.Services
         public Task<ObservableCollection<Company>> GetFilteredCompanies(string searchText);
         public Task<StockDTO> LoadStockData(Company selectedCompany, string selectedRange);
         public Task<FinancialStatementDTO> LoadFinancialStatement(Company selectedCompany);
-        public Task<Root> GetNewsFeed(string symbol, int size);
+        public Task<NewsFeed> GetNewsFeed(string symbol, int size);
     }
     public class StockService : IStockService
     {
@@ -114,7 +114,7 @@ namespace StockApp.Appl.Services
             };
         }
 
-        public async Task<Root> GetNewsFeed(string symbol, int size)
+        public async Task<NewsFeed> GetNewsFeed(string symbol, int size)
         {
             return await _processing.GetNewsFeed(symbol,size).ConfigureAwait(false);
         }
