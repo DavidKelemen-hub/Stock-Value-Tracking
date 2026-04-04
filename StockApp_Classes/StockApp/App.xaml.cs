@@ -36,7 +36,7 @@ namespace StockApp
             services.AddSingleton<IDataBaseService, DataBaseService>();
             services.AddSingleton<IProcessing, Processing>();
             services.AddSingleton<IStockService, StockService>();
-            services.AddSingleton<IPerformersService, PerformersService>();
+            services.AddSingleton<IMessageService, MessageService>();
 
             // Register ViewModels
             services.AddSingleton<IMainViewModel, MainViewModel>();

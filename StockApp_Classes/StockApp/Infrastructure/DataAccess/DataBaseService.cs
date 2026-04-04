@@ -3,6 +3,7 @@ using Dapper;
 using StockApp.Domain.Models;
 using StockApp.Common.Helpers;
 using System.Runtime.Caching;
+using System.Diagnostics;
 
 namespace StockApp.Infrastructure.DataAccess
 {
@@ -15,6 +16,10 @@ namespace StockApp.Infrastructure.DataAccess
         public Task<List<DailyEntry>> GetCompleteStockData(string symbol);
         public Task<List<DailyEntry>> GetLast5TradingDays();
         public Task<List<DailyEntry>> GetStockEntriesBetweenDates(string symbol, string range);
+        public Task<FinancialStatement> GetFinancialStatement(string symbol);
+        public Task<decimal?> GetSectorMedianPE(string? industrySector);
+        public Task<decimal?> GetSectorMedianEV_EBITDA(string? industrySector);
+        public Task<double> GetRiskFreeRate();
     }
     public class DataBaseService : IDataBaseService
     {
@@ -27,6 +32,17 @@ namespace StockApp.Infrastructure.DataAccess
         public DataBaseService()
         {
             connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["dbconnection"].ConnectionString;
+        }
+
+        public async Task<FinancialStatement> GetFinancialStatement(string symbol)
+        {
+            var stockID = await GetCompanyIDFromSymbol(symbol).ConfigureAwait(false);
+            const string queryString = "SELECT * FROM Earnings WHERE StockID=@stockID";
+
+            using var connection = new SqlConnection(connectionString);
+            await connection.OpenAsync();
+
+            return await connection.QuerySingleOrDefaultAsync<FinancialStatement>(queryString, new { stockID}).ConfigureAwait(false);
         }
 
         public async Task<List<Company>> GetAllCompanies()
@@ -83,18 +99,18 @@ namespace StockApp.Infrastructure.DataAccess
             using var connection = new SqlConnection(connectionString);
             await connection.OpenAsync();
 
-            return await connection.QuerySingleOrDefaultAsync<int>(queryString, new { symbol });
+            return await connection.QuerySingleOrDefaultAsync<int>(queryString, new { symbol }).ConfigureAwait(false);
         }
 
         public async Task<List<DailyEntry>> GetCompleteStockData(string symbol)
         {
-            var stockID = await GetCompanyIDFromSymbol(symbol);
+            var stockID = await GetCompanyIDFromSymbol(symbol).ConfigureAwait(false);
             const string queryString = "SELECT * " +
                                        "FROM DailyPrices WHERE StockID = @stockID";
 
             using var connection = new SqlConnection(connectionString);
             await connection.OpenAsync();
-            var result = await connection.QueryAsync<DailyEntry>(queryString, new { stockID });
+            var result = await connection.QueryAsync<DailyEntry>(queryString, new { stockID }).ConfigureAwait(false);
 
             return result.AsList();
         }
@@ -107,7 +123,7 @@ namespace StockApp.Infrastructure.DataAccess
             using var connection = new SqlConnection(connectionString);
             await connection.OpenAsync();
 
-            return (await connection.QueryAsync<DailyEntry>(queryString)).AsList();
+            return (await connection.QueryAsync<DailyEntry>(queryString).ConfigureAwait(false)).AsList();
         }
 
         public async Task<List<DailyEntry>> GetStockEntriesBetweenDates(string symbol, string range)
@@ -116,12 +132,12 @@ namespace StockApp.Infrastructure.DataAccess
 
             if (range == "Max")
             {
-                return (await GetCompleteStockData(symbol)).AsList();
+                return (await GetCompleteStockData(symbol).ConfigureAwait(false)).AsList();
             }
             else
             {
                 DateTime startDate = DateTimeHelper.GetStartDate(range);
-                var stockID = await GetCompanyIDFromSymbol(symbol);
+                var stockID = await GetCompanyIDFromSymbol(symbol).ConfigureAwait(false);
 
                 const string queryString = "SELECT * " +
                                            "FROM DailyPrices WHERE StockID = @stockID " +
@@ -129,8 +145,43 @@ namespace StockApp.Infrastructure.DataAccess
 
                 using var connection = new SqlConnection(connectionString);
                 await connection.OpenAsync();
-                return (await connection.QueryAsync<DailyEntry>(queryString, new { stockID, startDate, endDate })).AsList();
+                return (await connection.QueryAsync<DailyEntry>(queryString, 
+                              new { stockID, startDate, endDate }).ConfigureAwait(false)).AsList();
             }
+        }
+
+        public async Task<decimal?> GetSectorMedianPE(string? industrySector)
+        {
+                string queryString = "SELECT Median_PE " +
+                                 "FROM SectorMedians " +
+                                 "WHERE Sector=@industrySector";
+
+                using var connection = new SqlConnection(connectionString);
+                await connection.OpenAsync();
+
+                return await connection.QuerySingleOrDefaultAsync<decimal>(queryString, new { industrySector }).ConfigureAwait(false);
+        }
+
+        public async Task<decimal?> GetSectorMedianEV_EBITDA(string? industrySector)
+        {
+            string queryString = "SELECT Median_EV_EBITDA " +
+                                 "FROM SectorMedians " +
+                                 "WHERE Sector=@industrySector";
+
+            using var connection = new SqlConnection(connectionString);
+            await connection.OpenAsync();
+
+            return await connection.QuerySingleOrDefaultAsync<decimal>(queryString, new { industrySector }).ConfigureAwait(false);
+        }
+
+        public async Task<double> GetRiskFreeRate()
+        {
+            string queryString = "SELECT DISTINCT RiskFreeRate from Earnings";
+
+            using var connection = new SqlConnection(connectionString);
+            await connection.OpenAsync();
+
+            return await connection.QuerySingleOrDefaultAsync<double>(queryString).ConfigureAwait(false);
         }
     }
 }

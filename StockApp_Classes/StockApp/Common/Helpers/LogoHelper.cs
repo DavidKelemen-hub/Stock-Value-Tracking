@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,12 +19,11 @@ namespace StockApp.Common.Helpers
                 var uri = new Uri($"pack://application:,,,/StockApp;component/Presentation/Resources/{symbol}.png", UriKind.Absolute);
                 companyLogo = new BitmapImage(uri);
             }
-            catch (Exception)
+            catch (IOException)
             {
                 var uri = new Uri($"pack://application:,,,/StockApp;component/Presentation/Resources/notfound.png", UriKind.Absolute);
                 companyLogo = new BitmapImage(uri);
             }
-
             return companyLogo;
         }
     }
