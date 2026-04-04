@@ -134,6 +134,7 @@ namespace StockApp.ViewModels
 
         public async Task LoadFinancialStatementAsync()
         {
+            if (SelectedCompany == null) return;
             var statement = await _stockService.LoadFinancialStatement(SelectedCompany!);
 
             TrailingEPS = statement.TrailingEPS;
@@ -156,16 +157,37 @@ namespace StockApp.ViewModels
 
         private async Task LoadNewsAsync()
         {
-            var root = await _stockService.GetNewsFeed(selectedCompany!.Symbol!,5);
-            NewsItems.Clear();
-            foreach (var msg in root.Messages ?? [])
+            if (SelectedCompany == null) return;
+            Root root;
+            try
             {
-                NewsItems.Add(new NewsCardViewModel
+                string cacheKey = $"{SelectedCompany.Symbol}";
+                Root result;
+
+                if (_cache[cacheKey] is Root cached)
                 {
-                    Title = msg.Title,
-                    Url = msg.Url,
-                    Thumbnail = msg.Thumbnail
-                });
+                    result = cached;
+                }
+                else
+                {
+                    result = await _stockService.GetNewsFeed(selectedCompany!.Symbol!, 5);
+                    _cache.Set(cacheKey, result, policy);
+                }
+
+                NewsItems.Clear();
+                foreach (var msg in result.Messages ?? [])
+                {
+                    NewsItems.Add(new NewsCardViewModel
+                    {
+                        Title = msg.Title,
+                        Url = msg.Url,
+                        Thumbnail = msg.Thumbnail
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
             }
         }
 
