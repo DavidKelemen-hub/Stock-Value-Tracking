@@ -10,7 +10,7 @@ namespace StockApp.Appl.DTO
         public ObservableCollection<Company>? Companies { get; set; }
         public Company? SelectedCompany { get; set; }
         public ImageSource? CompanyLogo { get; set; }
-        public PlotModel? ChartData { get; set; }
+        public Chart? ChartData { get; set; }
         public Brush? ChartColor { get; set; }
         public double? CurrentPrice { get; set; }
         public double? PriceVariation { get; set; }

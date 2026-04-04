@@ -1,4 +1,6 @@
-﻿using OxyPlot;
+﻿using LiveChartsCore;
+using LiveChartsCore.SkiaSharpView;
+using OxyPlot;
 using StockApp.Appl.DTO;
 using StockApp.Appl.Services;
 using StockApp.Common.Helpers;
@@ -31,7 +33,9 @@ namespace StockApp.ViewModels
         public ObservableCollection<NewsCardViewModel> NewsItems { get; set; } = new();
         public ICollectionView? companiesView { get; set; }
         private Company? selectedCompany;
-        private PlotModel? chartData;
+        public ISeries[] ChartSeries { get; set; } = Array.Empty<ISeries>();
+        public Axis[] XAxes { get; set; } = new Axis[] { new Axis { Labels = new List<string>() } };
+        public Axis[] YAxes { get; set; } = new Axis[] { new Axis() };
         private double? percentageVariation { get; set; }
         private double? currentPrice { get; set; }
         private string? selectedRange { get; set; }
@@ -47,6 +51,7 @@ namespace StockApp.ViewModels
         private double? lowestPrice { get; set; }
         public List<CompanyPerformance>? companiesPerformance { get; set; }
         private ImageSource? companyLogo { get; set; }
+        public bool IsPositiveChange => PriceVariation >= 0;
         /********** Stock Data **********/
 
         /********** Financial Statement Data **********/
@@ -121,10 +126,14 @@ namespace StockApp.ViewModels
                 RangeText = dto.RangeText;
                 HighestPrice = dto.HighestPrice;
                 LowestPrice = dto.LowestPrice;
-                ChartData = dto.ChartData!;
-                ChartColor = dto.ChartColor!;
                 CompanyLogo = dto.CompanyLogo;
                 FairValues = dto.FairValues;
+                ChartSeries = dto.ChartData.ChartSeries;
+                XAxes = dto.ChartData.XAxes;
+                YAxes = dto.ChartData.YAxes;
+                OnPropertyChanged(nameof(ChartSeries));
+                OnPropertyChanged(nameof(XAxes));
+                OnPropertyChanged(nameof(YAxes));
             }
             catch (Exception ex)
             {
@@ -325,6 +334,7 @@ namespace StockApp.ViewModels
                 if (priceVariation == value) return;
                 priceVariation = value;
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(IsPositiveChange));
             }
         }
         public string? SearchText
@@ -384,17 +394,6 @@ namespace StockApp.ViewModels
                 _ = LoadStockDataAsync();
                 _ = LoadFinancialStatementAsync();
                 _ = LoadNewsAsync();
-            }
-        }
-
-        public PlotModel? ChartData
-        {
-            get { return chartData; }
-            set
-            {
-                if (chartData == value) return;
-                chartData = value;
-                OnPropertyChanged();
             }
         }
 
