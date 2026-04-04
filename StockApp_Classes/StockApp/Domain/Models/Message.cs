@@ -1,0 +1,25 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Text.Json.Serialization;
+using System.Threading.Tasks;
+
+namespace StockApp.Domain.Models
+{
+    public class Message
+    {
+        [JsonPropertyName("title")]
+        public string? Title { get; set; }
+        [JsonPropertyName("url")]
+        public string? Url { get; set; }
+        [JsonPropertyName("thumbnail")]
+        public string? Thumbnail { get; set; }
+    }
+
+    public class Root
+    {
+        [JsonPropertyName("message")] 
+        public List<Message> Messages { get; set; }
+    }
+}

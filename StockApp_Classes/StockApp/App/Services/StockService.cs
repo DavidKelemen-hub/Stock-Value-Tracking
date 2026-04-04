@@ -13,6 +13,7 @@ namespace StockApp.Appl.Services
         public Task<ObservableCollection<Company>> GetFilteredCompanies(string searchText);
         public Task<StockDTO> LoadStockData(Company selectedCompany, string selectedRange);
         public Task<FinancialStatementDTO> LoadFinancialStatement(Company selectedCompany);
+        public Task<Root> GetNewsFeed(string symbol, int size);
     }
     public class StockService : IStockService
     {
@@ -111,6 +112,11 @@ namespace StockApp.Appl.Services
                 Beta = statement.Beta.HasValue ? $"{statement.Beta.Value:F2}" : "N/A",
                 SharesOutstanding = statement.SharesOutstanding.HasValue ? LargeNumberHelper.FormatLargeNumber(statement.SharesOutstanding.Value) : "N/A",
             };
+        }
+
+        public async Task<Root> GetNewsFeed(string symbol, int size)
+        {
+            return await _processing.GetNewsFeed(symbol,size).ConfigureAwait(false);
         }
     }
 }

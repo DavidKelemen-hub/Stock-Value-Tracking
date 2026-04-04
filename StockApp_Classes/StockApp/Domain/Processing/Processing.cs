@@ -1,4 +1,5 @@
-﻿using StockApp.Common.Helpers;
+﻿using Dapper;
+using StockApp.Common.Helpers;
 using StockApp.Domain.Models;
 using StockApp.Infrastructure.DataAccess;
 
@@ -12,16 +13,19 @@ namespace StockApp.Domain.Processing
         public Task<IndividualStockData> GetIndividualStockData(string symbol, string range);
         public Task<EstimatedFairValues> GetEstimatedFairValues(string symbol);
         public Task<FinancialStatement> GetFinancialStatement(string symbol);
+        public Task<Root> GetNewsFeed(string symbol, int size);
     }
 
 
     public class Processing : IProcessing
     {
         private readonly IDataBaseService dbService;
+        private readonly IMessageService msgService;
 
-        public Processing(IDataBaseService dbService)
+        public Processing(IDataBaseService dbService, IMessageService msgService)
         {
             this.dbService = dbService;
+            this.msgService = msgService;
         }
 
         public async Task<IndividualStockData> GetIndividualStockData(string symbol, string range)
@@ -90,6 +94,13 @@ namespace StockApp.Domain.Processing
         {
             return await dbService.GetFinancialStatement(symbol).ConfigureAwait(false);
         }
+
+        public async Task<Root> GetNewsFeed(string symbol, int size)
+        {
+            return await msgService.GetNewsFeed(symbol, size).ConfigureAwait(false);
+        }
+
+
     }
 }
 

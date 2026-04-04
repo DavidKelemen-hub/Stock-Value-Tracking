@@ -44,250 +44,326 @@
 
         <!-- ══ RIGHT PANEL ══ -->
         <Border Grid.Column="2" Padding="12" BorderThickness="1">
-            <StackPanel>
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel>
 
-                <!-- Company header -->
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,8" VerticalAlignment="Center">
-                    <Image Width="60" Height="60"
-                           Source="{Binding CompanyLogo}"
-                           Margin="0,0,10,0"
-                           VerticalAlignment="Center"/>
-                    <TextBlock FontSize="18" FontWeight="Bold"
-                               VerticalAlignment="Center"
-                               Text="{Binding SelectedCompany.Name}"/>
-                    <TextBlock Opacity="0.7" FontSize="18"
-                               Margin="8,0,0,0" VerticalAlignment="Center"
-                               Text="{Binding SelectedCompany.Symbol, StringFormat={}({0})}"/>
-                    <TextBlock FontSize="18" FontWeight="Bold"
-                               Margin="8,0,0,0" VerticalAlignment="Center"
-                               Text="{Binding CurrentPrice, StringFormat={}{0}$}"/>
-                </StackPanel>
-
-                <!-- Price variation row -->
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
-                    <TextBlock FontSize="13" Margin="8,0,0,0"
-                               Text="{Binding PriceVariation, StringFormat={}{0:+0.##;-0.##;0}$}"
-                               Foreground="{Binding ChartColor}"/>
-                    <TextBlock FontSize="13" Margin="8,0,0,0"
-                               Text="{Binding PercentageVariation, StringFormat={}{0:(+0.##;(-0.##;(0}%)}"
-                               Foreground="{Binding ChartColor}"/>
-                    <TextBlock FontSize="13" Margin="8,0,0,0"
-                               Text="{Binding RangeText}"
-                               Foreground="{Binding ChartColor}"/>
-                </StackPanel>
-
-                <!-- Range buttons -->
-                <StackPanel Orientation="Horizontal" Margin="0,4,0,4">
-                    <RadioButton Content="5D"  GroupName="RangeGroup" Style="{StaticResource RangeRadioButtonStyle}" Command="{Binding RangeClickedCommand}" CommandParameter="5D"/>
-                    <RadioButton Content="1M"  GroupName="RangeGroup" Style="{StaticResource RangeRadioButtonStyle}" Command="{Binding RangeClickedCommand}" CommandParameter="1M"/>
-                    <RadioButton Content="6M"  GroupName="RangeGroup" Style="{StaticResource RangeRadioButtonStyle}" Command="{Binding RangeClickedCommand}" CommandParameter="6M"/>
-                    <RadioButton Content="YTD" GroupName="RangeGroup" Style="{StaticResource RangeRadioButtonStyle}" Command="{Binding RangeClickedCommand}" CommandParameter="YTD"/>
-                    <RadioButton Content="1Y"  GroupName="RangeGroup" Style="{StaticResource RangeRadioButtonStyle}" Command="{Binding RangeClickedCommand}" CommandParameter="1Y"/>
-                    <RadioButton Content="5Y"  GroupName="RangeGroup" Style="{StaticResource RangeRadioButtonStyle}" Command="{Binding RangeClickedCommand}" CommandParameter="5Y"/>
-                    <RadioButton Content="Max" GroupName="RangeGroup" Style="{StaticResource RangeRadioButtonStyle}" Command="{Binding RangeClickedCommand}" CommandParameter="Max"/>
-                </StackPanel>
-
-                <!-- Chart -->
-                <oxy:PlotView Model="{Binding ChartData}" Height="260" Margin="0"/>
-
-                <!-- High / Low -->
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,4,0,4">
-                    <StackPanel Orientation="Vertical" Margin="0,0,12,0">
-                        <Label Content="Highest Price" FontWeight="Bold" VerticalAlignment="Center" Padding="0"/>
-                        <TextBlock FontSize="13" Margin="0,0,0,0" Foreground="Black"
-                                   Text="{Binding HighestPrice, StringFormat={}{0}$}"/>
+                    <!-- Company header -->
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,8" VerticalAlignment="Center">
+                        <Image Width="60" Height="60"
+                               Source="{Binding CompanyLogo}"
+                               Margin="0,0,10,0"
+                               VerticalAlignment="Center"/>
+                        <TextBlock FontSize="18" FontWeight="Bold"
+                                   VerticalAlignment="Center"
+                                   Text="{Binding SelectedCompany.Name}"/>
+                        <TextBlock Opacity="0.7" FontSize="18"
+                                   Margin="8,0,0,0" VerticalAlignment="Center"
+                                   Text="{Binding SelectedCompany.Symbol, StringFormat={}({0})}"/>
+                        <TextBlock FontSize="18" FontWeight="Bold"
+                                   Margin="8,0,0,0" VerticalAlignment="Center"
+                                   Text="{Binding CurrentPrice, StringFormat={}{0}$}"/>
                     </StackPanel>
-                    <StackPanel Orientation="Vertical">
-                        <Label Content="Lowest Price" FontWeight="Bold" VerticalAlignment="Center" Padding="0"/>
-                        <TextBlock FontSize="13" Foreground="Black"
-                                   Text="{Binding LowestPrice, StringFormat={}{0}$}"/>
+
+                    <!-- Price variation row -->
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                        <TextBlock FontSize="13" Margin="8,0,0,0"
+                                   Text="{Binding PriceVariation, StringFormat={}{0:+0.##;-0.##;0}$}"
+                                   Foreground="{Binding ChartColor}"/>
+                        <TextBlock FontSize="13" Margin="8,0,0,0"
+                                   Text="{Binding PercentageVariation, StringFormat={}{0:(+0.##;(-0.##;(0}%)}"
+                                   Foreground="{Binding ChartColor}"/>
+                        <TextBlock FontSize="13" Margin="8,0,0,0"
+                                   Text="{Binding RangeText}"
+                                   Foreground="{Binding ChartColor}"/>
                     </StackPanel>
+
+                    <!-- Range buttons -->
+                    <StackPanel Orientation="Horizontal" Margin="0,4,0,4">
+                        <RadioButton Content="5D"  GroupName="RangeGroup" Style="{StaticResource RangeRadioButtonStyle}" Command="{Binding RangeClickedCommand}" CommandParameter="5D"/>
+                        <RadioButton Content="1M"  GroupName="RangeGroup" Style="{StaticResource RangeRadioButtonStyle}" Command="{Binding RangeClickedCommand}" CommandParameter="1M"/>
+                        <RadioButton Content="6M"  GroupName="RangeGroup" Style="{StaticResource RangeRadioButtonStyle}" Command="{Binding RangeClickedCommand}" CommandParameter="6M"/>
+                        <RadioButton Content="YTD" GroupName="RangeGroup" Style="{StaticResource RangeRadioButtonStyle}" Command="{Binding RangeClickedCommand}" CommandParameter="YTD"/>
+                        <RadioButton Content="1Y"  GroupName="RangeGroup" Style="{StaticResource RangeRadioButtonStyle}" Command="{Binding RangeClickedCommand}" CommandParameter="1Y"/>
+                        <RadioButton Content="5Y"  GroupName="RangeGroup" Style="{StaticResource RangeRadioButtonStyle}" Command="{Binding RangeClickedCommand}" CommandParameter="5Y"/>
+                        <RadioButton Content="Max" GroupName="RangeGroup" Style="{StaticResource RangeRadioButtonStyle}" Command="{Binding RangeClickedCommand}" CommandParameter="Max"/>
+                    </StackPanel>
+
+                    <!-- Chart -->
+                    <oxy:PlotView Model="{Binding ChartData}" Height="260" Margin="0"/>
+
+                    <!-- High / Low -->
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,4,0,4">
+                        <StackPanel Orientation="Vertical" Margin="0,0,12,0">
+                            <Label Content="Highest Price" FontWeight="Bold" VerticalAlignment="Center" Padding="0"/>
+                            <TextBlock FontSize="13" Margin="0,0,0,0" Foreground="Black"
+                                       Text="{Binding HighestPrice, StringFormat={}{0}$}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Vertical">
+                            <Label Content="Lowest Price" FontWeight="Bold" VerticalAlignment="Center" Padding="0"/>
+                            <TextBlock FontSize="13" Foreground="Black"
+                                       Text="{Binding LowestPrice, StringFormat={}{0}$}"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <Separator Margin="0,6"/>
+
+                    <!-- ══ FINANCIAL METRICS + NEWS ══ -->
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="8"/>
+                            <ColumnDefinition Width="0.5*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- ── LEFT: Financial metrics ── -->
+                        <Border Grid.Column="0"
+                                Background="#FFF5F0"
+                                BorderBrush="#E8E0DB"
+                                BorderThickness="1"
+                                CornerRadius="4"
+                                Padding="12,10">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <!-- ── VALUATION & PER SHARE ── -->
+                                <TextBlock Grid.Row="0"
+                                           Text="VALUATION &amp; PER SHARE"
+                                           FontSize="11" FontWeight="SemiBold"
+                                           Foreground="#AAAAAA" Margin="0,0,0,4"/>
+                                <Grid Grid.Row="1">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0" HorizontalAlignment="Center">
+                                        <TextBlock Text="EPS (TTM)" FontSize="12" Foreground="#888888" FontWeight="Medium" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="{Binding TrailingEPS}" FontSize="14" FontWeight="Bold" Foreground="#1A1A1A" HorizontalAlignment="Center" Margin="0,2,0,0"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1" HorizontalAlignment="Center">
+                                        <TextBlock Text="Forward EPS" FontSize="12" Foreground="#888888" FontWeight="Medium" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="{Binding ForwardEPS}" FontSize="14" FontWeight="Bold" Foreground="#1A1A1A" HorizontalAlignment="Center" Margin="0,2,0,0"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="2" HorizontalAlignment="Center">
+                                        <TextBlock Text="Book Value" FontSize="12" Foreground="#888888" FontWeight="Medium" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="{Binding BookValue}" FontSize="14" FontWeight="Bold" Foreground="#1A1A1A" HorizontalAlignment="Center" Margin="0,2,0,0"/>
+                                    </StackPanel>
+                                </Grid>
+
+                                <Rectangle Grid.Row="2" Height="1" Fill="#E8E0DB" Margin="0,6"/>
+
+                                <!-- ── PROFITABILITY & MARGINS ── -->
+                                <TextBlock Grid.Row="3"
+                                           Text="PROFITABILITY &amp; MARGINS"
+                                           FontSize="9" FontWeight="SemiBold"
+                                           Foreground="#AAAAAA" Margin="0,0,0,4"/>
+                                <Grid Grid.Row="4">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0" HorizontalAlignment="Center">
+                                        <TextBlock Text="Gross Margin" FontSize="12" Foreground="#888888" FontWeight="Medium" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="{Binding GrossMargins}" FontSize="14" FontWeight="Bold" Foreground="#1A1A1A" HorizontalAlignment="Center" Margin="0,2,0,0"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1" HorizontalAlignment="Center">
+                                        <TextBlock Text="Oper. Margin" FontSize="12" Foreground="#888888" FontWeight="Medium" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="{Binding OperatingMargins}" FontSize="14" FontWeight="Bold" Foreground="#1A1A1A" HorizontalAlignment="Center" Margin="0,2,0,0"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="2" HorizontalAlignment="Center">
+                                        <TextBlock Text="EBITDA" FontSize="12" Foreground="#888888" FontWeight="Medium" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="{Binding Ebitda}" FontSize="14" FontWeight="Bold" Foreground="#1A1A1A" HorizontalAlignment="Center" Margin="0,2,0,0"/>
+                                    </StackPanel>
+                                </Grid>
+
+                                <Rectangle Grid.Row="5" Height="1" Fill="#E8E0DB" Margin="0,6"/>
+
+                                <!-- ── GROWTH ── -->
+                                <TextBlock Grid.Row="6"
+                                           Text="GROWTH"
+                                           FontSize="9" FontWeight="SemiBold"
+                                           Foreground="#AAAAAA" Margin="0,0,0,4"/>
+                                <Grid Grid.Row="7">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0" HorizontalAlignment="Center">
+                                        <TextBlock Text="Revenue Growth" FontSize="12" Foreground="#888888" FontWeight="Medium" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="{Binding RevenueGrowth}" FontSize="14" FontWeight="Bold" Foreground="#1A1A1A" HorizontalAlignment="Center" Margin="0,2,0,0"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1" HorizontalAlignment="Center">
+                                        <TextBlock Text="Earnings Growth" FontSize="12" Foreground="#888888" FontWeight="Medium" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="{Binding EarningsGrowth}" FontSize="14" FontWeight="Bold" Foreground="#1A1A1A" HorizontalAlignment="Center" Margin="0,2,0,0"/>
+                                    </StackPanel>
+                                </Grid>
+
+                                <Rectangle Grid.Row="8" Height="1" Fill="#E8E0DB" Margin="0,6"/>
+
+                                <!-- ── FINANCIAL HEALTH ── -->
+                                <TextBlock Grid.Row="9"
+                                           Text="FINANCIAL HEALTH"
+                                           FontSize="11" FontWeight="SemiBold"
+                                           Foreground="#AAAAAA" Margin="0,0,0,4"/>
+                                <Grid Grid.Row="10">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0" HorizontalAlignment="Center">
+                                        <TextBlock Text="Total Debt" FontSize="12" Foreground="#888888" FontWeight="Medium" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="{Binding TotalDebt}" FontSize="14" FontWeight="Bold" Foreground="#1A1A1A" HorizontalAlignment="Center" Margin="0,2,0,0"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1" HorizontalAlignment="Center">
+                                        <TextBlock Text="Net Cash" FontSize="12" Foreground="#888888" FontWeight="Medium" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="{Binding NetCashPosition}" FontSize="14" FontWeight="Bold" Foreground="#1A1A1A" HorizontalAlignment="Center" Margin="0,2,0,0"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="2" HorizontalAlignment="Center">
+                                        <TextBlock Text="Free CF" FontSize="12" Foreground="#888888" FontWeight="Medium" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="{Binding FreeCashFlow}" FontSize="14" FontWeight="Bold" Foreground="#1A1A1A" HorizontalAlignment="Center" Margin="0,2,0,0"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="3" HorizontalAlignment="Center">
+                                        <TextBlock Text="Curr. Ratio" FontSize="12" Foreground="#888888" FontWeight="Medium" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="{Binding CurrentRatio}" FontSize="14" FontWeight="Bold" Foreground="#1A1A1A" HorizontalAlignment="Center" Margin="0,2,0,0"/>
+                                    </StackPanel>
+                                </Grid>
+
+                                <Rectangle Grid.Row="11" Height="1" Fill="#E8E0DB" Margin="0,6"/>
+
+                                <!-- ── DIVIDENDS · MARKET & RISK ── -->
+                                <Grid Grid.Row="12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <StackPanel Grid.Column="0" HorizontalAlignment="Center">
+                                        <TextBlock Text="DIVIDENDS" FontSize="10" FontWeight="SemiBold" Foreground="#AAAAAA" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="{Binding DividendRate}" FontSize="14" FontWeight="Bold" Foreground="#1A1A1A" HorizontalAlignment="Center" Margin="0,2,0,0"/>
+                                        <TextBlock Text="Rate" FontSize="11" Foreground="#AAAAAA" HorizontalAlignment="Center" Margin="0,1,0,0"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1" HorizontalAlignment="Center">
+                                        <TextBlock Text="" FontSize="8" Foreground="Transparent"/>
+                                        <TextBlock Text="{Binding DividendYield}" FontSize="14" FontWeight="Bold" Foreground="#1A1A1A" HorizontalAlignment="Center" Margin="0,2,0,0"/>
+                                        <TextBlock Text="Yield" FontSize="11" Foreground="#AAAAAA" HorizontalAlignment="Center" Margin="0,1,0,0"/>
+                                    </StackPanel>
+
+                                    <Rectangle Grid.Column="2" Width="1" Fill="#E8E0DB" Margin="6,0"/>
+
+                                    <StackPanel Grid.Column="3" HorizontalAlignment="Center">
+                                        <TextBlock Text="MARKET &amp; RISK" FontSize="10" FontWeight="SemiBold" Foreground="#AAAAAA" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="{Binding Beta}" FontSize="14" FontWeight="Bold" Foreground="#1A1A1A" HorizontalAlignment="Center" Margin="0,2,0,0"/>
+                                        <TextBlock Text="Beta" FontSize="11" Foreground="#AAAAAA" HorizontalAlignment="Center" Margin="0,1,0,0"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="4" HorizontalAlignment="Center">
+                                        <TextBlock Text="" FontSize="8" Foreground="Transparent"/>
+                                        <TextBlock Text="{Binding SharesOutstanding}" FontSize="14" FontWeight="Bold" Foreground="#1A1A1A" HorizontalAlignment="Center" Margin="0,2,0,0"/>
+                                        <TextBlock Text="Shares Out." FontSize="11" Foreground="#AAAAAA" HorizontalAlignment="Center" Margin="0,1,0,0"/>
+                                    </StackPanel>
+                                </Grid>
+
+                            </Grid>
+                        </Border>
+
+                        <!-- ── RIGHT: News panel ── -->
+                        <Border Grid.Column="2"
+                                Background="#FFF5F0"
+                                BorderBrush="#E8E0DB"
+                                BorderThickness="1"
+                                CornerRadius="4"
+                                Padding="12,10"
+                                MaxHeight="400">
+                            <DockPanel>
+                                <TextBlock DockPanel.Dock="Top"
+                                           Text="LATEST NEWS"
+                                           FontSize="11" FontWeight="SemiBold"
+                                           Foreground="#AAAAAA"
+                                           Margin="0,0,0,8"/>
+                                <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                              CanContentScroll="True">
+                                    <ItemsControl ItemsSource="{Binding NewsItems}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border Background="#FFFAF7"
+                                                        BorderBrush="#E8D5C4"
+                                                        BorderThickness="1"
+                                                        CornerRadius="6"
+                                                        Margin="0,0,0,8"
+                                                        Cursor="Hand">
+                                                    <Border.InputBindings>
+                                                        <MouseBinding MouseAction="LeftClick"
+                                                                      Command="{Binding OpenUrlCommand}"/>
+                                                    </Border.InputBindings>
+                                                    <Border.Style>
+                                                        <Style TargetType="Border">
+                                                            <Style.Triggers>
+                                                                <Trigger Property="IsMouseOver" Value="True">
+                                                                    <Setter Property="Background" Value="#FDEEE5"/>
+                                                                    <Setter Property="BorderBrush" Value="#C8A882"/>
+                                                                </Trigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Border.Style>
+                                                    <Grid Margin="8">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="64"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <Border Grid.Column="0"
+                                                                CornerRadius="4"
+                                                                ClipToBounds="True"
+                                                                Width="60" Height="60"
+                                                                VerticalAlignment="Top">
+                                                            <Image Source="{Binding Thumbnail}"
+                                                                   Stretch="UniformToFill"/>
+                                                        </Border>
+                                                        <StackPanel Grid.Column="1" Margin="8,0,0,0" VerticalAlignment="Center">
+                                                            <TextBlock Text="{Binding Title}"
+                                                                       FontSize="11"
+                                                                       FontWeight="SemiBold"
+                                                                       Foreground="#1A1A1A"
+                                                                       TextWrapping="Wrap"
+                                                                       MaxHeight="54"
+                                                                       TextTrimming="CharacterEllipsis"/>
+                                                            <TextBlock Text="{Binding DisplayUrl}"
+                                                                       FontSize="10"
+                                                                       Foreground="#AAAAAA"
+                                                                       Margin="0,4,0,0"
+                                                                       TextTrimming="CharacterEllipsis"/>
+                                                        </StackPanel>
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </ScrollViewer>
+                            </DockPanel>
+                        </Border>
+
+                    </Grid>
+
                 </StackPanel>
-
-                <Separator Margin="0,6"/>
-
-                <!-- ══ FINANCIAL METRICS — left half only ══ -->
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="0.5*"/>
-                        <ColumnDefinition Width="0.5*"/>
-                    </Grid.ColumnDefinitions>
-
-                    <Border Grid.Column="0"
-                            Background="#FFF5F0"
-                            BorderBrush="#E8E0DB"
-                            BorderThickness="1"
-                            CornerRadius="4"
-                            Padding="12,10">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
-
-                            <!-- ── VALUATION & PER SHARE ── -->
-                            <TextBlock Grid.Row="0"
-                                       Text="VALUATION &amp; PER SHARE"
-                                       FontSize="11" FontWeight="SemiBold"
-                                       Foreground="#AAAAAA" Margin="0,0,0,4"/>
-                            <Grid Grid.Row="1">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <StackPanel Grid.Column="0" HorizontalAlignment="Center">
-                                    <TextBlock Text="EPS (TTM)" FontSize="12" Foreground="#888888" FontWeight="Medium" HorizontalAlignment="Center"/>
-                                    <TextBlock Text="{Binding TrailingEPS}" FontSize="14" FontWeight="Bold" Foreground="#1A1A1A" HorizontalAlignment="Center" Margin="0,2,0,0"/>
-                                </StackPanel>
-                                <StackPanel Grid.Column="1" HorizontalAlignment="Center">
-                                    <TextBlock Text="Forward EPS" FontSize="12" Foreground="#888888" FontWeight="Medium" HorizontalAlignment="Center"/>
-                                    <TextBlock Text="{Binding ForwardEPS}" FontSize="14" FontWeight="Bold" Foreground="#1A1A1A" HorizontalAlignment="Center" Margin="0,2,0,0"/>
-                                </StackPanel>
-                                <StackPanel Grid.Column="2" HorizontalAlignment="Center">
-                                    <TextBlock Text="Book Value" FontSize="12" Foreground="#888888" FontWeight="Medium" HorizontalAlignment="Center"/>
-                                    <TextBlock Text="{Binding BookValue}" FontSize="14" FontWeight="Bold" Foreground="#1A1A1A" HorizontalAlignment="Center" Margin="0,2,0,0"/>
-                                </StackPanel>
-                            </Grid>
-
-                            <Rectangle Grid.Row="2" Height="1" Fill="#E8E0DB" Margin="0,6"/>
-
-                            <!-- ── PROFITABILITY & MARGINS ── -->
-                            <TextBlock Grid.Row="3"
-                                       Text="PROFITABILITY &amp; MARGINS"
-                                       FontSize="9" FontWeight="SemiBold"
-                                       Foreground="#AAAAAA" Margin="0,0,0,4"/>
-                            <Grid Grid.Row="4">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <StackPanel Grid.Column="0" HorizontalAlignment="Center">
-                                    <TextBlock Text="Gross Margin" FontSize="12" Foreground="#888888" FontWeight="Medium" HorizontalAlignment="Center"/>
-                                    <TextBlock Text="{Binding GrossMargins}" FontSize="14" FontWeight="Bold" Foreground="#1A1A1A" HorizontalAlignment="Center" Margin="0,2,0,0"/>
-                                </StackPanel>
-                                <StackPanel Grid.Column="1" HorizontalAlignment="Center">
-                                    <TextBlock Text="Oper. Margin" FontSize="12" Foreground="#888888" FontWeight="Medium" HorizontalAlignment="Center"/>
-                                    <TextBlock Text="{Binding OperatingMargins}" FontSize="14" FontWeight="Bold" Foreground="#1A1A1A" HorizontalAlignment="Center" Margin="0,2,0,0"/>
-                                </StackPanel>
-                                <StackPanel Grid.Column="2" HorizontalAlignment="Center">
-                                    <TextBlock Text="EBITDA" FontSize="12" Foreground="#888888" FontWeight="Medium" HorizontalAlignment="Center"/>
-                                    <TextBlock Text="{Binding Ebitda}" FontSize="14" FontWeight="Bold" Foreground="#1A1A1A" HorizontalAlignment="Center" Margin="0,2,0,0"/>
-                                </StackPanel>
-                            </Grid>
-
-                            <Rectangle Grid.Row="5" Height="1" Fill="#E8E0DB" Margin="0,6"/>
-
-                            <!-- ── GROWTH ── -->
-                            <TextBlock Grid.Row="6"
-                                       Text="GROWTH"
-                                       FontSize="9" FontWeight="SemiBold"
-                                       Foreground="#AAAAAA" Margin="0,0,0,4"/>
-                            <Grid Grid.Row="7">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <StackPanel Grid.Column="0" HorizontalAlignment="Center">
-                                    <TextBlock Text="Revenue Growth" FontSize="12" Foreground="#888888" FontWeight="Medium" HorizontalAlignment="Center"/>
-                                    <TextBlock Text="{Binding RevenueGrowth}" FontSize="14" FontWeight="Bold" Foreground="#1A1A1A" HorizontalAlignment="Center" Margin="0,2,0,0"/>
-                                </StackPanel>
-                                <StackPanel Grid.Column="1" HorizontalAlignment="Center">
-                                    <TextBlock Text="Earnings Growth" FontSize="12" Foreground="#888888" FontWeight="Medium" HorizontalAlignment="Center"/>
-                                    <TextBlock Text="{Binding EarningsGrowth}" FontSize="14" FontWeight="Bold" Foreground="#1A1A1A" HorizontalAlignment="Center" Margin="0,2,0,0"/>
-                                </StackPanel>
-                            </Grid>
-
-                            <Rectangle Grid.Row="8" Height="1" Fill="#E8E0DB" Margin="0,6"/>
-
-                            <!-- ── FINANCIAL HEALTH ── -->
-                            <TextBlock Grid.Row="9"
-                                       Text="FINANCIAL HEALTH"
-                                       FontSize="11" FontWeight="SemiBold"
-                                       Foreground="#AAAAAA" Margin="0,0,0,4"/>
-                            <Grid Grid.Row="10">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <StackPanel Grid.Column="0" HorizontalAlignment="Center">
-                                    <TextBlock Text="Total Debt" FontSize="12" Foreground="#888888" FontWeight="Medium" HorizontalAlignment="Center"/>
-                                    <TextBlock Text="{Binding TotalDebt}" FontSize="14" FontWeight="Bold" Foreground="#1A1A1A" HorizontalAlignment="Center" Margin="0,2,0,0"/>
-                                </StackPanel>
-                                <StackPanel Grid.Column="1" HorizontalAlignment="Center">
-                                    <TextBlock Text="Net Cash" FontSize="12" Foreground="#888888" FontWeight="Medium" HorizontalAlignment="Center"/>
-                                    <TextBlock Text="{Binding NetCashPosition}" FontSize="14" FontWeight="Bold" Foreground="#1A1A1A" HorizontalAlignment="Center" Margin="0,2,0,0"/>
-                                </StackPanel>
-                                <StackPanel Grid.Column="2" HorizontalAlignment="Center">
-                                    <TextBlock Text="Free CF" FontSize="12" Foreground="#888888" FontWeight="Medium" HorizontalAlignment="Center"/>
-                                    <TextBlock Text="{Binding FreeCashFlow}" FontSize="14" FontWeight="Bold" Foreground="#1A1A1A" HorizontalAlignment="Center" Margin="0,2,0,0"/>
-                                </StackPanel>
-                                <StackPanel Grid.Column="3" HorizontalAlignment="Center">
-                                    <TextBlock Text="Curr. Ratio" FontSize="12" Foreground="#888888" FontWeight="Medium" HorizontalAlignment="Center"/>
-                                    <TextBlock Text="{Binding CurrentRatio}" FontSize="14" FontWeight="Bold" Foreground="#1A1A1A" HorizontalAlignment="Center" Margin="0,2,0,0"/>
-                                </StackPanel>
-                            </Grid>
-
-                            <Rectangle Grid.Row="11" Height="1" Fill="#E8E0DB" Margin="0,6"/>
-
-                            <!-- ── DIVIDENDS · MARKET & RISK ── -->
-                            <Grid Grid.Row="12">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-
-                                <StackPanel Grid.Column="0" HorizontalAlignment="Center">
-                                    <TextBlock Text="DIVIDENDS" FontSize="10" FontWeight="SemiBold" Foreground="#AAAAAA" HorizontalAlignment="Center"/>
-                                    <TextBlock Text="{Binding DividendRate}" FontSize="14" FontWeight="Bold" Foreground="#1A1A1A" HorizontalAlignment="Center" Margin="0,2,0,0"/>
-                                    <TextBlock Text="Rate" FontSize="11" Foreground="#AAAAAA" HorizontalAlignment="Center" Margin="0,1,0,0"/>
-                                </StackPanel>
-                                <StackPanel Grid.Column="1" HorizontalAlignment="Center">
-                                    <TextBlock Text="" FontSize="8" Foreground="Transparent"/>
-                                    <TextBlock Text="{Binding DividendYield}" FontSize="14" FontWeight="Bold" Foreground="#1A1A1A" HorizontalAlignment="Center" Margin="0,2,0,0"/>
-                                    <TextBlock Text="Yield" FontSize="11" Foreground="#AAAAAA" HorizontalAlignment="Center" Margin="0,1,0,0"/>
-                                </StackPanel>
-
-                                <Rectangle Grid.Column="2" Width="1" Fill="#E8E0DB" Margin="6,0"/>
-
-                                <StackPanel Grid.Column="3" HorizontalAlignment="Center">
-                                    <TextBlock Text="MARKET &amp; RISK" FontSize="10" FontWeight="SemiBold" Foreground="#AAAAAA" HorizontalAlignment="Center"/>
-                                    <TextBlock Text="{Binding Beta}" FontSize="14" FontWeight="Bold" Foreground="#1A1A1A" HorizontalAlignment="Center" Margin="0,2,0,0"/>
-                                    <TextBlock Text="Beta" FontSize="11" Foreground="#AAAAAA" HorizontalAlignment="Center" Margin="0,1,0,0"/>
-                                </StackPanel>
-                                <StackPanel Grid.Column="4" HorizontalAlignment="Center">
-                                    <TextBlock Text="" FontSize="8" Foreground="Transparent"/>
-                                    <TextBlock Text="{Binding SharesOutstanding}" FontSize="14" FontWeight="Bold" Foreground="#1A1A1A" HorizontalAlignment="Center" Margin="0,2,0,0"/>
-                                    <TextBlock Text="Shares Out." FontSize="11" Foreground="#AAAAAA" HorizontalAlignment="Center" Margin="0,1,0,0"/>
-                                </StackPanel>
-                            </Grid>
-
-                        </Grid>
-                    </Border>
-
-                    <!-- Right half intentionally empty — reserved for future use -->
-                    <Border Grid.Column="1"/>
-
-                </Grid>
-
-            </StackPanel>
+            </ScrollViewer>
         </Border>
 
     </Grid>

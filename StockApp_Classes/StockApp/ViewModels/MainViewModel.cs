@@ -28,6 +28,7 @@ namespace StockApp.ViewModels
 
         /********** Stock Data /**********/
         public ObservableCollection<Company>? companiesCollection { get; set; }
+        public ObservableCollection<NewsCardViewModel> NewsItems { get; set; } = new();
         public ICollectionView? companiesView { get; set; }
         private Company? selectedCompany;
         private PlotModel? chartData;
@@ -153,6 +154,21 @@ namespace StockApp.ViewModels
             SharesOutstanding = statement.SharesOutstanding;
         }
 
+        private async Task LoadNewsAsync()
+        {
+            var root = await _stockService.GetNewsFeed(selectedCompany!.Symbol!,5);
+            NewsItems.Clear();
+            foreach (var msg in root.Messages ?? [])
+            {
+                NewsItems.Add(new NewsCardViewModel
+                {
+                    Title = msg.Title,
+                    Url = msg.Url,
+                    Thumbnail = msg.Thumbnail
+                });
+            }
+        }
+
         public async Task Initialize()
         {
             var companiesView = await _stockService.GetAllCompanies();
@@ -163,8 +179,8 @@ namespace StockApp.ViewModels
             SelectedRange = "1Y";
 
             await LoadStockDataAsync();
-            //await LoadPerformersDataAsync();
             await LoadFinancialStatementAsync();
+            await LoadNewsAsync();
         }
 
         private bool CompanyMatches(object obj)
@@ -346,6 +362,7 @@ namespace StockApp.ViewModels
                 OnPropertyChanged();
                 _ = LoadStockDataAsync();
                 _ = LoadFinancialStatementAsync();
+                _ = LoadNewsAsync();
             }
         }
 
