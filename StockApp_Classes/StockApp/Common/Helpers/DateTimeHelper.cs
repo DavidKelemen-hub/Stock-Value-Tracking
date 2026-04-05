@@ -36,5 +36,18 @@
             return startDate;
         }
 
+        public static string GetDateFormat(IList<DateTime> dates)
+        {
+            if (dates.Count < 2) return "MMM dd";
+
+            var span = dates[^1] - dates[0];
+
+            return span.TotalDays switch
+            {
+                > 365 * 2 => "yyyy",
+                > 60 => "MMM yyyy",
+                _ => "MMM dd"
+            };
+        }
     }
 }

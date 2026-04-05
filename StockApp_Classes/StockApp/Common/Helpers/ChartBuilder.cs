@@ -25,7 +25,8 @@ namespace StockApp.Common.Helpers
         {
             Chart chart = new();
             var prices = dailyEntries.Select(d => d.ClosePrice).ToArray();
-            var labels = dailyEntries.Select(d => d.TradeDate.ToString("MMM dd")).ToList();
+            string dateFormat = DateTimeHelper.GetDateFormat(dailyEntries.Select(d => d.TradeDate).ToList());
+            var labels = dailyEntries.Select(d => d.TradeDate.ToString(dateFormat)).ToList();
 
             var priceVariation = prices.Last() - prices.First();
             bool isPositiveTrend = priceVariation >= 0 ? true : false;
