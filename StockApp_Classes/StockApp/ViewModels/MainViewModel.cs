@@ -179,7 +179,11 @@ namespace StockApp.ViewModels
                 else
                 {
                     result = await _stockService.GetNewsFeed(selectedCompany!.Symbol!, 5);
-                    _cache.Set(cacheKey, result, policy);
+
+                    if(result != null)
+                    {
+                        _cache.Set(cacheKey, result, policy);
+                    }
                 }
 
                 NewsItems.Clear();
@@ -189,7 +193,7 @@ namespace StockApp.ViewModels
                     {
                         Title = msg.Title,
                         Url = msg.Url,
-                        Thumbnail = msg.Thumbnail
+                        Thumbnail = msg.Thumbnail.Equals("None") ? LogoHelper.GetCompanyLogo(SelectedCompany.Symbol).ToString() : msg.Thumbnail
                     });
                 }
             }
