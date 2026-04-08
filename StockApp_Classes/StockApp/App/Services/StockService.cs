@@ -56,13 +56,11 @@ namespace StockApp.Appl.Services
 
             IndividualStockData stockData = stockTask.Result;
             EstimatedFairValues fairValues = fairValuesTask.Result;
-            ChartBuilder chartBuilder = new(selectedCompany.Name!);
+            ChartBuilder chartBuilder = new ChartBuilder(stockData.DailyValues!);
 
             return new StockDTO
             {
-                ChartData = chartBuilder.LoadChartData(selectedRange,
-                                                       stockData.DailyValues!,
-                                                       Math.Sign(Convert.ToDouble(stockData.PercentageVariation))),
+                ChartData = chartBuilder.LoadChartData(),
                 CurrentPrice = stockData.CurrentPrice,
                 PriceVariation = stockData.PriceVariation,
                 PercentageVariation = stockData.PercentageVariation,

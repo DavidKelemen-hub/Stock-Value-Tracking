@@ -6,6 +6,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
         xmlns:local="clr-namespace:StockApp"
         mc:Ignorable="d"
         Title="SP500 Stock Application" Height="450" Width="800"
@@ -68,14 +69,46 @@
                     <!-- Price variation row -->
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
                         <TextBlock FontSize="13" Margin="8,0,0,0"
-                                   Text="{Binding PriceVariation, StringFormat={}{0:+0.##;-0.##;0}$}"
-                                   Foreground="{Binding ChartColor}"/>
+               Text="{Binding PriceVariation, StringFormat={}{0:+0.##;-0.##;0}$}">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Foreground" Value="#E53935"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsPositiveChange}" Value="True">
+                                            <Setter Property="Foreground" Value="#43A047"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+
                         <TextBlock FontSize="13" Margin="8,0,0,0"
-                                   Text="{Binding PercentageVariation, StringFormat={}{0:(+0.##;(-0.##;(0}%)}"
-                                   Foreground="{Binding ChartColor}"/>
+               Text="{Binding PercentageVariation, StringFormat={}{0:(+0.##;(-0.##;(0}%)}">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Foreground" Value="#E53935"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsPositiveChange}" Value="True">
+                                            <Setter Property="Foreground" Value="#43A047"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+
                         <TextBlock FontSize="13" Margin="8,0,0,0"
-                                   Text="{Binding RangeText}"
-                                   Foreground="{Binding ChartColor}"/>
+               Text="{Binding RangeText}">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Foreground" Value="#E53935"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsPositiveChange}" Value="True">
+                                            <Setter Property="Foreground" Value="#43A047"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
                     </StackPanel>
 
                     <!-- Range buttons -->
@@ -90,7 +123,11 @@
                     </StackPanel>
 
                     <!-- Chart -->
-                    <oxy:PlotView Model="{Binding ChartData}" Height="260" Margin="0"/>
+                    <lvc:CartesianChart Series="{Binding ChartSeries}"
+                    XAxes="{Binding XAxes}"
+                    YAxes="{Binding YAxes}"
+                    Height="260"
+                    Margin="0"/>
 
                     <!-- High / Low -->
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,4,0,4">
