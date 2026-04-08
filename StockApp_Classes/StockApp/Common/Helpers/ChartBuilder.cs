@@ -55,7 +55,9 @@ namespace StockApp.Common.Helpers
                     Labels = labels,
                     LabelsPaint = new SolidColorPaint(SKColor.Parse("#AAAAAA")),
                     SeparatorsPaint = null,
-                    TextSize = 11
+                    TextSize = 11,
+                    MinLimit = 0,
+                    MaxLimit = dailyEntries.Count - 1
                 }
             };
 

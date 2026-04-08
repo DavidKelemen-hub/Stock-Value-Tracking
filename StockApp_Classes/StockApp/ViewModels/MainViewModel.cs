@@ -128,7 +128,7 @@ namespace StockApp.ViewModels
                 LowestPrice = dto.LowestPrice;
                 CompanyLogo = dto.CompanyLogo;
                 FairValues = dto.FairValues;
-                ChartSeries = dto.ChartData.ChartSeries;
+                ChartSeries = dto.ChartData!.ChartSeries;
                 XAxes = dto.ChartData.XAxes;
                 YAxes = dto.ChartData.YAxes;
                 OnPropertyChanged(nameof(ChartSeries));
@@ -187,13 +187,13 @@ namespace StockApp.ViewModels
                 }
 
                 NewsItems.Clear();
-                foreach (var msg in result.News ?? [])
+                foreach (var msg in result!.News ?? [])
                 {
                     NewsItems.Add(new NewsCardViewModel
                     {
                         Title = msg.Title,
                         Url = msg.Url,
-                        Thumbnail = msg.Thumbnail.Equals("None") ? LogoHelper.GetCompanyLogo(SelectedCompany.Symbol).ToString() : msg.Thumbnail
+                        Thumbnail = msg!.Thumbnail!.Equals("None") ? LogoHelper.GetCompanyLogo(SelectedCompany!.Symbol!).ToString() : msg.Thumbnail
                     });
                 }
             }
