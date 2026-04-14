@@ -80,12 +80,15 @@ namespace StockApp.Domain.Processing
             decimal? sectorMedianEV_EBITDA = sectorMedianEV_EBITDATask.Result;
             double? riskFreeRate = riskFreeRateTask.Result;
 
+            var grahamFairValue = FairValueHelper.Graham_Value(statement);
+            var peBasedFairValue = FairValueHelper.PE_Value(statement, sectorMedianPE);
+            var disountedCashFlow = FairValueHelper.CalculateDCF(statement);
+
             return new EstimatedFairValues
             {
-                GrahamFairValue = FairValueHelper.Graham_Value(statement),
-                PEBasedFairValue = FairValueHelper.PE_Value(statement, sectorMedianPE),
-                EbitdaBasedFairValue = FairValueHelper.EbitdaBased_Value(statement, sectorMedianEV_EBITDA),
-                DividendDiscountModelFairValue = FairValueHelper.DividendDiscountModel_Value(statement, riskFreeRate)
+                GrahamFairValue = grahamFairValue.HasValue ? $"${grahamFairValue}" : "N/A",
+                PEBasedFairValue = peBasedFairValue.HasValue ? $"${peBasedFairValue}" : "N/A",
+                DiscountedCashFlow = disountedCashFlow.HasValue ? $"${disountedCashFlow}" : "N/A"
             };
             
         }

@@ -73,7 +73,9 @@ namespace StockApp.ViewModels
         private string? _sharesOutstanding { get; set; }
         /********** Financial Statement Data **********/
 
+        /********** Estimated Fair Prices **********/
         private EstimatedFairValues? fairValues { get; set; }
+        /********** Estimated Fair Prices **********/
 
         private readonly CacheItemPolicy policy = new()
         {
