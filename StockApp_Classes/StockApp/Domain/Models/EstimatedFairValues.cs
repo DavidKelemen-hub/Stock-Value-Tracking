@@ -8,10 +8,10 @@ namespace StockApp.Domain.Models
 {
     public class EstimatedFairValues
     {
-        public decimal? GrahamFairValue { get; set; }
-        public decimal? DiscountedCashFlow { get; set; }
-        public decimal? PEBasedFairValue { get; set; }
-        public decimal? EbitdaBasedFairValue{get;set;}
-        public decimal? DividendDiscountModelFairValue { get; set; }
+        public string? GrahamFairValue { get; set; }
+        public string? DiscountedCashFlow { get; set; }
+        public string? PEBasedFairValue { get; set; }
+        public string? EbitdaBasedFairValue{get;set;}
+        public string? DividendDiscountModelFairValue { get; set; }
     }
 }
