@@ -27,9 +27,16 @@ namespace StockApp.Common.Helpers
 
         public static decimal? PE_Value(FinancialStatement st, decimal? sectorMedianPE)
         {
-            if (st.TrailingEPS == null || st.ForwardEPS == null) return null;
+            if (st.TrailingEPS == null || sectorMedianPE == null) return null;
 
-            return Decimal.Round((decimal)st.TrailingEPS * (decimal)sectorMedianPE,2);
+            float historicalMarketPE = 17f;
+            float growthAdjustedPE = Math.Clamp((st.EarningsGrowth ?? 0.05f) * 100f, 5f, 30f);
+
+            decimal fairPE = (sectorMedianPE.Value * 0.5m)
+                           + ((decimal)historicalMarketPE * 0.3m)
+                           + ((decimal)growthAdjustedPE * 0.2m);
+
+            return decimal.Round((decimal)st.TrailingEPS.Value * fairPE, 2);
         }
 
         public static decimal? EbitdaBased_Value(FinancialStatement st, decimal? sectorMedianEV_EBITDA)
