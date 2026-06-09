@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -14,14 +15,15 @@ namespace StockApp.Common.Helpers
         public static ImageSource GetCompanyLogo(string symbol)
         {
             ImageSource companyLogo;
+            Uri uri;
             try
             {
-                var uri = new Uri($"pack://application:,,,/StockApp;component/Presentation/Resources/{symbol}.png", UriKind.Absolute);
+                uri = new Uri($"pack://application:,,,/StockApp;component/Presentation/Resources/{symbol.ToLower()}.png", UriKind.Absolute);
                 companyLogo = new BitmapImage(uri);
             }
-            catch (IOException)
+            catch (IOException ex)
             {
-                var uri = new Uri($"pack://application:,,,/StockApp;component/Presentation/Resources/notfound.png", UriKind.Absolute);
+                uri = new Uri($"pack://application:,,,/StockApp;component/Presentation/Resources/notfound.png", UriKind.Absolute);
                 companyLogo = new BitmapImage(uri);
             }
             return companyLogo;

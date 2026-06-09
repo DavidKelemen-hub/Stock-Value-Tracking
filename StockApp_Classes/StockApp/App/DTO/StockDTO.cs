@@ -12,11 +12,11 @@ namespace StockApp.Appl.DTO
         public ImageSource? CompanyLogo { get; set; }
         public Chart? ChartData { get; set; }
         public Brush? ChartColor { get; set; }
-        public double? CurrentPrice { get; set; }
-        public double? PriceVariation { get; set; }
-        public double? PercentageVariation { get; set; }
-        public double? HighestPrice { get; set; }
-        public double? LowestPrice { get; set; }
+        public decimal? CurrentPrice { get; set; }
+        public decimal? PriceVariation { get; set; }
+        public decimal? PercentageVariation { get; set; }
+        public decimal? HighestPrice { get; set; }
+        public decimal? LowestPrice { get; set; }
         public string RangeText { get; set; } = String.Empty;
         public string SelectedRange { get; set; } = String.Empty;
         public string SearchText { get; set; } = String.Empty;

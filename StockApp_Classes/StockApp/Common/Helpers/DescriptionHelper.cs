@@ -9,7 +9,7 @@ namespace StockApp.Common.Helpers
 {
     public static class DescriptionHelper
     {
-        public static string GetRangeDescription(double? priceVariation, string range)
+        public static string GetRangeDescription(decimal? priceVariation, string range)
         {
             string description = range switch
             {

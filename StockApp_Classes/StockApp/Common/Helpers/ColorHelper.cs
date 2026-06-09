@@ -9,7 +9,7 @@ namespace StockApp.Common.Helpers
             return new SolidColorBrush(isPositive ? Colors.LimeGreen : Colors.IndianRed);
         }
 
-        public static SolidColorBrush GetTrendingColor(double? priceVariation) =>
+        public static SolidColorBrush GetTrendingColor(decimal? priceVariation) =>
             GetTrendingColor(priceVariation > 0);
     }
 }

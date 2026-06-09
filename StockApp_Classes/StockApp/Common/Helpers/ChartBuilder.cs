@@ -24,7 +24,7 @@ namespace StockApp.Common.Helpers
         public Chart LoadChartData()
         {
             Chart chart = new();
-            var prices = dailyEntries.Select(d => d.ClosePrice).ToArray();
+            var prices = dailyEntries.Select(d => Decimal.ToDouble(d.ClosePrice)).ToArray();
             string dateFormat = DateTimeHelper.GetDateFormat(dailyEntries.Select(d => d.TradeDate).ToList());
             var labels = dailyEntries.Select(d => d.TradeDate.ToString(dateFormat)).ToList();
 

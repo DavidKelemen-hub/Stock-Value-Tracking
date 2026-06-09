@@ -36,19 +36,19 @@ namespace StockApp.ViewModels
         public ISeries[] ChartSeries { get; set; } = Array.Empty<ISeries>();
         public Axis[] XAxes { get; set; } = new Axis[] { new Axis { Labels = new List<string>() } };
         public Axis[] YAxes { get; set; } = new Axis[] { new Axis() };
-        private double? percentageVariation { get; set; }
-        private double? currentPrice { get; set; }
+        private decimal? percentageVariation { get; set; }
+        private decimal? currentPrice { get; set; }
         private string? selectedRange { get; set; }
         private string? searchText { get; set; }
-        private double? priceVariation { get; set; }
+        private decimal? priceVariation { get; set; }
         private string? rangeText { get; set; }
         private string? performerRangeText { get; set; }
         private bool showTop10 { get; set; }
         private Brush? chartColor { get; set; }
         private Brush? performersColor { get; set; }
         public ICommand RangeClickedCommand { get; set; }
-        private double? highestPrice { get; set; }
-        private double? lowestPrice { get; set; }
+        private decimal? highestPrice { get; set; }
+        private decimal? lowestPrice { get; set; }
         public List<CompanyPerformance>? companiesPerformance { get; set; }
         private ImageSource? companyLogo { get; set; }
         public bool IsPositiveChange => PriceVariation >= 0;
@@ -268,7 +268,7 @@ namespace StockApp.ViewModels
             }
         }
 
-        public double? HighestPrice
+        public decimal? HighestPrice
         {
             get { return highestPrice; }
             set
@@ -279,7 +279,7 @@ namespace StockApp.ViewModels
             }
         }
 
-        public double? LowestPrice
+        public decimal? LowestPrice
         {
             get { return lowestPrice; }
             set
@@ -332,7 +332,7 @@ namespace StockApp.ViewModels
                 OnPropertyChanged();
             }
         }
-        public double? PriceVariation
+        public decimal? PriceVariation
         {
             get { return priceVariation; }
             set
@@ -354,7 +354,7 @@ namespace StockApp.ViewModels
                 CompaniesView!.Refresh();
             }
         }
-        public double? PercentageVariation
+        public decimal? PercentageVariation
         {
             get { return percentageVariation; }
             set
@@ -377,7 +377,7 @@ namespace StockApp.ViewModels
             }
         }
 
-        public double? CurrentPrice
+        public decimal? CurrentPrice
         {
             get { return currentPrice; }
             set

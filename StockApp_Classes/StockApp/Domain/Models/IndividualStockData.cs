@@ -9,10 +9,10 @@ namespace StockApp.Domain.Models
     public class IndividualStockData
     {
         public List<DailyEntry>? DailyValues { get; set; }
-        public double? CurrentPrice { get; set; }
-        public double? PriceVariation { get; set; }
-        public double? PercentageVariation { get; set; }
-        public double? HighestPrice { get; set; }
-        public double? LowestPrice { get; set; }
+        public decimal? CurrentPrice { get; set; }
+        public decimal? PriceVariation { get; set; }
+        public decimal? PercentageVariation { get; set; }
+        public decimal? HighestPrice { get; set; }
+        public decimal? LowestPrice { get; set; }
     }
 }
