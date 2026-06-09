@@ -31,8 +31,10 @@ namespace StockApp.Domain.Processing
         public async Task<IndividualStockData> GetIndividualStockData(string symbol, string range)
         {
             var result = await dbService.GetStockEntriesBetweenDates(symbol, range).ConfigureAwait(false);
-            NullEntryHelper.SanitizeInput(result);
 
+            /* Reduce data points */
+            result = LLTB.LargestTriangleThreeBuckets(result, 500);
+            
             var First = result.First();
             var Last = result.Last();
 

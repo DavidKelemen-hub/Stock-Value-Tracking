@@ -1,6 +1,5 @@
 ﻿using LiveChartsCore;
 using LiveChartsCore.SkiaSharpView;
-using OxyPlot;
 using StockApp.Appl.DTO;
 using StockApp.Appl.Services;
 using StockApp.Common.Helpers;
@@ -8,14 +7,11 @@ using StockApp.Domain.Models;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Resources;
 using System.Runtime.Caching;
 using System.Runtime.CompilerServices;
-using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 
 namespace StockApp.ViewModels
 {
@@ -79,7 +75,7 @@ namespace StockApp.ViewModels
 
         private readonly CacheItemPolicy policy = new()
         {
-            AbsoluteExpiration = DateTimeOffset.Now.AddDays(1)
+            AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(10)
         };
 
         private readonly MemoryCache _cache = MemoryCache.Default;
