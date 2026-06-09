@@ -61,11 +61,11 @@ namespace StockApp.Appl.Services
             return new StockDTO
             {
                 ChartData = chartBuilder.LoadChartData(),
-                CurrentPrice = stockData.CurrentPrice,
+                CurrentPrice = Math.Round((decimal)stockData.CurrentPrice, 2),
                 PriceVariation = stockData.PriceVariation,
                 PercentageVariation = stockData.PercentageVariation,
-                HighestPrice = stockData.HighestPrice,
-                LowestPrice = stockData.LowestPrice,
+                HighestPrice = Math.Round((decimal)stockData.HighestPrice,2),
+                LowestPrice = Math.Round((decimal)stockData.LowestPrice,2),
                 RangeText = DescriptionHelper.GetRangeDescription(stockData.PriceVariation, selectedRange),
                 ChartColor = ColorHelper.GetTrendingColor(stockData.PriceVariation),
                 CompanyLogo = LogoHelper.GetCompanyLogo(selectedCompany.Symbol!),

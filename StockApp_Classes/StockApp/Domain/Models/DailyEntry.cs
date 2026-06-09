@@ -4,10 +4,10 @@
     {
         public int StockID { get; set; }
         public DateTime TradeDate { get; set; }
-        public double OpenPrice { get; set; }
-        public double HighPrice { get; set; }
-        public double LowPrice { get; set; }
-        public double ClosePrice { get; set; }
+        public decimal OpenPrice { get; set; }
+        public decimal HighPrice { get; set; }
+        public decimal LowPrice { get; set; }
+        public decimal ClosePrice { get; set; }
         public long Volume { get; set; }
     }
 }
